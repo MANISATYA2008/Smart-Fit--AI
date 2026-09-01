@@ -15,39 +15,87 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+/* --------------------------------
+   CONFIG
+--------------------------------- */
 
-const isVercel = Boolean(process.env.VERCEL);
+const PORT = Number(process.env.PORT) || 3000;
+
+const JWT_SECRET =
+  process.env.JWT_SECRET || "dev-secret-change-me";
+
+const isVercel =
+  process.env.VERCEL === "1" ||
+  process.env.VERCEL === "true";
 
 /*
   IMPORTANT:
-  Vercel's deployed filesystem is not a normal writable project folder.
-  /tmp is writable during the function lifetime.
+  Vercel filesystem is read-only except /tmp.
 
-  Locally:
-    ../database/smartfit.db
+  Local:
+    project/database/smartfit.db
 
   Vercel:
     /tmp/smartfit.db
 */
 
-const databaseDir = isVercel
-  ? "/tmp"
-  : path.join(__dirname, "../database");
+let databasePath;
 
-if (!fs.existsSync(databaseDir)) {
-  fs.mkdirSync(databaseDir, { recursive: true });
+if (isVercel) {
+  databasePath = "/tmp/smartfit.db";
+} else {
+  const databaseDir = path.resolve(
+    process.cwd(),
+    "database"
+  );
+
+  if (!fs.existsSync(databaseDir)) {
+    fs.mkdirSync(databaseDir, {
+      recursive: true
+    });
+  }
+
+  databasePath = path.join(
+    databaseDir,
+    "smartfit.db"
+  );
 }
 
-const databasePath = path.join(databaseDir, "smartfit.db");
+/*
+  Extra safety for Vercel.
+*/
+const databaseParent =
+  path.dirname(databasePath);
 
-console.log("Environment:", isVercel ? "Vercel" : "Local");
-console.log("Database path:", databasePath);
+if (!fs.existsSync(databaseParent)) {
+  fs.mkdirSync(databaseParent, {
+    recursive: true
+  });
+}
+
+console.log(
+  "Environment:",
+  isVercel ? "Vercel" : "Local"
+);
+
+console.log(
+  "Database path:",
+  databasePath
+);
+
+/* --------------------------------
+   DATABASE
+--------------------------------- */
 
 const db = new Database(databasePath);
 
 db.pragma("foreign_keys = ON");
+
+db.pragma("journal_mode = WAL");
+
+/* --------------------------------
+   DATABASE SCHEMA
+--------------------------------- */
 
 const schema = `
 CREATE TABLE IF NOT EXISTS users (
@@ -76,7 +124,9 @@ CREATE TABLE IF NOT EXISTS profiles (
   allergies TEXT,
   meals_per_day INTEGER,
   food_budget REAL,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY(user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS exercises (
@@ -99,7 +149,9 @@ CREATE TABLE IF NOT EXISTS workout_logs (
   completed_exercises INTEGER DEFAULT 0,
   total_exercises INTEGER DEFAULT 0,
   completed INTEGER DEFAULT 0,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY(user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS feedback (
@@ -109,7 +161,9 @@ CREATE TABLE IF NOT EXISTS feedback (
   difficulty TEXT NOT NULL,
   comment TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY(user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS ai_plans (
@@ -118,15 +172,17 @@ CREATE TABLE IF NOT EXISTS ai_plans (
   week_start TEXT NOT NULL,
   plan_json TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY(user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
 );
 `;
 
 db.exec(schema);
 
-/* -----------------------------
+/* --------------------------------
    EXERCISE SEED DATA
------------------------------- */
+--------------------------------- */
 
 const exerciseSeed = [
   [
@@ -212,7 +268,7 @@ const exerciseSeed = [
 ];
 
 const seed = db.prepare(`
-  INSERT INTO exercises(
+  INSERT INTO exercises (
     name,
     muscle_group,
     equipment,
@@ -220,9 +276,11 @@ const seed = db.prepare(`
     instructions,
     mistakes
   )
-  SELECT ?,?,?,?,?,?
+  SELECT ?, ?, ?, ?, ?, ?
   WHERE NOT EXISTS (
-    SELECT 1 FROM exercises WHERE name=?
+    SELECT 1
+    FROM exercises
+    WHERE name = ?
   )
 `);
 
@@ -238,28 +296,42 @@ for (const e of exerciseSeed) {
   );
 }
 
-/* -----------------------------
+/* --------------------------------
    MIDDLEWARE
------------------------------- */
+--------------------------------- */
 
 app.use(express.json());
 
-const frontendPath = path.join(__dirname, "../frontend");
+app.use(express.urlencoded({
+  extended: true
+}));
+
+/*
+  Serve frontend locally if it exists.
+*/
+const frontendPath = path.resolve(
+  __dirname,
+  "../frontend"
+);
 
 if (fs.existsSync(frontendPath)) {
-  app.use(express.static(frontendPath));
+  app.use(
+    express.static(frontendPath)
+  );
 }
 
-/* -----------------------------
-   AUTH
------------------------------- */
+/* --------------------------------
+   AUTH MIDDLEWARE
+--------------------------------- */
 
 function auth(req, res, next) {
-  const authHeader = req.headers.authorization || "";
+  const authHeader =
+    req.headers.authorization || "";
 
-  const token = authHeader.startsWith("Bearer ")
-    ? authHeader.slice(7)
-    : "";
+  const token =
+    authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : "";
 
   if (!token) {
     return res.status(401).json({
@@ -268,27 +340,50 @@ function auth(req, res, next) {
   }
 
   try {
-    req.user = jwt.verify(token, JWT_SECRET);
+    req.user = jwt.verify(
+      token,
+      JWT_SECRET
+    );
+
     next();
-  } catch {
+  } catch (error) {
     return res.status(401).json({
       error: "Please log in."
     });
   }
 }
 
-/* -----------------------------
+/* --------------------------------
    HELPERS
------------------------------- */
+--------------------------------- */
 
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  return new Date()
+    .toISOString()
+    .slice(0, 10);
 }
+
+function getUserProfile(userId) {
+  return db
+    .prepare(`
+      SELECT *
+      FROM profiles
+      WHERE user_id = ?
+    `)
+    .get(userId);
+}
+
+/* --------------------------------
+   RULE BASED WORKOUT PLAN
+--------------------------------- */
 
 function buildRulePlan(profile) {
   const days = Math.min(
     6,
-    Math.max(2, Number(profile.workout_days || 3))
+    Math.max(
+      2,
+      Number(profile.workout_days || 3)
+    )
   );
 
   const templates = {
@@ -328,7 +423,8 @@ function buildRulePlan(profile) {
     ]
   };
 
-  const names = templates[days] || templates[3];
+  const names =
+    templates[days] || templates[3];
 
   const map = {
     "Chest & Triceps": [
@@ -341,7 +437,7 @@ function buildRulePlan(profile) {
       "Dumbbell Biceps Curl"
     ],
 
-    "Legs": [
+    Legs: [
       "Dumbbell Goblet Squat",
       "Glute Bridge",
       "Calf Raise"
@@ -352,20 +448,20 @@ function buildRulePlan(profile) {
       "Plank"
     ],
 
-    "Chest": [
+    Chest: [
       "Push-Up"
     ],
 
-    "Back": [
+    Back: [
       "Dumbbell Row"
     ],
 
-    "Shoulders": [
+    Shoulders: [
       "Dumbbell Shoulder Press",
       "Plank"
     ],
 
-    "Arms": [
+    Arms: [
       "Dumbbell Biceps Curl",
       "Dumbbell Triceps Extension"
     ],
@@ -407,55 +503,81 @@ function buildRulePlan(profile) {
     ]
   };
 
-  const equipment = String(
-    profile.equipment || ""
-  ).toLowerCase();
+  const equipment =
+    String(
+      profile.equipment || ""
+    ).toLowerCase();
 
-  return names.map((name, i) => {
-    let exercises = map[name] || [
-      "Bodyweight Squat",
-      "Push-Up",
-      "Plank"
-    ];
+  const noEquipment =
+    equipment.includes("no equipment");
 
-    if (
-      equipment.includes("no equipment") ||
-      (
-        profile.location === "Home" &&
-        !equipment
-      )
-    ) {
-      exercises = exercises.filter(
-        x => !x.toLowerCase().includes("dumbbell")
-      );
+  const homeWithoutEquipment =
+    String(profile.location || "")
+      .toLowerCase() === "home" &&
+    !equipment;
+
+  return names.map(
+    (name, index) => {
+      let exercises =
+        map[name] || [
+          "Bodyweight Squat",
+          "Push-Up",
+          "Plank"
+        ];
+
+      if (
+        noEquipment ||
+        homeWithoutEquipment
+      ) {
+        exercises =
+          exercises.filter(
+            x =>
+              !x
+                .toLowerCase()
+                .includes("dumbbell")
+          );
+      }
+
+      if (
+        !equipment.includes("dumbbell") &&
+        String(profile.location || "")
+          .toLowerCase() !== "gym"
+      ) {
+        exercises =
+          exercises.filter(
+            x =>
+              !x
+                .toLowerCase()
+                .includes("dumbbell")
+          );
+      }
+
+      return {
+        day: index + 1,
+        split: name,
+        rest: false,
+
+        exercises:
+          exercises.map(
+            exerciseName => ({
+              name: exerciseName,
+              sets: 3,
+              reps: "8-12"
+            })
+          )
+      };
     }
-
-    if (
-      !equipment.includes("dumbbell") &&
-      profile.location !== "Gym"
-    ) {
-      exercises = exercises.filter(
-        x => !x.toLowerCase().includes("dumbbell")
-      );
-    }
-
-    return {
-      day: i + 1,
-      split: name,
-      rest: false,
-
-      exercises: exercises.map(x => ({
-        name: x,
-        sets: 3,
-        reps: "8-12"
-      }))
-    };
-  });
+  );
 }
+
+/* --------------------------------
+   NUTRITION
+--------------------------------- */
 
 function nutrition(profile) {
   const veg =
-    profile.vegetarian_type || "Not specified";
+    profile.vegetarian_type ||
+    "Not specified";
 
   return {
     note:
@@ -488,9 +610,9 @@ function nutrition(profile) {
   };
 }
 
-/* -----------------------------
-   GEMINI
------------------------------- */
+/* --------------------------------
+   GEMINI AI PLAN
+--------------------------------- */
 
 async function geminiPlan(profile) {
   if (!process.env.GEMINI_API_KEY) {
@@ -498,13 +620,14 @@ async function geminiPlan(profile) {
   }
 
   const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
+    apiKey:
+      process.env.GEMINI_API_KEY
   });
 
   const prompt = `
 You are a cautious fitness planning assistant.
 
-Create a beginner-safe, balanced weekly fitness plan.
+Create a beginner-safe and balanced weekly fitness plan.
 
 Do not:
 - diagnose medical conditions
@@ -535,300 +658,400 @@ Required JSON structure:
   "safety_notes": []
 }
 
-Profile:
+User profile:
 ${JSON.stringify(profile)}
 `;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-3.7-flash",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json"
-    }
-  });
+  const response =
+    await ai.models.generateContent({
+      model:
+        process.env.GEMINI_MODEL ||
+        "gemini-2.5-flash",
 
-  const text = response.text;
+      contents: prompt,
+
+      config: {
+        responseMimeType:
+          "application/json"
+      }
+    });
+
+  const text =
+    response.text;
 
   if (!text) {
-    throw new Error("Gemini returned an empty response.");
+    throw new Error(
+      "Gemini returned an empty response."
+    );
   }
 
   return JSON.parse(text);
 }
 
-/* -----------------------------
+/* --------------------------------
    HEALTH CHECK
------------------------------- */
+--------------------------------- */
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "SMART FIT AI server is running.",
-    environment: isVercel ? "vercel" : "local",
-    database: databasePath,
-    time: new Date().toISOString()
-  });
-});
-
-/* -----------------------------
-   AUTH REGISTER
------------------------------- */
-
-app.post("/api/auth/register", async (req, res) => {
-  const {
-    name,
-    email,
-    password
-  } = req.body || {};
-
-  if (
-    !name ||
-    !email ||
-    !password ||
-    password.length < 6
-  ) {
-    return res.status(400).json({
-      error:
-        "Name, email and a password of at least 6 characters are required."
+app.get(
+  "/api/health",
+  (req, res) => {
+    res.json({
+      status: "ok",
+      message:
+        "SMART FIT AI server is running.",
+      environment:
+        isVercel
+          ? "vercel"
+          : "local",
+      database:
+        databasePath,
+      time:
+        new Date().toISOString()
     });
   }
+);
 
-  try {
-    const normalizedEmail =
-      email.trim().toLowerCase();
+/* --------------------------------
+   REGISTER
+--------------------------------- */
 
-    const hash = await bcrypt.hash(
-      password,
-      10
-    );
+app.post(
+  "/api/auth/register",
+  async (req, res) => {
+    const {
+      name,
+      email,
+      password
+    } = req.body || {};
 
-    const info = db
-      .prepare(`
-        INSERT INTO users(
-          name,
-          email,
-          password_hash
-        )
-        VALUES(?,?,?)
-      `)
-      .run(
-        name.trim(),
-        normalizedEmail,
-        hash
+    if (
+      !name ||
+      !email ||
+      !password ||
+      String(password).length < 6
+    ) {
+      return res.status(400).json({
+        error:
+          "Name, email and a password of at least 6 characters are required."
+      });
+    }
+
+    try {
+      const normalizedEmail =
+        String(email)
+          .trim()
+          .toLowerCase();
+
+      const cleanName =
+        String(name).trim();
+
+      const hash =
+        await bcrypt.hash(
+          String(password),
+          10
+        );
+
+      const info =
+        db.prepare(`
+          INSERT INTO users (
+            name,
+            email,
+            password_hash
+          )
+          VALUES (?, ?, ?)
+        `).run(
+          cleanName,
+          normalizedEmail,
+          hash
+        );
+
+      const userId =
+        Number(
+          info.lastInsertRowid
+        );
+
+      const token =
+        jwt.sign(
+          {
+            id: userId,
+            name: cleanName,
+            role: "user"
+          },
+          JWT_SECRET,
+          {
+            expiresIn: "7d"
+          }
+        );
+
+      return res.json({
+        token,
+
+        user: {
+          id: userId,
+          name: cleanName,
+          email: normalizedEmail
+        }
+      });
+    } catch (error) {
+      console.error(
+        "REGISTER ERROR:",
+        error
       );
 
-    const userId =
-      Number(info.lastInsertRowid);
+      return res.status(400).json({
+        error:
+          "Email may already be registered."
+      });
+    }
+  }
+);
 
-    const token = jwt.sign(
-      {
-        id: userId,
-        name: name.trim(),
-        role: "user"
-      },
-      JWT_SECRET,
-      {
-        expiresIn: "7d"
-      }
-    );
+/* --------------------------------
+   LOGIN
+--------------------------------- */
+
+app.post(
+  "/api/auth/login",
+  async (req, res) => {
+    const {
+      email,
+      password
+    } = req.body || {};
+
+    const normalizedEmail =
+      String(email || "")
+        .trim()
+        .toLowerCase();
+
+    const user =
+      db.prepare(`
+        SELECT *
+        FROM users
+        WHERE email = ?
+      `).get(normalizedEmail);
+
+    if (
+      !user ||
+      !(await bcrypt.compare(
+        String(password || ""),
+        user.password_hash
+      ))
+    ) {
+      return res.status(401).json({
+        error:
+          "Invalid email or password."
+      });
+    }
+
+    const token =
+      jwt.sign(
+        {
+          id: user.id,
+          name: user.name,
+          role: user.role
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "7d"
+        }
+      );
 
     return res.json({
       token,
 
       user: {
-        id: userId,
-        name: name.trim(),
-        email: normalizedEmail
+        id: user.id,
+        name: user.name,
+        email: user.email
       }
     });
-  } catch (error) {
-    console.error("REGISTER ERROR:", error);
-
-    return res.status(400).json({
-      error:
-        "Email may already be registered."
-    });
   }
-});
+);
 
-/* -----------------------------
-   LOGIN
------------------------------- */
-
-app.post("/api/auth/login", async (req, res) => {
-  const {
-    email,
-    password
-  } = req.body || {};
-
-  const normalizedEmail =
-    String(email || "")
-      .trim()
-      .toLowerCase();
-
-  const user = db
-    .prepare(
-      "SELECT * FROM users WHERE email=?"
-    )
-    .get(normalizedEmail);
-
-  if (
-    !user ||
-    !(await bcrypt.compare(
-      password || "",
-      user.password_hash
-    ))
-  ) {
-    return res.status(401).json({
-      error: "Invalid email or password."
-    });
-  }
-
-  const token = jwt.sign(
-    {
-      id: user.id,
-      name: user.name,
-      role: user.role
-    },
-    JWT_SECRET,
-    {
-      expiresIn: "7d"
-    }
-  );
-
-  return res.json({
-    token,
-
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email
-    }
-  });
-});
-
-/* -----------------------------
+/* --------------------------------
    CURRENT USER
------------------------------- */
+--------------------------------- */
 
-app.get("/api/me", auth, (req, res) => {
-  const user = db
-    .prepare(`
-      SELECT id,name,email,role
-      FROM users
-      WHERE id=?
-    `)
-    .get(req.user.id);
+app.get(
+  "/api/me",
+  auth,
+  (req, res) => {
+    const user =
+      db.prepare(`
+        SELECT
+          id,
+          name,
+          email,
+          role
+        FROM users
+        WHERE id = ?
+      `).get(req.user.id);
 
-  const profile = db
-    .prepare(`
-      SELECT *
-      FROM profiles
-      WHERE user_id=?
-    `)
-    .get(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found."
+      });
+    }
 
-  res.json({
-    user,
-    profile
-  });
-});
-
-/* -----------------------------
-   SAVE PROFILE
------------------------------- */
-
-app.post("/api/profile", auth, (req, res) => {
-  const p = req.body || {};
-
-  try {
-    db.prepare(`
-      INSERT INTO profiles(
-        user_id,
-        age,
-        height_cm,
-        weight_kg,
-        experience,
-        goal,
-        workout_days,
-        workout_minutes,
-        location,
-        equipment,
-        vegetarian_type,
-        preferred_foods,
-        avoided_foods,
-        allergies,
-        meals_per_day,
-        food_budget
-      )
-      VALUES(
-        @user_id,
-        @age,
-        @height_cm,
-        @weight_kg,
-        @experience,
-        @goal,
-        @workout_days,
-        @workout_minutes,
-        @location,
-        @equipment,
-        @vegetarian_type,
-        @preferred_foods,
-        @avoided_foods,
-        @allergies,
-        @meals_per_day,
-        @food_budget
-      )
-
-      ON CONFLICT(user_id)
-      DO UPDATE SET
-        age=@age,
-        height_cm=@height_cm,
-        weight_kg=@weight_kg,
-        experience=@experience,
-        goal=@goal,
-        workout_days=@workout_days,
-        workout_minutes=@workout_minutes,
-        location=@location,
-        equipment=@equipment,
-        vegetarian_type=@vegetarian_type,
-        preferred_foods=@preferred_foods,
-        avoided_foods=@avoided_foods,
-        allergies=@allergies,
-        meals_per_day=@meals_per_day,
-        food_budget=@food_budget
-    `).run({
-      ...p,
-      user_id: req.user.id
-    });
+    const profile =
+      getUserProfile(
+        req.user.id
+      );
 
     return res.json({
-      message: "Profile saved."
-    });
-  } catch (error) {
-    console.error("PROFILE ERROR:", error);
-
-    return res.status(400).json({
-      error: "Could not save profile."
+      user,
+      profile
     });
   }
-});
+);
 
-/* -----------------------------
-   TODAY'S WORKOUT
------------------------------- */
+/* --------------------------------
+   SAVE PROFILE
+--------------------------------- */
+
+app.post(
+  "/api/profile",
+  auth,
+  (req, res) => {
+    const p =
+      req.body || {};
+
+    try {
+      db.prepare(`
+        INSERT INTO profiles (
+          user_id,
+          age,
+          height_cm,
+          weight_kg,
+          experience,
+          goal,
+          workout_days,
+          workout_minutes,
+          location,
+          equipment,
+          vegetarian_type,
+          preferred_foods,
+          avoided_foods,
+          allergies,
+          meals_per_day,
+          food_budget
+        )
+        VALUES (
+          @user_id,
+          @age,
+          @height_cm,
+          @weight_kg,
+          @experience,
+          @goal,
+          @workout_days,
+          @workout_minutes,
+          @location,
+          @equipment,
+          @vegetarian_type,
+          @preferred_foods,
+          @avoided_foods,
+          @allergies,
+          @meals_per_day,
+          @food_budget
+        )
+
+        ON CONFLICT(user_id)
+        DO UPDATE SET
+          age = @age,
+          height_cm = @height_cm,
+          weight_kg = @weight_kg,
+          experience = @experience,
+          goal = @goal,
+          workout_days = @workout_days,
+          workout_minutes = @workout_minutes,
+          location = @location,
+          equipment = @equipment,
+          vegetarian_type = @vegetarian_type,
+          preferred_foods = @preferred_foods,
+          avoided_foods = @avoided_foods,
+          allergies = @allergies,
+          meals_per_day = @meals_per_day,
+          food_budget = @food_budget
+      `).run({
+        user_id:
+          req.user.id,
+
+        age:
+          p.age ?? null,
+
+        height_cm:
+          p.height_cm ?? null,
+
+        weight_kg:
+          p.weight_kg ?? null,
+
+        experience:
+          p.experience ?? null,
+
+        goal:
+          p.goal ?? null,
+
+        workout_days:
+          p.workout_days ?? null,
+
+        workout_minutes:
+          p.workout_minutes ?? null,
+
+        location:
+          p.location ?? null,
+
+        equipment:
+          p.equipment ?? null,
+
+        vegetarian_type:
+          p.vegetarian_type ?? null,
+
+        preferred_foods:
+          p.preferred_foods ?? null,
+
+        avoided_foods:
+          p.avoided_foods ?? null,
+
+        allergies:
+          p.allergies ?? null,
+
+        meals_per_day:
+          p.meals_per_day ?? null,
+
+        food_budget:
+          p.food_budget ?? null
+      });
+
+      return res.json({
+        message:
+          "Profile saved."
+      });
+    } catch (error) {
+      console.error(
+        "PROFILE ERROR:",
+        error
+      );
+
+      return res.status(400).json({
+        error:
+          "Could not save profile."
+      });
+    }
+  }
+);
+
+/* --------------------------------
+   TODAY WORKOUT
+--------------------------------- */
 
 app.get(
   "/api/workout/today",
   auth,
   (req, res) => {
-    const profile = db
-      .prepare(`
-        SELECT *
-        FROM profiles
-        WHERE user_id=?
-      `)
-      .get(req.user.id);
+    const profile =
+      getUserProfile(
+        req.user.id
+      );
 
     if (!profile) {
       return res.status(400).json({
@@ -844,195 +1067,11 @@ app.get(
       ((new Date().getDay() + 6) % 7) + 1;
 
     const active =
-      plan[(day - 1) % plan.length];
+      plan[
+        (day - 1) %
+          plan.length
+      ];
 
     return res.json({
       plan,
-      today: active,
-      nutrition: nutrition(profile)
-    });
-  }
-);
-
-/* -----------------------------
-   COMPLETE WORKOUT
------------------------------- */
-
-app.post(
-  "/api/workout/complete",
-  auth,
-  (req, res) => {
-    const {
-      split_name,
-      duration_minutes,
-      completed_exercises,
-      total_exercises
-    } = req.body || {};
-
-    try {
-      db.prepare(`
-        INSERT INTO workout_logs(
-          user_id,
-          workout_date,
-          split_name,
-          duration_minutes,
-          completed_exercises,
-          total_exercises,
-          completed
-        )
-        VALUES(?,?,?,?,?,?,1)
-      `).run(
-        req.user.id,
-        today(),
-        split_name || "Workout",
-        Number(duration_minutes || 0),
-        Number(completed_exercises || 0),
-        Number(total_exercises || 0)
-      );
-
-      return res.json({
-        message: "Workout saved."
-      });
-    } catch (error) {
-      console.error(
-        "WORKOUT COMPLETE ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error: "Could not save workout."
-      });
-    }
-  }
-);
-
-/* -----------------------------
-   PROGRESS
------------------------------- */
-
-app.get(
-  "/api/progress",
-  auth,
-  (req, res) => {
-    const logs = db
-      .prepare(`
-        SELECT
-          workout_date,
-          split_name,
-          duration_minutes,
-          completed_exercises,
-          total_exercises
-        FROM workout_logs
-        WHERE user_id=?
-        ORDER BY workout_date DESC
-        LIMIT 30
-      `)
-      .all(req.user.id);
-
-    const completed =
-      logs.length;
-
-    const minutes =
-      logs.reduce(
-        (sum, item) =>
-          sum +
-          Number(
-            item.duration_minutes || 0
-          ),
-        0
-      );
-
-    return res.json({
-      completed,
-      minutes,
-      logs
-    });
-  }
-);
-
-/* -----------------------------
-   FEEDBACK
------------------------------- */
-
-app.post(
-  "/api/feedback",
-  auth,
-  (req, res) => {
-    const {
-      difficulty,
-      comment
-    } = req.body || {};
-
-    try {
-      db.prepare(`
-        INSERT INTO feedback(
-          user_id,
-          week_start,
-          difficulty,
-          comment
-        )
-        VALUES(?,?,?,?)
-      `).run(
-        req.user.id,
-        today(),
-        difficulty || "moderate",
-        comment || ""
-      );
-
-      return res.json({
-        message: "Feedback saved."
-      });
-    } catch (error) {
-      console.error(
-        "FEEDBACK ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error: "Could not save feedback."
-      });
-    }
-  }
-);
-
-/* -----------------------------
-   AI PLAN
------------------------------- */
-
-app.post(
-  "/api/ai/plan",
-  auth,
-  async (req, res) => {
-    const profile = db
-      .prepare(`
-        SELECT *
-        FROM profiles
-        WHERE user_id=?
-      `)
-      .get(req.user.id);
-
-    if (!profile) {
-      return res.status(400).json({
-        error:
-          "Complete your profile first."
-      });
-    }
-
-    try {
-      const plan =
-        await geminiPlan(profile);
-
-      if (!plan) {
-        return res.json({
-          source: "rules",
-          plan: buildRulePlan(profile),
-          message:
-            "Gemini is not configured; showing the built-in personalized rule plan."
-        });
-      }
-
-      db.prepare(`
-        INSERT INTO ai_plans(
-          user_id,
-          week_start,
-          plan_j
+      today:
