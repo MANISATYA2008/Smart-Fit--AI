@@ -19,8 +19,6 @@ const app = express();
    CONFIG
 --------------------------------- */
 
-
-
 const JWT_SECRET =
   process.env.JWT_SECRET || "dev-secret-change-me";
 
@@ -302,23 +300,58 @@ for (const e of exerciseSeed) {
 
 app.use(express.json());
 
-app.use(express.urlencoded({
-  extended: true
-}));
-
-/*
-  Serve frontend locally if it exists.
-*/
-const frontendPath = path.resolve(
-  __dirname,
-  "../frontend"
+app.use(
+  express.urlencoded({
+    extended: true
+  })
 );
 
-if (fs.existsSync(frontendPath)) {
-  app.use(
-    express.static(frontendPath)
-  );
-}
+/* --------------------------------
+   FRONTEND
+--------------------------------- */
+
+/*
+  If a frontend folder exists, use it.
+
+  Otherwise use the same folder as server.js.
+*/
+const frontendFolder =
+  path.join(__dirname, "../frontend");
+
+const frontendPath =
+  fs.existsSync(frontendFolder)
+    ? frontendFolder
+    : __dirname;
+
+console.log(
+  "Frontend path:",
+  frontendPath
+);
+
+app.use(
+  express.static(frontendPath)
+);
+
+/*
+  Root route.
+  This fixes:
+    Cannot GET /
+*/
+app.get("/", (req, res) => {
+  const indexPath =
+    path.join(
+      frontendPath,
+      "index.html"
+    );
+
+  if (!fs.existsSync(indexPath)) {
+    return res.status(404).send(
+      "index.html not found."
+    );
+  }
+
+  res.sendFile(indexPath);
+});
 
 /* --------------------------------
    AUTH MIDDLEWARE
@@ -1074,14 +1107,101 @@ app.get(
 
     return res.json({
       plan,
-      today:
-         active
+      today: active
     });
-  });
-const PORT = process.env.PORT || 10000;
+  }
+);
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`SMART FIT AI server running on port ${PORT}`);
-});
+/* --------------------------------
+   NUTRITION API
+--------------------------------- */
+
+app.get(
+  "/api/nutrition",
+  auth,
+  (req, res) => {
+    const profile =
+      getUserProfile(
+        req.user.id
+      );
+
+    if (!profile) {
+      return res.status(400).json({
+        error:
+          "Complete your profile first."
+      });
+    }
+
+    return res.json(
+      nutrition(profile)
+    );
+  }
+);
+
+/* --------------------------------
+   AI PLAN API
+--------------------------------- */
+
+app.post(
+  "/api/ai-plan",
+  auth,
+  async (req, res) => {
+    const profile =
+      getUserProfile(
+        req.user.id
+      );
+
+    if (!profile) {
+      return res.status(400).json({
+        error:
+          "Complete your profile first."
+      });
+    }
+
+    try {
+      const aiPlan =
+        await geminiPlan(profile);
+
+      if (!aiPlan) {
+        return res.json({
+          source: "rule-based",
+          plan: buildRulePlan(profile)
+        });
+      }
+
+      return res.json({
+        source: "gemini",
+        plan: aiPlan
+      });
+    } catch (error) {
+      console.error(
+        "AI PLAN ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        error:
+          "Could not generate AI plan."
+      });
+    }
+  }
+);
+
+/* --------------------------------
+   START SERVER
+--------------------------------- */
+
+const PORT =
+  process.env.PORT || 10000;
+
+app.listen(
+  PORT,
+  "0.0.0.0",
+  () => {
+    console.log(
+      `SMART FIT AI server running on port ${PORT}`
+    );
+  }
+);
 
 export default app;
