@@ -14,38 +14,40 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
-
-const JWT_SECRET =
-  process.env.JWT_SECRET || "dev-secret-change-me";
-
-/* =========================================================
-   DATABASE
-   VERCEL:
-   - Use /tmp because the deployed filesystem is read-only.
-   LOCAL:
-   - Use ../database/smartfit.db
-   ========================================================= */
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 
 const isVercel = Boolean(process.env.VERCEL);
 
-const databaseDir = path.join(__dirname, "../database");
+/*
+  IMPORTANT:
+  Vercel's deployed filesystem is not a normal writable project folder.
+  /tmp is writable during the function lifetime.
 
-if (!isVercel) {
+  Locally:
+    ../database/smartfit.db
+
+  Vercel:
+    /tmp/smartfit.db
+*/
+
+const databaseDir = isVercel
+  ? "/tmp"
+  : path.join(__dirname, "../database");
+
+if (!fs.existsSync(databaseDir)) {
   fs.mkdirSync(databaseDir, { recursive: true });
 }
 
-const dbPath = isVercel
-  ? "/tmp/smartfit.db"
-  : path.join(databaseDir, "smartfit.db");
+const databasePath = path.join(databaseDir, "smartfit.db");
 
-const db = new Database(dbPath);
+console.log("Environment:", isVercel ? "Vercel" : "Local");
+console.log("Database path:", databasePath);
+
+const db = new Database(databasePath);
 
 db.pragma("foreign_keys = ON");
-
-/* =========================================================
-   DATABASE SCHEMA
-   ========================================================= */
 
 const schema = `
 CREATE TABLE IF NOT EXISTS users (
@@ -74,9 +76,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   allergies TEXT,
   meals_per_day INTEGER,
   food_budget REAL,
-  FOREIGN KEY(user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS exercises (
@@ -99,9 +99,7 @@ CREATE TABLE IF NOT EXISTS workout_logs (
   completed_exercises INTEGER DEFAULT 0,
   total_exercises INTEGER DEFAULT 0,
   completed INTEGER DEFAULT 0,
-  FOREIGN KEY(user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS feedback (
@@ -111,9 +109,7 @@ CREATE TABLE IF NOT EXISTS feedback (
   difficulty TEXT NOT NULL,
   comment TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS ai_plans (
@@ -122,17 +118,15 @@ CREATE TABLE IF NOT EXISTS ai_plans (
   week_start TEXT NOT NULL,
   plan_json TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 `;
 
 db.exec(schema);
 
-/* =========================================================
+/* -----------------------------
    EXERCISE SEED DATA
-   ========================================================= */
+------------------------------ */
 
 const exerciseSeed = [
   [
@@ -214,14 +208,6 @@ const exerciseSeed = [
     "Beginner",
     "Maintain a comfortable straight-line position and brace the core.",
     "Holding breath; letting hips sag."
-  ],
-  [
-    "Lateral Raise",
-    "Shoulders",
-    "Dumbbells",
-    "Beginner",
-    "Raise the dumbbells to a comfortable shoulder-height range with control.",
-    "Using momentum; shrugging the shoulders."
   ]
 ];
 
@@ -234,11 +220,9 @@ const seed = db.prepare(`
     instructions,
     mistakes
   )
-  SELECT ?, ?, ?, ?, ?, ?
+  SELECT ?,?,?,?,?,?
   WHERE NOT EXISTS (
-    SELECT 1
-    FROM exercises
-    WHERE name = ?
+    SELECT 1 FROM exercises WHERE name=?
   )
 `);
 
@@ -254,19 +238,21 @@ for (const e of exerciseSeed) {
   );
 }
 
-/* =========================================================
+/* -----------------------------
    MIDDLEWARE
-   ========================================================= */
+------------------------------ */
 
 app.use(express.json());
 
-app.use(
-  express.static(path.join(__dirname, "../frontend"))
-);
+const frontendPath = path.join(__dirname, "../frontend");
 
-/* =========================================================
-   AUTH MIDDLEWARE
-   ========================================================= */
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+}
+
+/* -----------------------------
+   AUTH
+------------------------------ */
 
 function auth(req, res, next) {
   const authHeader = req.headers.authorization || "";
@@ -291,17 +277,13 @@ function auth(req, res, next) {
   }
 }
 
-/* =========================================================
+/* -----------------------------
    HELPERS
-   ========================================================= */
+------------------------------ */
 
 function today() {
   return new Date().toISOString().slice(0, 10);
 }
-
-/* =========================================================
-   RULE-BASED WORKOUT PLAN
-   ========================================================= */
 
 function buildRulePlan(profile) {
   const days = Math.min(
@@ -367,7 +349,6 @@ function buildRulePlan(profile) {
 
     "Shoulders & Core": [
       "Dumbbell Shoulder Press",
-      "Lateral Raise",
       "Plank"
     ],
 
@@ -381,7 +362,6 @@ function buildRulePlan(profile) {
 
     "Shoulders": [
       "Dumbbell Shoulder Press",
-      "Lateral Raise",
       "Plank"
     ],
 
@@ -427,53 +407,51 @@ function buildRulePlan(profile) {
     ]
   };
 
-  const equipment =
-    String(profile.equipment || "").toLowerCase();
+  const equipment = String(
+    profile.equipment || ""
+  ).toLowerCase();
 
-  return names.map((name, i) => ({
-    day: i + 1,
-    split: name,
-    rest: false,
-
-    exercises: (map[name] || [
+  return names.map((name, i) => {
+    let exercises = map[name] || [
       "Bodyweight Squat",
       "Push-Up",
       "Plank"
-    ])
-      .filter((exercise) => {
-        const isNoEquipment =
-          equipment.includes("no equipment");
+    ];
 
-        const isHomeWithoutEquipment =
-          profile.location === "Home" && !equipment;
+    if (
+      equipment.includes("no equipment") ||
+      (
+        profile.location === "Home" &&
+        !equipment
+      )
+    ) {
+      exercises = exercises.filter(
+        x => !x.toLowerCase().includes("dumbbell")
+      );
+    }
 
-        if (
-          isNoEquipment ||
-          isHomeWithoutEquipment
-        ) {
-          return !exercise.includes("Dumbbell");
-        }
+    if (
+      !equipment.includes("dumbbell") &&
+      profile.location !== "Gym"
+    ) {
+      exercises = exercises.filter(
+        x => !x.toLowerCase().includes("dumbbell")
+      );
+    }
 
-        if (equipment.includes("dumbbell")) {
-          return true;
-        }
+    return {
+      day: i + 1,
+      split: name,
+      rest: false,
 
-        return (
-          !exercise.includes("Dumbbell") ||
-          profile.location === "Gym"
-        );
-      })
-      .map((exercise) => ({
-        name: exercise,
+      exercises: exercises.map(x => ({
+        name: x,
         sets: 3,
         reps: "8-12"
       }))
-  }));
+    };
+  });
 }
-
-/* =========================================================
-   NUTRITION
-   ========================================================= */
 
 function nutrition(profile) {
   const veg =
@@ -481,7 +459,7 @@ function nutrition(profile) {
 
   return {
     note:
-      "Balanced meal suggestions only; adjust to your needs and follow professional advice for allergies, medical conditions, or injuries.",
+      "Balanced meal suggestions only. Adjust to your needs and follow professional advice for allergies, medical conditions, or injuries.",
 
     breakfast:
       veg === "Vegan"
@@ -510,9 +488,9 @@ function nutrition(profile) {
   };
 }
 
-/* =========================================================
-   GEMINI AI PLAN
-   ========================================================= */
+/* -----------------------------
+   GEMINI
+------------------------------ */
 
 async function geminiPlan(profile) {
   if (!process.env.GEMINI_API_KEY) {
@@ -526,8 +504,7 @@ async function geminiPlan(profile) {
   const prompt = `
 You are a cautious fitness planning assistant.
 
-Create a beginner-safe, balanced weekly fitness plan
-from this profile.
+Create a beginner-safe, balanced weekly fitness plan.
 
 Do not:
 - diagnose medical conditions
@@ -535,7 +512,9 @@ Do not:
 - recommend extreme dieting
 - recommend aggressive weight-loss targets
 
-Return concise JSON with these keys:
+Return valid JSON only.
+
+Required JSON structure:
 
 {
   "summary": "...",
@@ -560,138 +539,92 @@ Profile:
 ${JSON.stringify(profile)}
 `;
 
-  const response =
-    await ai.models.generateContent({
-      model: "gemini-3.7-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json"
-      }
-    });
+  const response = await ai.models.generateContent({
+    model: "gemini-3.7-flash",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json"
+    }
+  });
 
-  return JSON.parse(response.text);
+  const text = response.text;
+
+  if (!text) {
+    throw new Error("Gemini returned an empty response.");
+  }
+
+  return JSON.parse(text);
 }
 
-/* =========================================================
-   REGISTER
-   ========================================================= */
+/* -----------------------------
+   HEALTH CHECK
+------------------------------ */
 
-app.post(
-  "/api/auth/register",
-  async (req, res) => {
-    const {
-      name,
-      email,
-      password
-    } = req.body;
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "SMART FIT AI server is running.",
+    environment: isVercel ? "vercel" : "local",
+    database: databasePath,
+    time: new Date().toISOString()
+  });
+});
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      password.length < 6
-    ) {
-      return res.status(400).json({
-        error:
-          "Name, email and a password of at least 6 characters are required."
-      });
-    }
+/* -----------------------------
+   AUTH REGISTER
+------------------------------ */
 
-    try {
-      const normalizedEmail =
-        email.toLowerCase().trim();
+app.post("/api/auth/register", async (req, res) => {
+  const {
+    name,
+    email,
+    password
+  } = req.body || {};
 
-      const hash =
-        await bcrypt.hash(password, 10);
+  if (
+    !name ||
+    !email ||
+    !password ||
+    password.length < 6
+  ) {
+    return res.status(400).json({
+      error:
+        "Name, email and a password of at least 6 characters are required."
+    });
+  }
 
-      const info = db
-        .prepare(`
-          INSERT INTO users(
-            name,
-            email,
-            password_hash
-          )
-          VALUES (?, ?, ?)
-        `)
-        .run(
-          name.trim(),
-          normalizedEmail,
-          hash
-        );
+  try {
+    const normalizedEmail =
+      email.trim().toLowerCase();
 
-      const userId =
-        Number(info.lastInsertRowid);
+    const hash = await bcrypt.hash(
+      password,
+      10
+    );
 
-      const token = jwt.sign(
-        {
-          id: userId,
-          name: name.trim(),
-          role: "user"
-        },
-        JWT_SECRET,
-        {
-          expiresIn: "7d"
-        }
+    const info = db
+      .prepare(`
+        INSERT INTO users(
+          name,
+          email,
+          password_hash
+        )
+        VALUES(?,?,?)
+      `)
+      .run(
+        name.trim(),
+        normalizedEmail,
+        hash
       );
 
-      res.json({
-        token,
-        user: {
-          id: userId,
-          name: name.trim(),
-          email: normalizedEmail
-        }
-      });
-    } catch (e) {
-      console.error("REGISTER ERROR:", e);
-
-      res.status(400).json({
-        error:
-          "Email may already be registered."
-      });
-    }
-  }
-);
-
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-app.post(
-  "/api/auth/login",
-  async (req, res) => {
-    const {
-      email,
-      password
-    } = req.body;
-
-    const normalizedEmail =
-      (email || "").toLowerCase().trim();
-
-    const user = db
-      .prepare(
-        "SELECT * FROM users WHERE email = ?"
-      )
-      .get(normalizedEmail);
-
-    if (
-      !user ||
-      !(await bcrypt.compare(
-        password || "",
-        user.password_hash
-      ))
-    ) {
-      return res.status(401).json({
-        error:
-          "Invalid email or password."
-      });
-    }
+    const userId =
+      Number(info.lastInsertRowid);
 
     const token = jwt.sign(
       {
-        id: user.id,
-        name: user.name,
-        role: user.role
+        id: userId,
+        name: name.trim(),
+        role: "user"
       },
       JWT_SECRET,
       {
@@ -699,58 +632,116 @@ app.post(
       }
     );
 
-    res.json({
+    return res.json({
       token,
+
       user: {
-        id: user.id,
-        name: user.name,
-        email: user.email
+        id: userId,
+        name: name.trim(),
+        email: normalizedEmail
       }
     });
-  }
-);
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
 
-/* =========================================================
-   CURRENT USER
-   ========================================================= */
-
-app.get(
-  "/api/me",
-  auth,
-  (req, res) => {
-    const user = db
-      .prepare(`
-        SELECT id, name, email, role
-        FROM users
-        WHERE id = ?
-      `)
-      .get(req.user.id);
-
-    const profile = db
-      .prepare(`
-        SELECT *
-        FROM profiles
-        WHERE user_id = ?
-      `)
-      .get(req.user.id);
-
-    res.json({
-      user,
-      profile
+    return res.status(400).json({
+      error:
+        "Email may already be registered."
     });
   }
-);
+});
 
-/* =========================================================
+/* -----------------------------
+   LOGIN
+------------------------------ */
+
+app.post("/api/auth/login", async (req, res) => {
+  const {
+    email,
+    password
+  } = req.body || {};
+
+  const normalizedEmail =
+    String(email || "")
+      .trim()
+      .toLowerCase();
+
+  const user = db
+    .prepare(
+      "SELECT * FROM users WHERE email=?"
+    )
+    .get(normalizedEmail);
+
+  if (
+    !user ||
+    !(await bcrypt.compare(
+      password || "",
+      user.password_hash
+    ))
+  ) {
+    return res.status(401).json({
+      error: "Invalid email or password."
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      role: user.role
+    },
+    JWT_SECRET,
+    {
+      expiresIn: "7d"
+    }
+  );
+
+  return res.json({
+    token,
+
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }
+  });
+});
+
+/* -----------------------------
+   CURRENT USER
+------------------------------ */
+
+app.get("/api/me", auth, (req, res) => {
+  const user = db
+    .prepare(`
+      SELECT id,name,email,role
+      FROM users
+      WHERE id=?
+    `)
+    .get(req.user.id);
+
+  const profile = db
+    .prepare(`
+      SELECT *
+      FROM profiles
+      WHERE user_id=?
+    `)
+    .get(req.user.id);
+
+  res.json({
+    user,
+    profile
+  });
+});
+
+/* -----------------------------
    SAVE PROFILE
-   ========================================================= */
+------------------------------ */
 
-app.post(
-  "/api/profile",
-  auth,
-  (req, res) => {
-    const p = req.body || {};
+app.post("/api/profile", auth, (req, res) => {
+  const p = req.body || {};
 
+  try {
     db.prepare(`
       INSERT INTO profiles(
         user_id,
@@ -791,35 +782,41 @@ app.post(
 
       ON CONFLICT(user_id)
       DO UPDATE SET
-        age = @age,
-        height_cm = @height_cm,
-        weight_kg = @weight_kg,
-        experience = @experience,
-        goal = @goal,
-        workout_days = @workout_days,
-        workout_minutes = @workout_minutes,
-        location = @location,
-        equipment = @equipment,
-        vegetarian_type = @vegetarian_type,
-        preferred_foods = @preferred_foods,
-        avoided_foods = @avoided_foods,
-        allergies = @allergies,
-        meals_per_day = @meals_per_day,
-        food_budget = @food_budget
+        age=@age,
+        height_cm=@height_cm,
+        weight_kg=@weight_kg,
+        experience=@experience,
+        goal=@goal,
+        workout_days=@workout_days,
+        workout_minutes=@workout_minutes,
+        location=@location,
+        equipment=@equipment,
+        vegetarian_type=@vegetarian_type,
+        preferred_foods=@preferred_foods,
+        avoided_foods=@avoided_foods,
+        allergies=@allergies,
+        meals_per_day=@meals_per_day,
+        food_budget=@food_budget
     `).run({
       ...p,
       user_id: req.user.id
     });
 
-    res.json({
+    return res.json({
       message: "Profile saved."
     });
-  }
-);
+  } catch (error) {
+    console.error("PROFILE ERROR:", error);
 
-/* =========================================================
+    return res.status(400).json({
+      error: "Could not save profile."
+    });
+  }
+});
+
+/* -----------------------------
    TODAY'S WORKOUT
-   ========================================================= */
+------------------------------ */
 
 app.get(
   "/api/workout/today",
@@ -829,7 +826,7 @@ app.get(
       .prepare(`
         SELECT *
         FROM profiles
-        WHERE user_id = ?
+        WHERE user_id=?
       `)
       .get(req.user.id);
 
@@ -849,7 +846,7 @@ app.get(
     const active =
       plan[(day - 1) % plan.length];
 
-    res.json({
+    return res.json({
       plan,
       today: active,
       nutrition: nutrition(profile)
@@ -857,9 +854,9 @@ app.get(
   }
 );
 
-/* =========================================================
+/* -----------------------------
    COMPLETE WORKOUT
-   ========================================================= */
+------------------------------ */
 
 app.post(
   "/api/workout/complete",
@@ -872,35 +869,46 @@ app.post(
       total_exercises
     } = req.body || {};
 
-    db.prepare(`
-      INSERT INTO workout_logs(
-        user_id,
-        workout_date,
-        split_name,
-        duration_minutes,
-        completed_exercises,
-        total_exercises,
-        completed
-      )
-      VALUES (?, ?, ?, ?, ?, ?, 1)
-    `).run(
-      req.user.id,
-      today(),
-      split_name || "Workout",
-      Number(duration_minutes || 0),
-      Number(completed_exercises || 0),
-      Number(total_exercises || 0)
-    );
+    try {
+      db.prepare(`
+        INSERT INTO workout_logs(
+          user_id,
+          workout_date,
+          split_name,
+          duration_minutes,
+          completed_exercises,
+          total_exercises,
+          completed
+        )
+        VALUES(?,?,?,?,?,?,1)
+      `).run(
+        req.user.id,
+        today(),
+        split_name || "Workout",
+        Number(duration_minutes || 0),
+        Number(completed_exercises || 0),
+        Number(total_exercises || 0)
+      );
 
-    res.json({
-      message: "Workout saved."
-    });
+      return res.json({
+        message: "Workout saved."
+      });
+    } catch (error) {
+      console.error(
+        "WORKOUT COMPLETE ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        error: "Could not save workout."
+      });
+    }
   }
 );
 
-/* =========================================================
+/* -----------------------------
    PROGRESS
-   ========================================================= */
+------------------------------ */
 
 app.get(
   "/api/progress",
@@ -915,7 +923,7 @@ app.get(
           completed_exercises,
           total_exercises
         FROM workout_logs
-        WHERE user_id = ?
+        WHERE user_id=?
         ORDER BY workout_date DESC
         LIMIT 30
       `)
@@ -927,11 +935,14 @@ app.get(
     const minutes =
       logs.reduce(
         (sum, item) =>
-          sum + (item.duration_minutes || 0),
+          sum +
+          Number(
+            item.duration_minutes || 0
+          ),
         0
       );
 
-    res.json({
+    return res.json({
       completed,
       minutes,
       logs
@@ -939,9 +950,9 @@ app.get(
   }
 );
 
-/* =========================================================
+/* -----------------------------
    FEEDBACK
-   ========================================================= */
+------------------------------ */
 
 app.post(
   "/api/feedback",
@@ -952,34 +963,76 @@ app.post(
       comment
     } = req.body || {};
 
-    db.prepare(`
-      INSERT INTO feedback(
-        user_id,
-        week_start,
-        difficulty,
-        comment
-      )
-      VALUES (?, ?, ?, ?)
-    `).run(
-      req.user.id,
-      today(),
-      difficulty || "moderate",
-      comment || ""
-    );
+    try {
+      db.prepare(`
+        INSERT INTO feedback(
+          user_id,
+          week_start,
+          difficulty,
+          comment
+        )
+        VALUES(?,?,?,?)
+      `).run(
+        req.user.id,
+        today(),
+        difficulty || "moderate",
+        comment || ""
+      );
 
-    res.json({
-      message: "Feedback saved."
-    });
+      return res.json({
+        message: "Feedback saved."
+      });
+    } catch (error) {
+      console.error(
+        "FEEDBACK ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        error: "Could not save feedback."
+      });
+    }
   }
 );
 
-/* =========================================================
+/* -----------------------------
    AI PLAN
-   ========================================================= */
+------------------------------ */
 
 app.post(
   "/api/ai/plan",
   auth,
   async (req, res) => {
     const profile = db
-      .prepar
+      .prepare(`
+        SELECT *
+        FROM profiles
+        WHERE user_id=?
+      `)
+      .get(req.user.id);
+
+    if (!profile) {
+      return res.status(400).json({
+        error:
+          "Complete your profile first."
+      });
+    }
+
+    try {
+      const plan =
+        await geminiPlan(profile);
+
+      if (!plan) {
+        return res.json({
+          source: "rules",
+          plan: buildRulePlan(profile),
+          message:
+            "Gemini is not configured; showing the built-in personalized rule plan."
+        });
+      }
+
+      db.prepare(`
+        INSERT INTO ai_plans(
+          user_id,
+          week_start,
+          plan_j
