@@ -1075,3 +1075,6 @@ app.get(
     return res.json({
       plan,
       today:
+         active
+    });
+  });
