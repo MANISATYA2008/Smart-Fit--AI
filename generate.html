@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Generate Plan - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <div>
+        <span style="color:#81958b;">
+            Step 3 of 3
+        </span>
+    </div>
+
+</header>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+
+        <p>STEP 3</p>
+
+        <h2>
+            Your Personalized<br>
+            <span>Fitness Plan</span>
+        </h2>
+
+        <p style="
+            max-width:600px;
+            margin:15px auto;
+            color:#9baea5;
+            letter-spacing:0;
+            font-weight:normal;
+        ">
+            Review your information and generate your
+            personalized SMART FIT AI plan.
+        </p>
+
+    </div>
+
+
+    <!-- PROFILE -->
+
+    <div style="
+        max-width:700px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:30px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>Fitness Profile 👤</h2>
+
+        <div class="form-group">
+            <label>Name</label>
+            <p id="userName">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Age</label>
+            <p id="age">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Height</label>
+            <p id="height">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Weight</label>
+            <p id="weight">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Experience</label>
+            <p id="experience">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Goal</label>
+            <p id="goal">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Workout Days</label>
+            <p id="days">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Workout Time</label>
+            <p id="workoutTime">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Location</label>
+            <p id="location">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Equipment</label>
+            <p id="equipment">-</p>
+        </div>
+
+    </div>
+
+
+    <!-- FOOD -->
+
+    <div style="
+        max-width:700px;
+        margin:30px auto;
+        background:#0e1e17;
+        padding:30px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>Food Preferences 🥗</h2>
+
+        <div class="form-group">
+            <label>Diet</label>
+            <p id="diet">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Preferred Foods</label>
+            <p id="preferredFoods">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Foods to Avoid</label>
+            <p id="avoidFoods">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Allergies / Intolerances</label>
+            <p id="allergies">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Meals Per Day</label>
+            <p id="meals">-</p>
+        </div>
+
+        <div class="form-group">
+            <label>Food Budget</label>
+            <p id="budget">-</p>
+        </div>
+
+    </div>
+
+
+    <!-- BUTTON -->
+
+    <div style="
+        max-width:700px;
+        margin:40px auto;
+        text-align:center;
+    ">
+
+        <button
+            class="primary-btn"
+            onclick="generatePlan()">
+
+            ✨ Generate My Plan
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<script>
+
+function getData(key) {
+
+    const data = localStorage.getItem(key);
+
+    if (!data) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(data);
+    }
+
+    catch (error) {
+
+        console.error("Invalid data:", error);
+
+        return null;
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const profile = getData("smartFitProfile");
+    const food = getData("smartFitFoodPreferences");
+
+
+    if (!profile) {
+
+        alert("Please complete your fitness profile first.");
+
+        window.location.href = "profile.html";
+
+        return;
+    }
+
+
+    if (!food) {
+
+        alert("Please complete your food preferences first.");
+
+        window.location.href = "food.html";
+
+        return;
+    }
+
+
+    document.getElementById("userName").textContent =
+        profile.name || "-";
+
+    document.getElementById("age").textContent =
+        profile.age ? profile.age + " years" : "-";
+
+    document.getElementById("height").textContent =
+        profile.height ? profile.height + " cm" : "-";
+
+    document.getElementById("weight").textContent =
+        profile.weight ? profile.weight + " kg" : "-";
+
+    document.getElementById("experience").textContent =
+        profile.experience || "-";
+
+    document.getElementById("goal").textContent =
+        profile.goal || "-";
+
+    document.getElementById("days").textContent =
+        profile.days ? profile.days + " days/week" : "-";
+
+    document.getElementById("workoutTime").textContent =
+        profile.workoutTime
+        ? profile.workoutTime + " minutes"
+        : "-";
+
+    document.getElementById("location").textContent =
+        profile.location || "-";
+
+    document.getElementById("equipment").textContent =
+        profile.equipment || "None";
+
+
+    document.getElementById("diet").textContent =
+        food.diet || "-";
+
+    document.getElementById("preferredFoods").textContent =
+        food.preferredFoods || "None";
+
+    document.getElementById("avoidFoods").textContent =
+        food.avoidFoods || "None";
+
+    document.getElementById("allergies").textContent =
+        food.allergies || "None";
+
+    document.getElementById("meals").textContent =
+        food.meals
+        ? food.meals + " meals/day"
+        : "-";
+
+    document.getElementById("budget").textContent =
+        food.budget || "-";
+
+});
+
+
+function generatePlan() {
+
+    const profile = getData("smartFitProfile");
+    const food = getData("smartFitFoodPreferences");
+
+
+    if (!profile) {
+
+        alert("Profile not found.");
+
+        window.location.href = "profile.html";
+
+        return;
+    }
+
+
+    if (!food) {
+
+        alert("Food preferences not found.");
+
+        window.location.href = "food.html";
+
+        return;
+    }
+
+
+    const plan = {
+
+        createdAt: new Date().toISOString(),
+
+        profile: profile,
+
+        food: food,
+
+        workout: {
+
+            experience: profile.experience || "Beginner",
+
+            goal: profile.goal || "General Fitness",
+
+            days: Number(profile.days) || 3,
+
+            duration: Number(profile.workoutTime) || 30,
+
+            location: profile.location || "Gym",
+
+            equipment: profile.equipment || ""
+
+        },
+
+        nutrition: {
+
+            diet: food.diet || "Vegetarian",
+
+            preferredFoods: food.preferredFoods || "",
+
+            avoidFoods: food.avoidFoods || "",
+
+            allergies: food.allergies || "None",
+
+            meals: Number(food.meals) || 3,
+
+            budget: food.budget || "Low"
+
+        }
+
+    };
+
+
+    localStorage.setItem(
+        "smartFitGeneratedPlan",
+        JSON.stringify(plan)
+    );
+
+
+    alert(
+        "🎉 Your SMART FIT AI plan has been generated!"
+    );
+
+
+    window.location.href = "workout.html";
+
+}
+
+</script>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

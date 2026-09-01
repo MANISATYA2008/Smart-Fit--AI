@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Food Preferences - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ================================
+     NAVBAR
+================================ -->
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <div>
+        <span style="color:#81958b;">
+            Step 2 of 3
+        </span>
+    </div>
+
+</header>
+
+
+
+<section class="features-section">
+
+
+<!-- ================================
+     HEADING
+================================ -->
+
+<div class="section-heading">
+
+    <p>STEP 2</p>
+
+    <h2>
+        Tell Us About<br>
+        <span>Your Food</span>
+    </h2>
+
+    <p>
+        Your food preferences help SMART FIT AI
+        create practical nutrition suggestions.
+    </p>
+
+</div>
+
+
+
+<div class="food-form">
+
+
+<!-- ================================
+     DIET PREFERENCE
+================================ -->
+
+<div class="form-group">
+
+    <label>
+        🥗 Diet Preference
+    </label>
+
+    <select id="diet">
+
+        <option value="Vegetarian">
+            Vegetarian
+        </option>
+
+        <option value="Non-Vegetarian">
+            Non-Vegetarian
+        </option>
+
+        <option value="Vegan">
+            Vegan
+        </option>
+
+    </select>
+
+</div>
+
+
+
+<!-- ================================
+     PREFERRED FOODS
+================================ -->
+
+<div class="form-group">
+
+    <label>
+        ❤️ Foods You Prefer
+    </label>
+
+    <input
+        type="text"
+        id="preferredFoods"
+        placeholder="Example: Rice, eggs, chicken, fruits"
+    >
+
+    <small>
+        Separate foods with commas.
+    </small>
+
+</div>
+
+
+
+<!-- ================================
+     FOODS TO AVOID
+================================ -->
+
+<div class="form-group">
+
+    <label>
+        🚫 Foods You Avoid
+    </label>
+
+    <input
+        type="text"
+        id="avoidFoods"
+        placeholder="Example: Spicy food, mushrooms"
+    >
+
+    <small>
+        Separate foods with commas.
+    </small>
+
+</div>
+
+
+
+<!-- ================================
+     ALLERGIES
+================================ -->
+
+<div class="form-group">
+
+    <label>
+        ⚠️ Allergies / Intolerances
+    </label>
+
+    <input
+        type="text"
+        id="allergies"
+        placeholder="Example: Nuts, lactose"
+    >
+
+    <small>
+        Enter None if you have no allergies.
+    </small>
+
+</div>
+
+
+
+<!-- ================================
+     MEALS PER DAY
+================================ -->
+
+<div class="form-group">
+
+    <label>
+        🍽️ Meals Per Day
+    </label>
+
+    <select id="meals">
+
+        <option value="3">
+            3 Meals
+        </option>
+
+        <option value="4">
+            4 Meals
+        </option>
+
+        <option value="5">
+            5 Meals
+        </option>
+
+        <option value="6">
+            6 Meals
+        </option>
+
+    </select>
+
+</div>
+
+
+
+<!-- ================================
+     FOOD BUDGET
+================================ -->
+
+<div class="form-group">
+
+    <label>
+        💰 Approximate Daily Food Budget
+    </label>
+
+    <select id="budget">
+
+        <option value="Low">
+            Low Budget
+        </option>
+
+        <option value="Medium">
+            Medium Budget
+        </option>
+
+        <option value="High">
+            Flexible Budget
+        </option>
+
+    </select>
+
+</div>
+
+
+
+<!-- ==================================================
+     PREFERRED SUPPLEMENTS
+================================================== -->
+
+<div class="form-group">
+
+
+    <label>
+        💊 Preferred Supplements
+    </label>
+
+
+    <p style="
+        color:#81958b;
+        font-size:14px;
+        margin:8px 0 18px;
+        line-height:1.6;
+    ">
+
+        Select supplements you currently use or want
+        SMART FIT AI to consider when displaying
+        nutrition information.
+
+    </p>
+
+
+
+    <!-- SUPPLEMENT OPTIONS -->
+
+    <div style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:14px;
+    ">
+
+
+        <!-- PROTEIN POWDER -->
+
+        <label
+            class="supplement-option"
+            style="
+                display:flex;
+                align-items:center;
+                gap:12px;
+                padding:18px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:14px;
+                cursor:pointer;
+                color:#ffffff;
+            "
+        >
+
+            <input
+                type="checkbox"
+                name="supplements"
+                value="protein powder"
+                style="
+                    width:18px;
+                    height:18px;
+                    cursor:pointer;
+                "
+            >
+
+            <span>
+                🥛 Protein Powder
+            </span>
+
+        </label>
+
+
+
+        <!-- CREATINE -->
+
+        <label
+            class="supplement-option"
+            style="
+                display:flex;
+                align-items:center;
+                gap:12px;
+                padding:18px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:14px;
+                cursor:pointer;
+                color:#ffffff;
+            "
+        >
+
+            <input
+                type="checkbox"
+                name="supplements"
+                value="creatine"
+                style="
+                    width:18px;
+                    height:18px;
+                    cursor:pointer;
+                "
+            >
+
+            <span>
+                ⚡ Creatine
+            </span>
+
+        </label>
+
+
+
+        <!-- MULTIVITAMIN -->
+
+        <label
+            class="supplement-option"
+            style="
+                display:flex;
+                align-items:center;
+                gap:12px;
+                padding:18px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:14px;
+                cursor:pointer;
+                color:#ffffff;
+            "
+        >
+
+            <input
+                type="checkbox"
+                name="supplements"
+                value="multivitamin"
+                style="
+                    width:18px;
+                    height:18px;
+                    cursor:pointer;
+                "
+            >
+
+            <span>
+                🌈 Multivitamin
+            </span>
+
+        </label>
+
+
+
+        <!-- OMEGA 3 -->
+
+        <label
+            class="supplement-option"
+            style="
+                display:flex;
+                align-items:center;
+                gap:12px;
+                padding:18px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:14px;
+                cursor:pointer;
+                color:#ffffff;
+            "
+        >
+
+            <input
+                type="checkbox"
+                name="supplements"
+                value="omega-3"
+                style="
+                    width:18px;
+                    height:18px;
+                    cursor:pointer;
+                "
+            >
+
+            <span>
+                🐟 Omega-3
+            </span>
+
+        </label>
+
+
+    </div>
+
+
+
+    <!-- NO SUPPLEMENT OPTION -->
+
+    <label
+        style="
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-top:14px;
+            padding:16px;
+            background:#0e1e17;
+            border:1px solid #1d362b;
+            border-radius:12px;
+            cursor:pointer;
+        "
+    >
+
+        <input
+            type="checkbox"
+            id="noSupplement"
+            style="
+                width:18px;
+                height:18px;
+                cursor:pointer;
+            "
+        >
+
+        <span>
+            🚫 I don't use supplements
+        </span>
+
+    </label>
+
+
+
+    <small style="
+        display:block;
+        margin-top:14px;
+        line-height:1.7;
+        color:#81958b;
+    ">
+
+        Supplements are optional and should not replace
+        balanced meals. If you are considering a supplement,
+        discuss it with a parent/guardian and a qualified
+        healthcare professional.
+
+    </small>
+
+
+</div>
+
+
+
+<!-- ================================
+     SAVE BUTTON
+================================ -->
+
+<button
+    class="primary-btn continue-btn"
+    onclick="saveFoodPreferences()"
+>
+
+    Save Food Preferences →
+
+</button>
+
+
+</div>
+
+</section>
+
+
+
+<script>
+
+
+/* ==================================================
+   LOGIN CHECK
+================================================== */
+
+const loggedIn =
+    localStorage.getItem("smartFitLoggedIn");
+
+
+const currentUser =
+    localStorage.getItem("smartFitCurrentUser");
+
+
+if (
+    loggedIn !== "true" ||
+    !currentUser
+) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+/* ==================================================
+   LOAD SAVED FOOD DATA
+================================================== */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    loadFoodPreferences
+);
+
+
+function loadFoodPreferences() {
+
+
+    const allFoods =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitFoods"
+            ) || "{}"
+        );
+
+
+    const food =
+        allFoods[currentUser];
+
+
+    if (!food) {
+
+        return;
+
+    }
+
+
+
+    /* DIET */
+
+    document.getElementById(
+        "diet"
+    ).value =
+        food.diet ||
+        "Vegetarian";
+
+
+
+    /* PREFERRED FOODS */
+
+    document.getElementById(
+        "preferredFoods"
+    ).value =
+        food.preferredFoods ||
+        "";
+
+
+
+    /* AVOID FOODS */
+
+    document.getElementById(
+        "avoidFoods"
+    ).value =
+        food.avoidFoods ||
+        "";
+
+
+
+    /* ALLERGIES */
+
+    document.getElementById(
+        "allergies"
+    ).value =
+        food.allergies ||
+        "";
+
+
+
+    /* MEALS */
+
+    document.getElementById(
+        "meals"
+    ).value =
+        food.meals ||
+        "3";
+
+
+
+    /* BUDGET */
+
+    document.getElementById(
+        "budget"
+    ).value =
+        food.budget ||
+        "Low";
+
+
+
+    /* ==================================================
+       LOAD SUPPLEMENTS
+    ================================================== */
+
+    let savedSupplements =
+        food.supplements || [];
+
+
+    /*
+       Support old saved data if it was
+       stored as a string.
+    */
+
+    if (
+        typeof savedSupplements === "string"
+    ) {
+
+        savedSupplements =
+            savedSupplements
+                .split(",")
+                .map(item =>
+                    item.trim().toLowerCase()
+                )
+                .filter(Boolean);
+
+    }
+
+
+    if (
+        !Array.isArray(savedSupplements)
+    ) {
+
+        savedSupplements = [];
+
+    }
+
+
+
+    /* CHECK SUPPLEMENTS */
+
+    document
+        .querySelectorAll(
+            'input[name="supplements"]'
+        )
+        .forEach(
+            checkbox => {
+
+                checkbox.checked =
+                    savedSupplements.includes(
+                        checkbox.value
+                    );
+
+            }
+        );
+
+
+
+    /* NO SUPPLEMENT */
+
+    document.getElementById(
+        "noSupplement"
+    ).checked =
+        savedSupplements.length === 0;
+
+}
+
+
+
+/* ==================================================
+   NO SUPPLEMENT CHECKBOX
+================================================== */
+
+document
+    .getElementById(
+        "noSupplement"
+    )
+    .addEventListener(
+        "change",
+        function() {
+
+
+            if (this.checked) {
+
+
+                document
+                    .querySelectorAll(
+                        'input[name="supplements"]'
+                    )
+                    .forEach(
+                        checkbox => {
+
+                            checkbox.checked =
+                                false;
+
+                        }
+                    );
+
+            }
+
+        }
+    );
+
+
+
+/* ==================================================
+   SUPPLEMENT CHECKBOXES
+================================================== */
+
+document
+    .querySelectorAll(
+        'input[name="supplements"]'
+    )
+    .forEach(
+        checkbox => {
+
+
+            checkbox.addEventListener(
+                "change",
+                function() {
+
+
+                    if (this.checked) {
+
+                        document.getElementById(
+                            "noSupplement"
+                        ).checked = false;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+
+/* ==================================================
+   SAVE FOOD PREFERENCES
+================================================== */
+
+function saveFoodPreferences() {
+
+
+    /* ==================================================
+       GET SELECTED SUPPLEMENTS
+    ================================================== */
+
+    let supplements =
+        Array.from(
+            document.querySelectorAll(
+                'input[name="supplements"]:checked'
+            )
+        )
+        .map(
+            checkbox =>
+                checkbox.value
+        );
+
+
+
+    /*
+       If "I don't use supplements"
+       is selected, save an empty array.
+    */
+
+    if (
+        document.getElementById(
+            "noSupplement"
+        ).checked
+    ) {
+
+        supplements = [];
+
+    }
+
+
+
+    /* ==================================================
+       CREATE FOOD OBJECT
+    ================================================== */
+
+    const food = {
+
+
+        userId:
+            currentUser,
+
+
+        diet:
+            document.getElementById(
+                "diet"
+            ).value,
+
+
+        preferredFoods:
+            document.getElementById(
+                "preferredFoods"
+            ).value
+            .trim(),
+
+
+        avoidFoods:
+            document.getElementById(
+                "avoidFoods"
+            ).value
+            .trim(),
+
+
+        allergies:
+            document.getElementById(
+                "allergies"
+            ).value
+            .trim(),
+
+
+        meals:
+            document.getElementById(
+                "meals"
+            ).value,
+
+
+        budget:
+            document.getElementById(
+                "budget"
+            ).value,
+
+
+        /* IMPORTANT */
+
+        supplements:
+            supplements
+
+    };
+
+
+
+    /* ==================================================
+       VALIDATION
+    ================================================== */
+
+    if (
+        !food.preferredFoods
+    ) {
+
+        alert(
+            "Please enter at least one preferred food."
+        );
+
+        document
+            .getElementById(
+                "preferredFoods"
+            )
+            .focus();
+
+        return;
+
+    }
+
+
+
+    /* ==================================================
+       GET ALL USERS' FOOD DATA
+    ================================================== */
+
+    const allFoods =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitFoods"
+            ) || "{}"
+        );
+
+
+
+    /* ==================================================
+       SAVE CURRENT USER
+    ================================================== */
+
+    allFoods[currentUser] =
+        food;
+
+
+
+    localStorage.setItem(
+        "smartFitFoods",
+        JSON.stringify(
+            allFoods
+        )
+    );
+
+
+
+    /* ==================================================
+       SAVE ACTIVE USER FOOD DATA
+    ================================================== */
+
+    localStorage.setItem(
+        "smartFitFoodPreferences",
+        JSON.stringify(
+            food
+        )
+    );
+
+
+
+    /* ==================================================
+       SUCCESS
+    ================================================== */
+
+    alert(
+        "Food preferences saved successfully! ✅"
+    );
+
+
+
+    /* ==================================================
+       GO TO NUTRITION
+    ================================================== */
+
+    window.location.href =
+        "nutrition.html";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

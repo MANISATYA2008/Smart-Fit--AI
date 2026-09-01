@@ -1,0 +1,2608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nutrition - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="workout.html">Workout</a>
+        <a href="nutrition.html">Nutrition</a>
+        <a href="progress.html">Progress</a>
+    </nav>
+
+</header>
+
+
+<section class="features-section">
+
+    <!-- ==============================
+         HEADER
+    =============================== -->
+
+    <div class="section-heading">
+
+        <p>NUTRITION PLAN</p>
+
+        <h2>
+            Your <span>Nutrition</span> 🥗
+        </h2>
+
+        <p id="nutritionInfo">
+            Creating your personalized nutrition plan...
+        </p>
+
+    </div>
+
+
+    <!-- ==============================
+         QUICK ACTIONS
+    =============================== -->
+
+    <div style="
+        max-width:800px;
+        margin:25px auto;
+        display:flex;
+        gap:15px;
+        justify-content:center;
+        flex-wrap:wrap;
+    ">
+
+        <button
+            class="secondary-btn"
+            onclick="editProfile()">
+
+            ✏️ Edit Fitness Profile
+
+        </button>
+
+        <button
+            class="secondary-btn"
+            onclick="editFoodPreferences()">
+
+            🥗 Edit Food Preferences
+
+        </button>
+
+    </div>
+
+
+    <!-- ==============================
+         SUMMARY
+    =============================== -->
+
+    <div style="
+        max-width:900px;
+        margin:40px auto;
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:20px;
+    ">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">⚖️</div>
+
+            <h3>Body Weight</h3>
+
+            <p
+                id="weightDisplay"
+                style="font-size:25px;">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">💪</div>
+
+            <h3>Protein Target</h3>
+
+            <p
+                id="proteinTarget"
+                style="font-size:25px;">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">🍽️</div>
+
+            <h3>Meals Per Day</h3>
+
+            <p
+                id="mealsTarget"
+                style="font-size:25px;">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">💰</div>
+
+            <h3>Budget</h3>
+
+            <p
+                id="budgetTarget"
+                style="font-size:25px;">
+                -
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         FOOD PREFERENCES
+    =============================== -->
+
+    <div style="
+        max-width:700px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:35px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>🥗 Your Food Preferences</h2>
+
+
+        <div class="form-group">
+
+            <label>Diet</label>
+
+            <p id="dietDisplay">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>❤️ Preferred Foods</label>
+
+            <p id="preferredFoodsDisplay">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>🚫 Foods to Avoid</label>
+
+            <p id="avoidFoodsDisplay">
+                None
+            </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>⚠️ Allergies / Intolerances</label>
+
+            <p
+                id="allergiesDisplay"
+                style="color:#ff9999;">
+                None
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         SELECTED SUPPLEMENTS
+    =============================== -->
+
+    <div style="
+        max-width:800px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:35px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>💊 Selected Supplements</h2>
+
+        <p style="
+            color:#9baea5;
+            line-height:1.7;
+            margin-top:10px;
+        ">
+
+            Your selected supplement preferences are shown here.
+            SMART FIT AI keeps them separate from normal food
+            nutrition and does not automatically calculate
+            supplement dosage.
+
+        </p>
+
+
+        <div
+            id="supplementList"
+            style="margin-top:20px;">
+        </div>
+
+
+        <div
+            id="supplementGuidance"
+            style="
+                margin-top:20px;
+                padding:20px;
+                background:#12251c;
+                border-radius:12px;
+                border:1px solid #1d362b;
+                line-height:1.7;
+                color:#9baea5;
+            ">
+        </div>
+
+
+        <div style="
+            margin-top:20px;
+            padding:18px;
+            border-radius:12px;
+            background:#18251f;
+            border:1px solid #31443a;
+            color:#aebdb5;
+            font-size:14px;
+            line-height:1.7;
+        ">
+
+            ⚠️ <strong>Important:</strong>
+
+            Supplements are optional and should not replace
+            normal meals. Because you are still growing,
+            discuss supplement use with a parent/guardian
+            and a qualified healthcare professional.
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         PROTEIN GUIDANCE
+    =============================== -->
+
+    <div style="
+        max-width:700px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:35px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>💪 Protein Guidance</h2>
+
+        <p
+            id="proteinExplanation"
+            style="
+                color:#9baea5;
+                line-height:1.7;
+                margin-top:15px;
+            ">
+        </p>
+
+
+        <p style="
+            color:#81958b;
+            font-size:14px;
+            line-height:1.6;
+            margin-top:20px;
+        ">
+
+            Protein requirements vary according to body size,
+            activity, training, age and individual circumstances.
+            SMART FIT AI provides an educational estimate and
+            not a medical prescription.
+
+        </p>
+
+    </div>
+
+
+    <!-- ==============================
+         DAILY DIET PLAN
+    =============================== -->
+
+    <div style="
+        max-width:800px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:35px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>🍽️ Today's Diet Plan</h2>
+
+        <p
+            id="mealPlanDescription"
+            style="
+                color:#9baea5;
+                margin-top:10px;
+                line-height:1.6;
+            ">
+        </p>
+
+
+        <div id="mealPlan"></div>
+
+    </div>
+
+
+    <!-- ==============================
+         PROTEIN SOURCES
+    =============================== -->
+
+    <div style="
+        max-width:800px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:35px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <h2>🥛 Protein Sources</h2>
+
+        <p
+            id="proteinSourcesDescription"
+            style="
+                color:#9baea5;
+                margin-top:10px;
+                line-height:1.6;
+            ">
+        </p>
+
+
+        <div id="proteinSources"></div>
+
+    </div>
+
+
+    <!-- ==============================
+         BACK
+    =============================== -->
+
+    <div style="
+        max-width:700px;
+        margin:30px auto;
+        text-align:center;
+    ">
+
+        <button
+            class="primary-btn"
+            onclick="goToDashboard()">
+
+            ← Back to Dashboard
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+const loggedIn =
+    localStorage.getItem("smartFitLoggedIn");
+
+const currentUser =
+    localStorage.getItem("smartFitCurrentUser");
+
+
+if (
+    loggedIn !== "true" ||
+    !currentUser
+) {
+
+    window.location.href = "login.html";
+
+}
+
+
+/* =====================================================
+   STORAGE
+===================================================== */
+
+function getSavedData(key) {
+
+    const data =
+        localStorage.getItem(key);
+
+
+    if (!data) {
+        return null;
+    }
+
+
+    try {
+
+        return JSON.parse(data);
+
+    }
+    catch (error) {
+
+        console.error(
+            "Invalid saved data:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   GET CURRENT FOOD DATA
+===================================================== */
+
+function getCurrentFoodData() {
+
+    const allFoods =
+        getSavedData(
+            "smartFitFoods"
+        ) || {};
+
+
+    const userFood =
+        allFoods[currentUser];
+
+
+    if (userFood) {
+
+        localStorage.setItem(
+            "smartFitFoodPreferences",
+            JSON.stringify(userFood)
+        );
+
+
+        return userFood;
+
+    }
+
+
+    return getSavedData(
+        "smartFitFoodPreferences"
+    );
+
+}
+
+
+/* =====================================================
+   GLOBALS
+===================================================== */
+
+let profile = null;
+
+let food = null;
+
+let proteinTarget = 0;
+
+let proteinPerKg = 0;
+
+
+/* =====================================================
+   NORMALIZE
+===================================================== */
+
+function normalize(text) {
+
+    return String(text || "")
+        .toLowerCase()
+        .trim();
+
+}
+
+
+/* =====================================================
+   TEXT → ARRAY
+===================================================== */
+
+function convertToArray(text) {
+
+    if (!text) {
+        return [];
+    }
+
+
+    return String(text)
+        .split(",")
+        .map(item => normalize(item))
+        .filter(item => item !== "");
+
+}
+
+
+/* =====================================================
+   FOOD MATCH
+===================================================== */
+
+function foodMatches(
+    foodName,
+    userFood
+) {
+
+    const a =
+        normalize(foodName);
+
+    const b =
+        normalize(userFood);
+
+
+    if (!a || !b) {
+        return false;
+    }
+
+
+    return (
+        a === b ||
+        a.includes(b) ||
+        b.includes(a)
+    );
+
+}
+
+
+/* =====================================================
+   ALLERGY GROUPS
+===================================================== */
+
+const allergyGroups = {
+
+    nuts: [
+        "nut",
+        "nuts",
+        "peanut",
+        "peanuts",
+        "almond",
+        "almonds",
+        "cashew",
+        "cashews",
+        "walnut",
+        "walnuts",
+        "pistachio",
+        "pistachios"
+    ],
+
+
+    dairy: [
+        "milk",
+        "curd",
+        "yogurt",
+        "greek yogurt",
+        "paneer",
+        "cheese",
+        "whey"
+    ],
+
+
+    egg: [
+        "egg",
+        "eggs"
+    ],
+
+
+    soy: [
+        "soy",
+        "soya",
+        "soybean",
+        "soy chunks",
+        "tofu"
+    ],
+
+
+    gluten: [
+        "wheat",
+        "bread",
+        "roti",
+        "chapati",
+        "pasta",
+        "gluten"
+    ]
+
+};
+
+
+/* =====================================================
+   ALLERGY CHECK
+===================================================== */
+
+function belongsToAllergyGroup(
+    foodName,
+    allergy
+) {
+
+    const name =
+        normalize(foodName);
+
+    const allergyText =
+        normalize(allergy);
+
+
+    if (
+        allergyText.includes("nut") ||
+        allergyText.includes("peanut") ||
+        allergyText.includes("almond") ||
+        allergyText.includes("cashew") ||
+        allergyText.includes("walnut")
+    ) {
+
+        return allergyGroups.nuts.some(
+            item => name.includes(item)
+        );
+
+    }
+
+
+    if (
+        allergyText.includes("dairy") ||
+        allergyText.includes("lactose") ||
+        allergyText.includes("milk")
+    ) {
+
+        return allergyGroups.dairy.some(
+            item => name.includes(item)
+        );
+
+    }
+
+
+    if (
+        allergyText.includes("egg")
+    ) {
+
+        return allergyGroups.egg.some(
+            item => name.includes(item)
+        );
+
+    }
+
+
+    if (
+        allergyText.includes("soy") ||
+        allergyText.includes("soya")
+    ) {
+
+        return allergyGroups.soy.some(
+            item => name.includes(item)
+        );
+
+    }
+
+
+    if (
+        allergyText.includes("gluten") ||
+        allergyText.includes("wheat")
+    ) {
+
+        return allergyGroups.gluten.some(
+            item => name.includes(item)
+        );
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =====================================================
+   BLOCKED FOOD
+===================================================== */
+
+function isBlocked(foodName) {
+
+    const name =
+        normalize(foodName);
+
+
+    if (!food) {
+        return true;
+    }
+
+
+    const avoid =
+        convertToArray(
+            food.avoidFoods
+        );
+
+
+    const allergies =
+        convertToArray(
+            food.allergies
+        );
+
+
+    const directAvoid =
+        avoid.some(
+            item =>
+                foodMatches(
+                    name,
+                    item
+                )
+        );
+
+
+    if (directAvoid) {
+        return true;
+    }
+
+
+    return allergies.some(
+        allergy => {
+
+            if (
+                belongsToAllergyGroup(
+                    name,
+                    allergy
+                )
+            ) {
+
+                return true;
+
+            }
+
+
+            return (
+                name.includes(allergy) ||
+                allergy.includes(name)
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   PROTEIN DATABASE
+===================================================== */
+
+const proteinDatabase = {
+
+    vegetarian: [
+
+        {
+            name: "Eggs",
+            quantity: "2 eggs",
+            protein: 12,
+            budget: "Low"
+        },
+
+        {
+            name: "Milk",
+            quantity: "250 ml",
+            protein: 8,
+            budget: "Low"
+        },
+
+        {
+            name: "Curd",
+            quantity: "200 g",
+            protein: 8,
+            budget: "Low"
+        },
+
+        {
+            name: "Paneer",
+            quantity: "100 g",
+            protein: 18,
+            budget: "Medium"
+        },
+
+        {
+            name: "Greek Yogurt",
+            quantity: "200 g",
+            protein: 18,
+            budget: "Medium"
+        },
+
+        {
+            name: "Dal",
+            quantity: "1 cup cooked",
+            protein: 12,
+            budget: "Low"
+        },
+
+        {
+            name: "Chickpeas",
+            quantity: "1 cup cooked",
+            protein: 14,
+            budget: "Low"
+        },
+
+        {
+            name: "Rajma",
+            quantity: "1 cup cooked",
+            protein: 13,
+            budget: "Low"
+        },
+
+        {
+            name: "Soy Chunks",
+            quantity: "50 g dry",
+            protein: 25,
+            budget: "Low"
+        }
+
+    ],
+
+
+    "non-vegetarian": [
+
+        {
+            name: "Eggs",
+            quantity: "2 eggs",
+            protein: 12,
+            budget: "Low"
+        },
+
+        {
+            name: "Chicken",
+            quantity: "100 g cooked",
+            protein: 31,
+            budget: "Medium"
+        },
+
+        {
+            name: "Fish",
+            quantity: "100 g cooked",
+            protein: 22,
+            budget: "Medium"
+        },
+
+        {
+            name: "Milk",
+            quantity: "250 ml",
+            protein: 8,
+            budget: "Low"
+        },
+
+        {
+            name: "Curd",
+            quantity: "200 g",
+            protein: 8,
+            budget: "Low"
+        },
+
+        {
+            name: "Dal",
+            quantity: "1 cup cooked",
+            protein: 12,
+            budget: "Low"
+        },
+
+        {
+            name: "Chickpeas",
+            quantity: "1 cup cooked",
+            protein: 14,
+            budget: "Low"
+        },
+
+        {
+            name: "Rajma",
+            quantity: "1 cup cooked",
+            protein: 13,
+            budget: "Low"
+        },
+
+        {
+            name: "Soy Chunks",
+            quantity: "50 g dry",
+            protein: 25,
+            budget: "Low"
+        }
+
+    ],
+
+
+    vegan: [
+
+        {
+            name: "Soy Chunks",
+            quantity: "50 g dry",
+            protein: 25,
+            budget: "Low"
+        },
+
+        {
+            name: "Tofu",
+            quantity: "150 g",
+            protein: 18,
+            budget: "Medium"
+        },
+
+        {
+            name: "Lentils",
+            quantity: "1 cup cooked",
+            protein: 18,
+            budget: "Low"
+        },
+
+        {
+            name: "Chickpeas",
+            quantity: "1 cup cooked",
+            protein: 14,
+            budget: "Low"
+        },
+
+        {
+            name: "Rajma",
+            quantity: "1 cup cooked",
+            protein: 13,
+            budget: "Low"
+        },
+
+        {
+            name: "Peas",
+            quantity: "1 cup cooked",
+            protein: 8,
+            budget: "Low"
+        }
+
+    ]
+
+};
+
+
+/* =====================================================
+   SUPPLEMENT DATABASE
+===================================================== */
+
+const supplementDatabase = {
+
+    "protein powder": {
+
+        icon: "🥛",
+
+        title: "Protein Powder",
+
+        description:
+            "A concentrated protein product selected in your food preferences.",
+
+        category:
+            "Protein supplement"
+
+    },
+
+
+    creatine: {
+
+        icon: "⚡",
+
+        title: "Creatine",
+
+        description:
+            "A sports nutrition supplement selected in your food preferences.",
+
+        category:
+            "Sports supplement"
+
+    },
+
+
+    multivitamin: {
+
+        icon: "🌈",
+
+        title: "Multivitamin",
+
+        description:
+            "A supplement containing multiple vitamins and minerals.",
+
+        category:
+            "Vitamin supplement"
+
+    },
+
+
+    "omega-3": {
+
+        icon: "🐟",
+
+        title: "Omega-3",
+
+        description:
+            "A supplement providing omega-3 fatty acids.",
+
+        category:
+            "Fatty-acid supplement"
+
+    },
+
+
+    other: {
+
+        icon: "💊",
+
+        title: "Other Supplement",
+
+        description:
+            "Another supplement selected in your preferences.",
+
+        category:
+            "Other"
+
+    }
+
+};
+
+
+/* =====================================================
+   GET USER SUPPLEMENTS
+===================================================== */
+
+function getUserSupplements() {
+
+    if (!food) {
+        return [];
+    }
+
+
+    const supplements =
+        food.supplements;
+
+
+    if (Array.isArray(supplements)) {
+
+        return supplements
+            .map(item => normalize(item))
+            .filter(Boolean);
+
+    }
+
+
+    if (typeof supplements === "string") {
+
+        return convertToArray(
+            supplements
+        );
+
+    }
+
+
+    return [];
+
+}
+
+
+/* =====================================================
+   DISPLAY SUPPLEMENTS
+===================================================== */
+
+function displaySupplements() {
+
+    const list =
+        document.getElementById(
+            "supplementList"
+        );
+
+
+    const guidance =
+        document.getElementById(
+            "supplementGuidance"
+        );
+
+
+    list.innerHTML = "";
+
+
+    const supplements =
+        getUserSupplements();
+
+
+    console.log(
+        "Selected supplements:",
+        supplements
+    );
+
+
+    if (!supplements.length) {
+
+        list.innerHTML = `
+
+            <div style="
+                padding:20px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:12px;
+                color:#9baea5;
+            ">
+
+                ❌ No supplements selected.
+
+                <br><br>
+
+                Go to
+                <strong>Edit Food Preferences</strong>
+                to select supplements.
+
+            </div>
+
+        `;
+
+
+        guidance.innerHTML = `
+
+            <strong>🌱 Food-first approach</strong>
+
+            <br><br>
+
+            Your diet plan currently focuses on normal
+            food sources.
+
+        `;
+
+
+        return;
+
+    }
+
+
+    supplements.forEach(
+        supplement => {
+
+            const key =
+                normalize(supplement);
+
+
+            const info =
+                supplementDatabase[key] ||
+                supplementDatabase.other;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.style.cssText = `
+
+                margin-top:15px;
+                padding:20px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:14px;
+
+            `;
+
+
+            card.innerHTML = `
+
+                <h3>
+                    ${info.icon}
+                    ${info.title}
+                </h3>
+
+                <p style="
+                    margin-top:8px;
+                    color:#7f968b;
+                    font-size:13px;
+                ">
+
+                    ${info.category}
+
+                </p>
+
+                <p style="
+                    margin-top:10px;
+                    color:#9baea5;
+                    line-height:1.7;
+                ">
+
+                    ${info.description}
+
+                </p>
+
+            `;
+
+
+            list.appendChild(card);
+
+        }
+    );
+
+
+    guidance.innerHTML = `
+
+        <strong>
+            🤖 SMART FIT AI
+        </strong>
+
+        <br><br>
+
+        ${supplements.length}
+        supplement option(s) selected.
+
+        <br><br>
+
+        Selected supplements can be displayed
+        in your diet plan as optional items,
+        but they are not automatically used to
+        calculate your protein target.
+
+    `;
+
+}
+
+
+/* =====================================================
+   DIET DATABASE
+===================================================== */
+
+function getDietDatabase() {
+
+    const diet =
+        normalize(food.diet);
+
+
+    if (diet === "vegan") {
+
+        return proteinDatabase.vegan;
+
+    }
+
+
+    if (diet === "non-vegetarian") {
+
+        return proteinDatabase[
+            "non-vegetarian"
+        ];
+
+    }
+
+
+    return proteinDatabase.vegetarian;
+
+}
+
+
+/* =====================================================
+   BUDGET
+===================================================== */
+
+function budgetRank(budget) {
+
+    if (budget === "Low") {
+        return 1;
+    }
+
+
+    if (budget === "Medium") {
+        return 2;
+    }
+
+
+    return 3;
+
+}
+
+
+function filterByBudget(sources) {
+
+    const selectedBudget =
+        food.budget || "Low";
+
+
+    const selectedRank =
+        budgetRank(selectedBudget);
+
+
+    return sources.filter(
+        source =>
+            budgetRank(source.budget)
+            <= selectedRank
+    );
+
+}
+
+
+/* =====================================================
+   SAFE PROTEIN SOURCES
+===================================================== */
+
+function getSafeProteinSources() {
+
+    let sources =
+        getDietDatabase();
+
+
+    sources =
+        sources.filter(
+            source =>
+                !isBlocked(
+                    source.name
+                )
+        );
+
+
+    sources =
+        filterByBudget(
+            sources
+        );
+
+
+    return sources;
+
+}
+
+
+/* =====================================================
+   PREFERRED FOODS
+===================================================== */
+
+function getPreferredFoods() {
+
+    return convertToArray(
+        food.preferredFoods
+    );
+
+}
+
+
+/* =====================================================
+   SORT
+===================================================== */
+
+function sortByPreference(
+    sources
+) {
+
+    const preferred =
+        getPreferredFoods();
+
+
+    return [...sources].sort(
+        (a, b) => {
+
+            const aPreferred =
+                preferred.some(
+                    item =>
+                        foodMatches(
+                            a.name,
+                            item
+                        )
+                );
+
+
+            const bPreferred =
+                preferred.some(
+                    item =>
+                        foodMatches(
+                            b.name,
+                            item
+                        )
+                );
+
+
+            if (
+                aPreferred &&
+                !bPreferred
+            ) {
+
+                return -1;
+
+            }
+
+
+            if (
+                !aPreferred &&
+                bPreferred
+            ) {
+
+                return 1;
+
+            }
+
+
+            return (
+                b.protein -
+                a.protein
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   PROTEIN CALCULATION
+===================================================== */
+
+function calculateProtein() {
+
+    const weight =
+        Number(profile.weight);
+
+
+    if (
+        !weight ||
+        weight <= 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    const experience =
+        normalize(
+            profile.experience
+        );
+
+
+    const goal =
+        normalize(
+            profile.goal
+        );
+
+
+    let gramsPerKg = 1.2;
+
+
+    if (
+        experience.includes(
+            "intermediate"
+        )
+    ) {
+
+        gramsPerKg = 1.4;
+
+    }
+
+
+    if (
+        experience.includes(
+            "advanced"
+        )
+    ) {
+
+        gramsPerKg = 1.6;
+
+    }
+
+
+    if (
+        goal.includes("strength") ||
+        goal.includes("muscle") ||
+        goal.includes("build")
+    ) {
+
+        gramsPerKg =
+            Math.max(
+                gramsPerKg,
+                1.4
+            );
+
+    }
+
+
+    proteinPerKg =
+        gramsPerKg;
+
+
+    return Math.round(
+        weight * gramsPerKg
+    );
+
+}
+
+
+/* =====================================================
+   DISPLAY PROTEIN SOURCES
+===================================================== */
+
+function displayProteinSources() {
+
+    const container =
+        document.getElementById(
+            "proteinSources"
+        );
+
+
+    container.innerHTML = "";
+
+
+    let sources =
+        sortByPreference(
+            getSafeProteinSources()
+        );
+
+
+    /*
+       ==========================================
+       PROTEIN POWDER
+       ==========================================
+
+       If selected, display it separately as
+       a supplement protein source.
+
+       We intentionally do not assign dosage.
+    */
+
+    const supplements =
+        getUserSupplements();
+
+
+    const proteinPowderSelected =
+        supplements.includes(
+            "protein powder"
+        );
+
+
+    if (
+        proteinPowderSelected
+    ) {
+
+        const supplementDiv =
+            document.createElement(
+                "div"
+            );
+
+
+        supplementDiv.style.cssText = `
+
+            padding:20px;
+            margin-top:12px;
+            background:#18251f;
+            border:1px solid #31443a;
+            border-radius:12px;
+
+        `;
+
+
+        supplementDiv.innerHTML = `
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+            ">
+
+                <div>
+
+                    <strong>
+                        🥛 Protein Powder
+                    </strong>
+
+                    <p style="
+                        color:#9baea5;
+                        margin-top:6px;
+                        line-height:1.6;
+                    ">
+
+                        Selected supplement protein
+                        source.
+
+                    </p>
+
+                    <p style="
+                        color:#81958b;
+                        margin-top:5px;
+                        font-size:13px;
+                    ">
+
+                        Check the product label for
+                        its protein content.
+
+                    </p>
+
+                </div>
+
+
+                <strong>
+                    Supplement
+                </strong>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(
+            supplementDiv
+        );
+
+    }
+
+
+    if (!sources.length) {
+
+        if (!proteinPowderSelected) {
+
+            container.innerHTML = `
+
+                <div style="
+                    padding:20px;
+                    border-radius:12px;
+                    background:#301616;
+                    border:1px solid #5c2929;
+                ">
+
+                    <strong>
+                        No suitable protein sources found.
+                    </strong>
+
+                </div>
+
+            `;
+
+        }
+
+
+        return;
+
+    }
+
+
+    sources.forEach(
+        source => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.style.cssText = `
+
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:20px;
+                padding:18px;
+                margin-top:12px;
+                background:#12251c;
+                border:1px solid #1d362b;
+                border-radius:12px;
+
+            `;
+
+
+            div.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${source.name}
+                    </strong>
+
+                    <p style="
+                        color:#9baea5;
+                        margin-top:6px;
+                    ">
+
+                        Suggested quantity:
+                        ${source.quantity}
+
+                    </p>
+
+                    <p style="
+                        color:#81958b;
+                        margin-top:5px;
+                        font-size:13px;
+                    ">
+
+                        Budget:
+                        ${source.budget}
+
+                    </p>
+
+                </div>
+
+
+                <strong>
+                    ~${source.protein}g protein
+                </strong>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   SAFE GENERIC FOOD
+===================================================== */
+
+function safeGeneric(name) {
+
+    return !isBlocked(name);
+
+}
+
+
+/* =====================================================
+   CREATE MEAL
+===================================================== */
+
+function createMeal(
+    title,
+    foods
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.style.cssText = `
+
+        margin-top:18px;
+        padding:22px;
+        background:#12251c;
+        border:1px solid #1d362b;
+        border-radius:14px;
+
+    `;
+
+
+    let html = "";
+
+
+    foods.forEach(
+        item => {
+
+            if (!item) {
+                return;
+            }
+
+
+            html += `
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    padding:12px 0;
+                    border-bottom:1px solid #1d362b;
+                ">
+
+                    <span>
+                        ${item.name}
+                    </span>
+
+                    <strong>
+                        ${item.quantity}
+                    </strong>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    div.innerHTML = `
+
+        <h3>
+            ${title}
+        </h3>
+
+        ${html}
+
+    `;
+
+
+    return div;
+
+}
+
+
+/* =====================================================
+   PROTEIN MEAL ITEM
+===================================================== */
+
+function proteinMealItem(
+    source
+) {
+
+    if (!source) {
+        return null;
+    }
+
+
+    return {
+
+        name:
+            source.name,
+
+        quantity:
+            source.quantity
+
+    };
+
+}
+
+
+/* =====================================================
+   SUPPLEMENT MEAL ITEMS
+===================================================== */
+
+function getSupplementMealItems() {
+
+    const supplements =
+        getUserSupplements();
+
+
+    const items = [];
+
+
+    supplements.forEach(
+        supplement => {
+
+            const key =
+                normalize(
+                    supplement
+                );
+
+
+            const info =
+                supplementDatabase[key] ||
+                supplementDatabase.other;
+
+
+            items.push({
+
+                name:
+                    info.icon +
+                    " " +
+                    info.title,
+
+                quantity:
+                    "Optional • check product label"
+
+            });
+
+        }
+    );
+
+
+    return items;
+
+}
+
+
+/* =====================================================
+   DAILY DIET PLAN
+===================================================== */
+
+function createDailyMealPlan() {
+
+    const container =
+        document.getElementById(
+            "mealPlan"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const meals =
+        Number(food.meals) || 3;
+
+
+    const sources =
+        sortByPreference(
+            getSafeProteinSources()
+        );
+
+
+    if (!sources.length) {
+
+        container.innerHTML = `
+
+            <p style="
+                color:#ff9999;
+                line-height:1.6;
+            ">
+
+                No safe normal-food protein sources
+                are available with your current
+                preferences.
+
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    const p1 =
+        sources[0];
+
+
+    const p2 =
+        sources[1] ||
+        sources[0];
+
+
+    const p3 =
+        sources[2] ||
+        sources[0];
+
+
+    const p4 =
+        sources[3] ||
+        sources[0];
+
+
+    /* ==========================================
+       BREAKFAST
+    ========================================== */
+
+    const breakfast = [];
+
+
+    if (
+        safeGeneric("Oats")
+    ) {
+
+        breakfast.push({
+
+            name: "Oats",
+
+            quantity: "50 g"
+
+        });
+
+    }
+
+
+    breakfast.push(
+        proteinMealItem(p1)
+    );
+
+
+    if (
+        safeGeneric("Fruit")
+    ) {
+
+        breakfast.push({
+
+            name: "Fruit",
+
+            quantity: "1 serving"
+
+        });
+
+    }
+
+
+    /* ==========================================
+       LUNCH
+    ========================================== */
+
+    const lunch = [];
+
+
+    if (
+        safeGeneric("Rice")
+    ) {
+
+        lunch.push({
+
+            name: "Rice",
+
+            quantity:
+                "1 cup cooked"
+
+        });
+
+    }
+    else if (
+        safeGeneric("Roti")
+    ) {
+
+        lunch.push({
+
+            name: "Roti",
+
+            quantity:
+                "2 medium"
+
+        });
+
+    }
+
+
+    lunch.push(
+        proteinMealItem(p2)
+    );
+
+
+    if (
+        safeGeneric("Vegetables")
+    ) {
+
+        lunch.push({
+
+            name: "Vegetables",
+
+            quantity:
+                "1–2 cups"
+
+        });
+
+    }
+
+
+    /* ==========================================
+       DINNER
+    ========================================== */
+
+    const dinner = [];
+
+
+    dinner.push(
+        proteinMealItem(p3)
+    );
+
+
+    if (
+        safeGeneric("Rice")
+    ) {
+
+        dinner.push({
+
+            name: "Rice",
+
+            quantity:
+                "1 cup cooked"
+
+        });
+
+    }
+    else if (
+        safeGeneric("Roti")
+    ) {
+
+        dinner.push({
+
+            name: "Roti",
+
+            quantity:
+                "2 medium"
+
+        });
+
+    }
+
+
+    if (
+        safeGeneric("Vegetables")
+    ) {
+
+        dinner.push({
+
+            name: "Vegetables",
+
+            quantity:
+                "1–2 cups"
+
+        });
+
+    }
+
+
+    /* ==========================================
+       SELECTED SUPPLEMENTS
+    ========================================== */
+
+    const supplementItems =
+        getSupplementMealItems();
+
+
+    /*
+       Add selected supplements to
+       the final meal plan.
+
+       They are displayed as optional.
+    */
+
+    function addSupplementsToMeal(
+        meal
+    ) {
+
+        if (
+            supplementItems.length
+        ) {
+
+            supplementItems.forEach(
+                supplement => {
+
+                    meal.push(
+                        supplement
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    /* ==========================================
+       3 MEALS
+    ========================================== */
+
+    if (meals === 3) {
+
+        addSupplementsToMeal(
+            dinner
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "🌅 Breakfast",
+                breakfast
+            )
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "☀️ Lunch",
+                lunch
+            )
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "🌙 Dinner",
+                dinner
+            )
+        );
+
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       4 MEALS
+    ========================================== */
+
+    if (meals === 4) {
+
+        const eveningSnack = [
+
+            proteinMealItem(p4),
+
+            {
+
+                name: "Fruit",
+
+                quantity:
+                    "1 serving"
+
+            }
+
+        ];
+
+
+        addSupplementsToMeal(
+            eveningSnack
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "🌅 Breakfast",
+                breakfast
+            )
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "☀️ Lunch",
+                lunch
+            )
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "🥛 Evening Snack",
+                eveningSnack
+            )
+        );
+
+
+        container.appendChild(
+            createMeal(
+                "🌙 Dinner",
+                dinner
+            )
+        );
+
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       5 MEALS
+    ========================================== */
+
+    const eveningMeal = [
+
+        proteinMealItem(p4),
+
+        {
+
+            name: "Fruit",
+
+            quantity:
+                "1 serving"
+
+        }
+
+    ];
+
+
+    addSupplementsToMeal(
+        eveningMeal
+    );
+
+
+    container.appendChild(
+        createMeal(
+            "🌅 Breakfast",
+            breakfast
+        )
+    );
+
+
+    container.appendChild(
+        createMeal(
+            "🍎 Mid-Morning Meal",
+            [
+
+                {
+
+                    name: "Fruit",
+
+                    quantity:
+                        "1 serving"
+
+                },
+
+                proteinMealItem(p2)
+
+            ]
+        )
+    );
+
+
+    container.appendChild(
+        createMeal(
+            "☀️ Lunch",
+            lunch
+        )
+    );
+
+
+    container.appendChild(
+        createMeal(
+            "🥛 Evening Meal",
+            eveningMeal
+        )
+    );
+
+
+    container.appendChild(
+        createMeal(
+            "🌙 Dinner",
+            dinner
+        )
+    );
+
+}
+
+
+/* =====================================================
+   LOAD NUTRITION
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadNutrition
+);
+
+
+function loadNutrition() {
+
+    profile =
+        getSavedData(
+            "smartFitProfile"
+        );
+
+
+    food =
+        getCurrentFoodData();
+
+
+    if (!profile) {
+
+        document.getElementById(
+            "nutritionInfo"
+        ).textContent =
+            "Fitness profile not found. Please create your profile.";
+
+        return;
+
+    }
+
+
+    if (!food) {
+
+        document.getElementById(
+            "nutritionInfo"
+        ).textContent =
+            "Food preferences not found. Please complete Step 2.";
+
+        return;
+
+    }
+
+
+    console.log(
+        "SMART FIT AI food data:",
+        food
+    );
+
+
+    console.log(
+        "SMART FIT supplements:",
+        food.supplements
+    );
+
+
+    /* ==========================================
+       PROTEIN
+    ========================================== */
+
+    proteinTarget =
+        calculateProtein();
+
+
+    /* ==========================================
+       SUMMARY
+    ========================================== */
+
+    document.getElementById(
+        "weightDisplay"
+    ).textContent =
+
+        profile.weight
+            ? profile.weight + " kg"
+            : "-";
+
+
+    document.getElementById(
+        "proteinTarget"
+    ).textContent =
+
+        proteinTarget
+            ? proteinTarget + " g/day"
+            : "-";
+
+
+    document.getElementById(
+        "mealsTarget"
+    ).textContent =
+
+        (food.meals || 3) +
+        " meals";
+
+
+    document.getElementById(
+        "budgetTarget"
+    ).textContent =
+
+        food.budget ||
+        "Not specified";
+
+
+    /* ==========================================
+       FOOD PREFERENCES
+    ========================================== */
+
+    document.getElementById(
+        "dietDisplay"
+    ).textContent =
+
+        food.diet ||
+        "Not specified";
+
+
+    document.getElementById(
+        "preferredFoodsDisplay"
+    ).textContent =
+
+        food.preferredFoods ||
+        "None specified";
+
+
+    document.getElementById(
+        "avoidFoodsDisplay"
+    ).textContent =
+
+        food.avoidFoods ||
+        "None specified";
+
+
+    document.getElementById(
+        "allergiesDisplay"
+    ).textContent =
+
+        food.allergies ||
+        "None specified";
+
+
+    /* ==========================================
+       HEADER
+    ========================================== */
+
+    document.getElementById(
+        "nutritionInfo"
+    ).textContent =
+
+        (food.diet || "Diet") +
+        " • " +
+        (food.meals || 3) +
+        " meals/day • " +
+        proteinTarget +
+        " g protein target";
+
+
+    /* ==========================================
+       PROTEIN EXPLANATION
+    ========================================== */
+
+    document.getElementById(
+        "proteinExplanation"
+    ).textContent =
+
+        "Based on the body weight you entered (" +
+        profile.weight +
+        " kg), SMART FIT AI is using an educational estimate of approximately " +
+        proteinPerKg +
+        " g of protein per kg of body weight, giving a daily target of about " +
+        proteinTarget +
+        " g.";
+
+
+    /* ==========================================
+       MEAL DESCRIPTION
+    ========================================== */
+
+    document.getElementById(
+        "mealPlanDescription"
+    ).textContent =
+
+        "Your diet plan is generated using your diet type, preferred foods, allergies, foods to avoid, budget and selected number of meals. Selected supplements are shown separately as optional items and are not automatically counted toward your protein target.";
+
+
+    /* ==========================================
+       PROTEIN SOURCES DESCRIPTION
+    ========================================== */
+
+    document.getElementById(
+        "proteinSourcesDescription"
+    ).textContent =
+
+        "Normal food protein sources are filtered according to your diet, budget, allergies and foods to avoid. If Protein Powder is selected in your preferences, it is also shown as a supplement protein source. Check the product label for its actual protein content.";
+
+
+    /* ==========================================
+       DISPLAY
+    ========================================== */
+
+    displaySupplements();
+
+    displayProteinSources();
+
+    createDailyMealPlan();
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function editProfile() {
+
+    window.location.href =
+        "profile.html";
+
+}
+
+
+function editFoodPreferences() {
+
+    window.location.href =
+        "food.html";
+
+}
+
+
+function goToDashboard() {
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+</script>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Choose Workout Split - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+
+        .split-container {
+
+            max-width: 1200px;
+
+            margin: 50px auto;
+
+            padding: 20px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(330px, 1fr));
+
+            gap: 25px;
+
+        }
+
+
+        .split-card {
+
+            background: #0e1e17;
+
+            border: 1px solid #1d362b;
+
+            border-radius: 18px;
+
+            padding: 28px;
+
+            transition: 0.3s;
+
+        }
+
+
+        .split-card:hover {
+
+            transform: translateY(-5px);
+
+            border-color: #4ade80;
+
+        }
+
+
+        .split-card h2 {
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .split-days {
+
+            color: #4ade80;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .split-level {
+
+            color: #81958b;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .split-description {
+
+            color: #d0ddd7;
+
+            line-height: 1.6;
+
+        }
+
+
+        .advantages {
+
+            margin-top: 20px;
+
+        }
+
+
+        .advantages li {
+
+            margin: 10px 0;
+
+            color: #9baea5;
+
+        }
+
+
+        .schedule {
+
+            margin-top: 20px;
+
+        }
+
+
+        .schedule p {
+
+            margin: 8px 0;
+
+            color: #9baea5;
+
+        }
+
+
+        .select-split-btn {
+
+            width: 100%;
+
+            margin-top: 25px;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #4ade80;
+
+            color: #06120d;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .select-split-btn:hover {
+
+            background: #22c55e;
+
+        }
+
+
+        .selected {
+
+            border: 2px solid #4ade80;
+
+        }
+
+
+        @media(max-width:700px) {
+
+            .split-container {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="workout.html">
+            Workout
+        </a>
+
+        <a href="nutrition.html">
+            Nutrition
+        </a>
+
+        <a href="progress.html">
+            Progress
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<section class="features-section">
+
+
+    <div class="section-heading">
+
+        <p>WORKOUT CUSTOMIZATION</p>
+
+        <h2>
+            Choose Your
+            <span>Workout Split</span>
+        </h2>
+
+        <p>
+            Select the training split that best
+            matches your goals and schedule.
+        </p>
+
+    </div>
+
+
+
+    <div class="split-container">
+
+
+        <!-- =========================
+             PPL
+        ========================== -->
+
+        <div class="split-card">
+
+            <h2>
+                Push Pull Legs
+            </h2>
+
+            <div class="split-days">
+                6 Days / Week
+            </div>
+
+            <div class="split-level">
+                Intermediate
+            </div>
+
+            <p class="split-description">
+
+                A popular split that trains
+                pushing muscles, pulling muscles
+                and legs separately.
+
+            </p>
+
+
+            <div class="advantages">
+
+                <h3>Advantages</h3>
+
+                <ul>
+
+                    <li>
+                        Balanced muscle training
+                    </li>
+
+                    <li>
+                        Good recovery between sessions
+                    </li>
+
+                    <li>
+                        Each muscle can be trained twice weekly
+                    </li>
+
+                    <li>
+                        Excellent for muscle building
+                    </li>
+
+                    <li>
+                        Easy to understand
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="schedule">
+
+                <h3>
+                    Weekly Schedule
+                </h3>
+
+                <p>Day 1 — Push</p>
+                <p>Day 2 — Pull</p>
+                <p>Day 3 — Legs</p>
+                <p>Day 4 — Push</p>
+                <p>Day 5 — Pull</p>
+                <p>Day 6 — Legs</p>
+
+            </div>
+
+
+            <button
+                class="select-split-btn"
+                onclick="selectSplit('ppl')">
+
+                Select This Split →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             BRO SPLIT
+        ========================== -->
+
+        <div class="split-card">
+
+            <h2>
+                Bro Split
+            </h2>
+
+            <div class="split-days">
+                5 Days / Week
+            </div>
+
+            <div class="split-level">
+                Intermediate
+            </div>
+
+            <p class="split-description">
+
+                Each workout focuses mainly on
+                one major muscle group.
+
+            </p>
+
+
+            <div class="advantages">
+
+                <h3>Advantages</h3>
+
+                <ul>
+
+                    <li>
+                        Simple and easy to understand
+                    </li>
+
+                    <li>
+                        Allows focused training
+                    </li>
+
+                    <li>
+                        Good recovery for each muscle group
+                    </li>
+
+                    <li>
+                        Useful for bodybuilding-style training
+                    </li>
+
+                    <li>
+                        Easy to customize
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="schedule">
+
+                <h3>
+                    Weekly Schedule
+                </h3>
+
+                <p>Day 1 — Chest</p>
+                <p>Day 2 — Back</p>
+                <p>Day 3 — Shoulders</p>
+                <p>Day 4 — Arms</p>
+                <p>Day 5 — Legs</p>
+
+            </div>
+
+
+            <button
+                class="select-split-btn"
+                onclick="selectSplit('bro')">
+
+                Select This Split →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             UPPER LOWER
+        ========================== -->
+
+        <div class="split-card">
+
+            <h2>
+                Upper / Lower
+            </h2>
+
+            <div class="split-days">
+                4 Days / Week
+            </div>
+
+            <div class="split-level">
+                Beginner / Intermediate
+            </div>
+
+            <p class="split-description">
+
+                Alternates upper-body and lower-body
+                training days.
+
+            </p>
+
+
+            <div class="advantages">
+
+                <h3>Advantages</h3>
+
+                <ul>
+
+                    <li>
+                        Excellent recovery
+                    </li>
+
+                    <li>
+                        Simple weekly structure
+                    </li>
+
+                    <li>
+                        Good for beginners
+                    </li>
+
+                    <li>
+                        Muscles can be trained twice weekly
+                    </li>
+
+                    <li>
+                        Good balance between training and recovery
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="schedule">
+
+                <h3>
+                    Weekly Schedule
+                </h3>
+
+                <p>Day 1 — Upper Body</p>
+                <p>Day 2 — Lower Body</p>
+                <p>Day 3 — Rest</p>
+                <p>Day 4 — Upper Body</p>
+                <p>Day 5 — Lower Body</p>
+
+            </div>
+
+
+            <button
+                class="select-split-btn"
+                onclick="selectSplit('upper-lower')">
+
+                Select This Split →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             DOUBLE MUSCLE
+        ========================== -->
+
+        <div class="split-card">
+
+            <h2>
+                Double Muscle Split
+            </h2>
+
+            <div class="split-days">
+                6 Days / Week
+            </div>
+
+            <div class="split-level">
+                Intermediate / Advanced
+            </div>
+
+            <p class="split-description">
+
+                Trains two major muscle groups
+                during each workout.
+
+            </p>
+
+
+            <div class="advantages">
+
+                <h3>Advantages</h3>
+
+                <ul>
+
+                    <li>
+                        Allows high training variety
+                    </li>
+
+                    <li>
+                        Good for muscle specialization
+                    </li>
+
+                    <li>
+                        Multiple muscle groups per session
+                    </li>
+
+                    <li>
+                        Useful for experienced lifters
+                    </li>
+
+                    <li>
+                        Flexible exercise selection
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="schedule">
+
+                <h3>
+                    Weekly Schedule
+                </h3>
+
+                <p>Day 1 — Chest + Back</p>
+                <p>Day 2 — Shoulders + Arms</p>
+                <p>Day 3 — Legs + Core</p>
+                <p>Day 4 — Chest + Back</p>
+                <p>Day 5 — Shoulders + Arms</p>
+                <p>Day 6 — Legs + Core</p>
+
+            </div>
+
+
+            <button
+                class="select-split-btn"
+                onclick="selectSplit('double-muscle')">
+
+                Select This Split →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             ENHANCED PPL
+        ========================== -->
+
+        <div class="split-card">
+
+            <h2>
+                Enhanced PPL
+            </h2>
+
+            <div class="split-days">
+                5 Training Days / Week
+            </div>
+
+            <div class="split-level">
+                Intermediate / Advanced
+            </div>
+
+            <p class="split-description">
+
+                Combines upper/lower training with
+                a Push/Pull/Legs sequence.
+
+            </p>
+
+
+            <div class="advantages">
+
+                <h3>Advantages</h3>
+
+                <ul>
+
+                    <li>
+                        Flexible weekly structure
+                    </li>
+
+                    <li>
+                        Good balance of volume and recovery
+                    </li>
+
+                    <li>
+                        Allows different training frequencies
+                    </li>
+
+                    <li>
+                        Suitable for experienced trainees
+                    </li>
+
+                    <li>
+                        Includes dedicated recovery days
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="schedule">
+
+                <h3>
+                    Weekly Schedule
+                </h3>
+
+                <p>Day 1 — Upper</p>
+                <p>Day 2 — Lower</p>
+                <p>Day 3 — Rest</p>
+                <p>Day 4 — Push</p>
+                <p>Day 5 — Pull</p>
+                <p>Day 6 — Legs</p>
+                <p>Day 7 — Rest</p>
+
+            </div>
+
+
+            <button
+                class="select-split-btn"
+                onclick="selectSplit('enhanced-ppl')">
+
+                Select This Split →
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<script>
+const loggedIn =
+    localStorage.getItem("smartFitLoggedIn");
+
+if (loggedIn !== "true") {
+
+    window.location.href = "login.html";
+
+}
+
+/* ==========================================
+   SELECT SPLIT
+========================================== */
+
+function selectSplit(split) {
+
+
+    /*
+       SAVE EXACT SPLIT ID
+    */
+
+    localStorage.setItem(
+        "smartFitSelectedSplit",
+        split
+    );
+
+
+    /*
+       ALSO SAVE A READABLE NAME
+    */
+
+    const names = {
+
+        "ppl":
+            "Push Pull Legs",
+
+        "bro":
+            "Bro Split",
+
+        "upper-lower":
+            "Upper / Lower",
+
+        "double-muscle":
+            "Double Muscle Split",
+
+        "enhanced-ppl":
+            "Enhanced PPL"
+
+    };
+
+
+    localStorage.setItem(
+        "smartFitSelectedSplitName",
+        names[split]
+    );
+
+
+    console.log(
+        "SELECTED SPLIT:",
+        split
+    );
+
+
+    alert(
+        names[split] +
+        " selected successfully!"
+    );
+
+
+    /*
+       GO TO WORKOUT PAGE
+    */
+
+    window.location.href =
+        "workout.html";
+
+}
+
+
+</script>
+
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

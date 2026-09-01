@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Workout - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .workout-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .workout-card {
+            background: #0e1e17;
+            border: 1px solid #1d362b;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: #13251d;
+            border: 1px solid #1d362b;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .info-item strong {
+            display: block;
+            margin-top: 8px;
+            color: #4ade80;
+        }
+
+        .exercise-card {
+            background: #12251c;
+            border: 1px solid #1d362b;
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .exercise-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .exercise-number {
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .exercise-name {
+            flex: 1;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .exercise-details {
+            color: #9baea5;
+            margin-top: 8px;
+            line-height: 1.7;
+        }
+
+        .video-box {
+            margin-top: 18px;
+            background: #0a1510;
+            border: 1px solid #263f32;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .video-placeholder {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #9baea5;
+            border-radius: 10px;
+            background: #101d16;
+            padding: 15px;
+        }
+
+        .video-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .youtube-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 12px 20px;
+            border-radius: 9px;
+            background: #ff0000;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .youtube-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .feedback-section {
+            display: none;
+            margin-top: 25px;
+            background: #0e1e17;
+            border: 1px solid #1d362b;
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .feedback-btn {
+            padding: 14px 25px;
+            border-radius: 10px;
+            border: 1px solid #2b493a;
+            background: #13251d;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .feedback-btn:hover {
+            border-color: #4ade80;
+        }
+
+        .feedback-result {
+            margin-top: 20px;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .error-box {
+            background: #241313;
+            border: 1px solid #693333;
+            color: #ffb4b4;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .split-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #13251d;
+            border: 1px solid #4ade80;
+            color: #4ade80;
+        }
+
+        .date-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            background: #13251d;
+            border: 1px solid #2b493a;
+            color: #ffffff;
+        }
+
+        .completed-box {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 12px;
+            background: #102c1d;
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .next-workout-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 14px;
+            background: #13251d;
+            border: 1px solid #2b493a;
+        }
+
+        .next-workout-box h3 {
+            color: #4ade80;
+            margin-bottom: 8px;
+        }
+
+        .next-workout-date {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .rest-box {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .rest-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="workout.html">Workout</a>
+        <a href="nutrition.html">Nutrition</a>
+        <a href="progress.html">Progress</a>
+    </nav>
+
+</header>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+
+        <p>SMART WORKOUT</p>
+
+        <h2>
+            Your <span>Adaptive Workout</span> 🏋️
+        </h2>
+
+        <p id="workoutInfo">
+            Preparing your workout...
+        </p>
+
+        <div id="splitBadge" class="split-badge"></div>
+
+        <br>
+
+        <div id="todayDate" class="date-badge"></div>
+
+    </div>
+
+
+    <div class="workout-container">
+
+
+        <!-- USER INFORMATION -->
+
+        <div class="workout-card">
+
+            <h2>
+                👤 Your Workout Setup
+            </h2>
+
+            <div class="info-box">
+
+                <div class="info-item">
+                    Location
+                    <strong id="userLocation">-</strong>
+                </div>
+
+                <div class="info-item">
+                    Equipment
+                    <strong id="userEquipment">-</strong>
+                </div>
+
+                <div class="info-item">
+                    Split
+                    <strong id="userSplit">-</strong>
+                </div>
+
+                <div class="info-item">
+                    Experience
+                    <strong id="userExperience">-</strong>
+                </div>
+
+                <div class="info-item">
+                    Workout Days
+                    <strong id="userDays">-</strong>
+                </div>
+
+                <div class="info-item">
+                    Time
+                    <strong id="userDuration">-</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TODAY'S WORKOUT -->
+
+        <div class="workout-card">
+
+            <h2 id="todayTitle">
+                Today's Workout
+            </h2>
+
+            <p id="todayDescription">
+                Loading...
+            </p>
+
+            <div id="exerciseList"></div>
+
+            <br>
+
+            <button
+                id="completeButton"
+                class="primary-btn"
+                onclick="completeWorkout()">
+
+                ✅ Complete Today's Workout
+
+            </button>
+
+            <div
+                id="completedBox"
+                class="completed-box"
+                style="display:none;">
+
+                🎉 Today's workout has already been completed!
+
+            </div>
+
+        </div>
+
+
+        <!-- NEXT WORKOUT -->
+
+        <div
+            class="workout-card"
+            id="nextWorkoutCard">
+
+            <h2>
+                📅 Next Workout
+            </h2>
+
+            <div
+                id="nextWorkoutBox"
+                class="next-workout-box">
+
+                <h3 id="nextWorkoutName">
+                    Next Workout
+                </h3>
+
+                <div
+                    id="nextWorkoutDate"
+                    class="next-workout-date">
+                </div>
+
+                <p
+                    id="nextWorkoutDescription"
+                    style="color:#9baea5;margin-top:10px;">
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEEDBACK -->
+
+        <div
+            id="feedbackSection"
+            class="feedback-section">
+
+            <h2>
+                🎯 How was today's workout?
+            </h2>
+
+            <p>
+                Your feedback helps SMART FIT AI adapt your future workouts.
+            </p>
+
+            <div class="feedback-buttons">
+
+                <button
+                    class="feedback-btn"
+                    onclick="submitFeedback('easy')">
+
+                    😊 Easy
+
+                </button>
+
+                <button
+                    class="feedback-btn"
+                    onclick="submitFeedback('moderate')">
+
+                    👍 Moderate
+
+                </button>
+
+                <button
+                    class="feedback-btn"
+                    onclick="submitFeedback('hard')">
+
+                    😓 Hard
+
+                </button>
+
+            </div>
+
+            <div
+                id="feedbackResult"
+                class="feedback-result">
+            </div>
+
+        </div>
+
+
+        <!-- WEEKLY PLAN -->
+
+        <div class="workout-card">
+
+            <h2>
+                📅 Weekly Plan
+            </h2>
+
+            <div id="weeklyPlan"></div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =====================================================
+   LOGIN CHECK
+===================================================== */
+
+const loggedIn =
+    localStorage.getItem("smartFitLoggedIn");
+
+const currentUserEmail =
+    localStorage.getItem("smartFitCurrentUserEmail");
+
+
+if (
+    loggedIn !== "true" ||
+    !currentUserEmail
+) {
+    window.location.replace("login.html");
+}
+
+
+/* =====================================================
+   SAFE JSON READER
+===================================================== */
+
+function getData(key) {
+
+    try {
+
+        const value =
+            localStorage.getItem(key);
+
+        if (!value) {
+            return null;
+        }
+
+        return JSON.parse(value);
+
+    } catch (error) {
+
+        console.error("Storage error:", error);
+
+        return null;
+    }
+}
+
+
+/* =====================================================
+   GET CURRENT USER
+===================================================== */
+
+function getCurrentUser() {
+
+    const users =
+        getData("smartFitUsers") || [];
+
+    return users.find(function(user) {
+
+        return user.email === currentUserEmail;
+
+    });
+}
+
+
+const currentUser =
+    getCurrentUser();
+
+
+if (!currentUser) {
+
+    localStorage.removeItem("smartFitLoggedIn");
+
+    localStorage.removeItem("smartFitCurrentUserEmail");
+
+    window.location.replace("login.html");
+}
+
+
+/* =====================================================
+   USER PROFILE
+===================================================== */
+
+const allProfiles =
+    getData("smartFitProfiles") || {};
+
+const profile =
+    allProfiles[currentUserEmail] || {};
+
+
+const locationValue =
+    profile.location ||
+    profile.workoutLocation ||
+    "Gym";
+
+
+const equipmentValue =
+    profile.equipment ||
+    profile.equipmentAvailable ||
+    "None";
+
+
+const experience =
+    profile.experience ||
+    "Beginner";
+
+
+const duration =
+    Number(
+        profile.workoutTime ||
+        profile.availableTime
+    ) || 45;
+
+
+const userDays =
+    Number(
+        profile.days ||
+        profile.workoutDays
+    ) || 6;
+
+
+/* =====================================================
+   SELECTED SPLIT
+===================================================== */
+
+const userSplitKey =
+    "smartFitSelectedSplit_" +
+    currentUserEmail;
+
+const userSplitNameKey =
+    "smartFitSelectedSplitName_" +
+    currentUserEmail;
+
+
+let selectedSplit =
+    localStorage.getItem(userSplitKey);
+
+let selectedSplitName =
+    localStorage.getItem(userSplitNameKey);
+
+
+if (!selectedSplit) {
+
+    selectedSplit =
+        localStorage.getItem(
+            "smartFitSelectedSplit"
+        );
+}
+
+
+if (!selectedSplitName) {
+
+    selectedSplitName =
+        localStorage.getItem(
+            "smartFitSelectedSplitName"
+        );
+}
+
+
+selectedSplit =
+    selectedSplit ||
+    "ppl";
+
+
+selectedSplitName =
+    selectedSplitName ||
+    "Push Pull Legs";
+
+
+/* =====================================================
+   DISPLAY USER DATA
+===================================================== */
+
+document.getElementById(
+    "userLocation"
+).textContent =
+    locationValue;
+
+
+document.getElementById(
+    "userEquipment"
+).textContent =
+    equipmentValue;
+
+
+document.getElementById(
+    "userSplit"
+).textContent =
+    selectedSplitName;
+
+
+document.getElementById(
+    "userExperience"
+).textContent =
+    experience;
+
+
+document.getElementById(
+    "userDays"
+).textContent =
+    userDays + " days";
+
+
+document.getElementById(
+    "userDuration"
+).textContent =
+    duration + " min";
+
+
+document.getElementById(
+    "splitBadge"
+).textContent =
+    "Selected Split: " +
+    selectedSplitName;
+
+
+/* =====================================================
+   YOUTUBE SEARCH LINK
+===================================================== */
+
+function getYouTubeLink(exerciseName) {
+
+    const query =
+        encodeURIComponent(
+            exerciseName +
+            " proper form exercise demonstration"
+        );
+
+    return (
+        "https://www.youtube.com/results?search_query=" +
+        query
+    );
+}
+
+
+/* =====================================================
+   EXERCISE DATABASE
+===================================================== */
+
+const exercises = {
+
+    chest: [
+
+        {
+            name: "Push Ups",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Dumbbell Bench Press",
+            equipment: "Dumbbells + Bench",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Dumbbell Fly",
+            equipment: "Dumbbells + Bench",
+            sets: 3,
+            reps: "10–12"
+        }
+
+    ],
+
+
+    back: [
+
+        {
+            name: "Lat Pulldown",
+            equipment: "Cable Machine",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Seated Cable Row",
+            equipment: "Cable Machine",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "One Arm Dumbbell Row",
+            equipment: "Dumbbell",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Resistance Band Row",
+            equipment: "Resistance Band",
+            sets: 3,
+            reps: "10–15"
+        }
+
+    ],
+
+
+    shoulders: [
+
+        {
+            name: "Dumbbell Shoulder Press",
+            equipment: "Dumbbells",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Lateral Raise",
+            equipment: "Dumbbells",
+            sets: 3,
+            reps: "10–15"
+        },
+
+        {
+            name: "Pike Push Up",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "8–12"
+        }
+
+    ],
+
+
+    arms: [
+
+        {
+            name: "Dumbbell Biceps Curl",
+            equipment: "Dumbbells",
+            sets: 3,
+            reps: "10–12"
+        },
+
+        {
+            name: "Hammer Curl",
+            equipment: "Dumbbells",
+            sets: 3,
+            reps: "10–12"
+        },
+
+        {
+            name: "Triceps Extension",
+            equipment: "Dumbbell",
+            sets: 3,
+            reps: "10–12"
+        },
+
+        {
+            name: "Close Grip Push Up",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "8–12"
+        }
+
+    ],
+
+
+    legs: [
+
+        {
+            name: "Bodyweight Squat",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "10–15"
+        },
+
+        {
+            name: "Goblet Squat",
+            equipment: "Dumbbell",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Romanian Deadlift",
+            equipment: "Dumbbells",
+            sets: 3,
+            reps: "8–12"
+        },
+
+        {
+            name: "Walking Lunges",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "10 each leg"
+        },
+
+        {
+            name: "Calf Raises",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "12–15"
+        }
+
+    ],
+
+
+    core: [
+
+        {
+            name: "Plank",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "30–45 sec"
+        },
+
+        {
+            name: "Dead Bug",
+            equipment: "Bodyweight",
+            sets: 3,
+            reps: "10 each side"
+        }
+
+    ]
+
+};
+
+
+/* =====================================================
+   HOME ALTERNATIVES
+===================================================== */
+
+const homeAlternatives = {
+
+    "Lat Pulldown":
+        "Resistance Band Row",
+
+    "Seated Cable Row":
+        "Resistance Band Row",
+
+    "Dumbbell Bench Press":
+        "Push Ups",
+
+    "Dumbbell Fly":
+        "Push Ups",
+
+    "Dumbbell Shoulder Press":
+        "Pike Push Up",
+
+    "Dumbbell Biceps Curl":
+        "Close Grip Push Up",
+
+    "Hammer Curl":
+        "Close Grip Push Up",
+
+    "Triceps Extension":
+        "Close Grip Push Up",
+
+    "Goblet Squat":
+        "Bodyweight Squat",
+
+    "Romanian Deadlift":
+        "Bodyweight Squat"
+
+};
+
+
+/* =====================================================
+   EQUIPMENT CHECK
+===================================================== */
+
+function hasEquipment(required) {
+
+    if (required === "Bodyweight") {
+        return true;
+    }
+
+    const equipment =
+        String(equipmentValue).toLowerCase();
+
+    const isHome =
+        String(locationValue)
+            .toLowerCase()
+            .includes("home");
+
+    if (isHome) {
+
+        const requiredText =
+            required.toLowerCase();
+
+        return equipment.includes(requiredText);
+    }
+
+    return true;
+}
+
+
+/* =====================================================
+   SUITABLE EXERCISE
+===================================================== */
+
+function getSuitableExercise(exercise) {
+
+    if (hasEquipment(exercise.equipment)) {
+        return exercise;
+    }
+
+    const alternativeName =
+        homeAlternatives[exercise.name];
+
+    if (alternativeName) {
+
+        const allExercises =
+            Object.values(exercises).flat();
+
+        const alternative =
+            allExercises.find(function(item) {
+
+                return item.name === alternativeName;
+
+            });
+
+        if (alternative) {
+            return alternative;
+        }
+    }
+
+    return null;
+}
+
+
+/* =====================================================
+   SPLIT PROGRAMS
+===================================================== */
+
+const splitPrograms = {
+
+    ppl: [
+
+        ["Push", "chest", "shoulders", "arms"],
+
+        ["Pull", "back", "arms"],
+
+        ["Legs", "legs", "core"],
+
+        ["Push", "chest", "shoulders", "arms"],
+
+        ["Pull", "back", "arms"],
+
+        ["Legs", "legs", "core"]
+
+    ],
+
+
+    bro: [
+
+        ["Chest", "chest"],
+
+        ["Back", "back"],
+
+        ["Shoulders", "shoulders"],
+
+        ["Arms", "arms"],
+
+        ["Legs", "legs", "core"],
+
+        ["Rest"]
+
+    ],
+
+
+    "upper-lower": [
+
+        ["Upper Body", "chest", "back", "shoulders", "arms"],
+
+        ["Lower Body", "legs", "core"],
+
+        ["Rest"],
+
+        ["Upper Body", "chest", "back", "shoulders", "arms"],
+
+        ["Lower Body", "legs", "core"],
+
+        ["Rest"]
+
+    ],
+
+
+    "double-muscle": [
+
+        ["Chest + Back", "chest", "back"],
+
+        ["Shoulders + Arms", "shoulders", "arms"],
+
+        ["Legs + Core", "legs", "core"],
+
+        ["Chest + Back", "chest", "back"],
+
+        ["Shoulders + Arms", "shoulders", "arms"],
+
+        ["Legs + Core", "legs", "core"]
+
+    ],
+
+
+    "enhanced-ppl": [
+
+        ["Upper", "chest", "back", "shoulders", "arms"],
+
+        ["Lower", "legs", "core"],
+
+        ["Rest"],
+
+        ["Push", "chest", "shoulders", "arms"],
+
+        ["Pull", "back", "arms"],
+
+        ["Legs", "legs", "core"],
+
+        ["Rest"]
+
+    ]
+
+};
+
+
+/* =====================================================
+   NORMALIZE SPLIT
+===================================================== */
+
+function normalizeSplit(value) {
+
+    if (!value) {
+        return null;
+    }
+
+    const text =
+        String(value)
+            .toLowerCase()
+            .trim();
+
+    if (text.includes("bro")) {
+        return "bro";
+    }
+
+    if (
+        text.includes("advanced") ||
+        text.includes("enhanced")
+    ) {
+        return "enhanced-ppl";
+    }
+
+    if (
+        text.includes("upper") &&
+        text.includes("lower")
+    ) {
+        return "upper-lower";
+    }
+
+    if (text.includes("double")) {
+        return "double-muscle";
+    }
+
+    if (
+        text.includes("push") &&
+        text.includes("pull")
+    ) {
+        return "ppl";
+    }
+
+    return null;
+}
+
+
+const profileSplit =
+    normalizeSplit(
+        profile.split ||
+        profile.workoutSplit ||
+        profile.selectedSplit
+    );
+
+
+if (
+    profileSplit &&
+    !localStorage.getItem(userSplitKey)
+) {
+
+    selectedSplit =
+        profileSplit;
+}
+
+
+const program =
+    splitPrograms[selectedSplit] ||
+    splitPrograms["ppl"];
+
+
+/* =====================================================
+   DATE HELPERS
+===================================================== */
+
+function getDateKey(date) {
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(date.getMonth() + 1)
+            .padStart(2, "0");
+
+    const day =
+        String(date.getDate())
+            .padStart(2, "0");
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+}
+
+
+function formatDate(date) {
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            weekday: "long",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+}
+
+
+function addDays(date, days) {
+
+    const result =
+        new Date(date);
+
+    result.setDate(
+        result.getDate() + days
+    );
+
+    return result;
+}
+
+
+/* =====================================================
+   TODAY DAY INDEX
+===================================================== */
+
+function getCurrentDayIndex() {
+
+    const today =
+        new Date();
+
+    const day =
+        today.getDay();
+
+    if (day === 0) {
+        return 6;
+    }
+
+    return day - 1;
+}
+
+
+/* =====================================================
+   GET TODAY'S PROGRAM DAY
+===================================================== */
+
+function getTodayProgramDay() {
+
+    const dayIndex =
+        getCurrentDayIndex();
+
+    return program[
+        dayIndex % program.length
+    ];
+}
+
+
+/* =====================================================
+   FIND NEXT WORKOUT
+===================================================== */
+
+function getNextWorkout() {
+
+    const today =
+        new Date();
+
+    for (
+        let i = 1;
+        i <= 14;
+        i++
+    ) {
+
+        const futureDate =
+            addDays(today, i);
+
+        const futureDayIndex =
+            futureDate.getDay() === 0
+                ? 6
+                : futureDate.getDay() - 1;
+
+        const programDay =
+            program[
+                futureDayIndex % program.length
+            ];
+
+        if (
+            programDay &&
+            programDay[0] !== "Rest"
+        ) {
+
+            return {
+
+                day: programDay,
+
+                date: futureDate
+
+            };
+        }
+    }
+
+    return null;
+}
+
+
+/* =====================================================
+   DISPLAY NEXT WORKOUT
+===================================================== */
+
+function displayNextWorkout() {
+
+    const next =
+        getNextWorkout();
+
+    if (!next) {
+        return;
+    }
+
+    document.getElementById(
+        "nextWorkoutName"
+    ).textContent =
+        next.day[0];
+
+    document.getElementById(
+        "nextWorkoutDate"
+    ).textContent =
+        formatDate(next.date);
+
+    document.getElementById(
+        "nextWorkoutDescription"
+    ).textContent =
+        "This is your next scheduled workout.";
+}
+
+
+/* =====================================================
+   PROGRESS STORAGE
+===================================================== */
+
+function getProgress() {
+
+    const key =
+        "smartFitProgress_" +
+        currentUserEmail;
+
+    let progress =
+        getData(key);
+
+    if (
+        !progress ||
+        typeof progress !== "object"
+    ) {
+
+        progress = {
+
+            workoutsCompleted: 0,
+
+            workoutDates: [],
+
+            lastWorkout: null
+
+        };
+    }
+
+    if (
+        !Array.isArray(
+            progress.workoutDates
+        )
+    ) {
+
+        progress.workoutDates = [];
+    }
+
+    return progress;
+}
+
+
+function saveProgress(progress) {
+
+    const key =
+        "smartFitProgress_" +
+        currentUserEmail;
+
+    localStorage.setItem(
+        key,
+        JSON.stringify(progress)
+    );
+}
+
+
+/* =====================================================
+   CHECK TODAY COMPLETION
+===================================================== */
+
+function isTodayCompleted() {
+
+    const progress =
+        getProgress();
+
+    const today =
+        getDateKey(new Date());
+
+    return progress.workoutDates.includes(today);
+}
+
+
+/* =====================================================
+   SHOW COMPLETED STATE
+===================================================== */
+
+function showCompletedState() {
+
+    document.getElementById(
+        "completeButton"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "completedBox"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "feedbackSection"
+    ).style.display =
+        "block";
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+function getFeedback() {
+
+    return localStorage.getItem(
+        "smartFitLastFeedback_" +
+        currentUserEmail
+    );
+}
+
+
+function getAdaptation() {
+
+    const feedback =
+        getFeedback();
+
+    if (feedback === "hard") {
+
+        return {
+
+            sets: 2,
+
+            reps: "8–10",
+
+            message:
+                "Workout adjusted to a lighter volume because your previous workout felt hard."
+
+        };
+    }
+
+    if (feedback === "easy") {
+
+        return {
+
+            sets: 3,
+
+            reps: "10–15",
+
+            message:
+                "Workout adjusted with slightly more volume because your previous workout felt easy."
+
+        };
+    }
+
+    return {
+
+        sets: 3,
+
+        reps: "8–12",
+
+        message:
+            "Workout uses your standard training volume."
+
+    };
+}
+
+
+/* =====================================================
+   CREATE EXERCISES
+===================================================== */
+
+function createExercises(categories) {
+
+    let result = [];
+
+    categories.forEach(function(category) {
+
+        if (!exercises[category]) {
+            return;
+        }
+
+        exercises[category].forEach(function(exercise) {
+
+            const suitable =
+                getSuitableExercise(exercise);
+
+            if (
+                suitable &&
+                !result.some(function(item) {
+
+                    return item.name === suitable.name;
+
+                })
+            ) {
+
+                result.push(suitable);
+            }
+
+        });
+
+    });
+
+    return result.slice(0, 7);
+}
+
+
+/* =====================================================
+   REST DAY
+===================================================== */
+
+function showRestDay() {
+
+    document.getElementById(
+        "todayTitle"
+    ).textContent =
+        "Today's Workout — Rest Day 😴";
+
+    document.getElementById(
+        "todayDescription"
+    ).textContent =
+        "Today is a recovery day. No structured workout is scheduled.";
+
+    document.getElementById(
+        "exerciseList"
+    ).innerHTML = `
+
+        <div class="exercise-card rest-box">
+
+            <div class="rest-icon">
+                🧘
+            </div>
+
+            <h3>
+                Recovery Day
+            </h3>
+
+            <p class="exercise-details">
+                Take a recovery day and return for your next scheduled workout.
+            </p>
+
+        </div>
+
+    `;
+
+    document.getElementById(
+        "completeButton"
+    ).style.display =
+        "none";
+
+    displayNextWorkout();
+}
+
+
+/* =====================================================
+   LOAD WORKOUT
+===================================================== */
+
+function loadWorkout() {
+
+    try {
+
+        const today =
+            new Date();
+
+        document.getElementById(
+            "todayDate"
+        ).textContent =
+            "📅 " +
+            formatDate(today);
+
+        const day =
+            getTodayProgramDay();
+
+        if (!day) {
+
+            showError(
+                "Unable to create today's workout."
+            );
+
+            return;
+        }
+
+        document.getElementById(
+            "workoutInfo"
+        ).textContent =
+            selectedSplitName +
+            " • " +
+            duration +
+            " minutes • " +
+            experience;
+
+
+        /* REST DAY */
+
+        if (day[0] === "Rest") {
+
+            showRestDay();
+
+            loadWeeklyPlan();
+
+            return;
+        }
+
+
+        /* CREATE EXERCISES */
+
+        const categories =
+            day.slice(1);
+
+        const workoutExercises =
+            createExercises(categories);
+
+        if (
+            workoutExercises.length === 0
+        ) {
+
+            showError(
+                "No suitable exercises found for your available equipment."
+            );
+
+            return;
+        }
+
+
+        const adaptation =
+            getAdaptation();
+
+
+        document.getElementById(
+            "todayTitle"
+        ).textContent =
+            "Today's Workout 🏋️ — " +
+            day[0];
+
+
+        document.getElementById(
+            "todayDescription"
+        ).textContent =
+            workoutExercises.length +
+            " exercises • " +
+            duration +
+            " minutes • " +
+            adaptation.message;
+
+
+        const list =
+            document.getElementById(
+                "exerciseList"
+            );
+
+        list.innerHTML = "";
+
+
+        workoutExercises.forEach(
+            function(exercise, index) {
+
+                const div =
+                    document.createElement("div");
+
+                div.className =
+                    "exercise-card";
+
+
+                const youtubeLink =
+                    getYouTubeLink(
+                        exercise.name
+                    );
+
+
+                div.innerHTML = `
+
+                    <div class="exercise-top">
+
+                        <span class="exercise-number">
+                            ${String(index + 1).padStart(2, "0")}
+                        </span>
+
+                        <span class="exercise-name">
+                            ${exercise.name}
+                        </span>
+
+                    </div>
+
+                    <div class="exercise-details">
+
+                        <strong>
+                            ${adaptation.sets} sets × ${adaptation.reps}
+                        </strong>
+
+                        <br>
+
+                        Equipment:
+                        ${exercise.equipment}
+
+                    </div>
+
+                    <div class="video-box">
+
+                        <div class="video-placeholder">
+
+                            <div class="video-icon">
+                                🎬
+                            </div>
+
+                            <div>
+                                Exercise demonstration
+                            </div>
+
+                            <a
+                                class="youtube-btn"
+                                href="${youtubeLink}"
+                                target="_blank"
+                                rel="noopener noreferrer">
+
+                                ▶ Watch on YouTube
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                list.appendChild(div);
+            }
+        );
+
+
+        /* CHECK COMPLETION */
+
+        if (isTodayCompleted()) {
+
+            showCompletedState();
+
+        }
+
+
+        loadWeeklyPlan();
+
+        displayNextWorkout();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Workout loading error:",
+            error
+        );
+
+        showError(
+            "Something went wrong while creating the workout. Please refresh the page."
+        );
+    }
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(message) {
+
+    document.getElementById(
+        "exerciseList"
+    ).innerHTML = `
+
+        <div class="error-box">
+
+            ⚠️ ${message}
+
+        </div>
+
+    `;
+}
+
+
+/* =====================================================
+   WEEKLY PLAN
+===================================================== */
+
+function loadWeeklyPlan() {
+
+    const container =
+        document.getElementById(
+            "weeklyPlan"
+        );
+
+    container.innerHTML = "";
+
+
+    program.forEach(
+        function(day, index) {
+
+            const div =
+                document.createElement("div");
+
+            div.style.cssText = `
+
+                background: #12251c;
+                border: 1px solid #1d362b;
+                border-radius: 12px;
+                padding: 15px;
+                margin-top: 10px;
+
+            `;
+
+
+            let muscleText = "";
+
+
+            if (day.length > 1) {
+
+                muscleText =
+                    " — " +
+                    day
+                        .slice(1)
+                        .join(", ");
+
+            }
+
+
+            div.innerHTML = `
+
+                <strong>
+                    Day ${index + 1} — ${day[0]}
+                </strong>
+
+                <div
+                    style="
+                        color:#9baea5;
+                        margin-top:5px;
+                    ">
+
+                    ${muscleText}
+
+                </div>
+
+            `;
+
+
+            container.appendChild(div);
+
+        }
+    );
+}
+
+
+/* =====================================================
+   COMPLETE WORKOUT
+===================================================== */
+
+function completeWorkout() {
+
+    const today =
+        getDateKey(new Date());
+
+
+    if (isTodayCompleted()) {
+
+        alert(
+            "Today's workout is already completed! 🎉"
+        );
+
+        showCompletedState();
+
+        return;
+    }
+
+
+    let progress =
+        getProgress();
+
+
+    if (
+        !progress.workoutDates.includes(today)
+    ) {
+
+        progress.workoutDates.push(today);
+
+        progress.workoutsCompleted =
+            progress.workoutDates.length;
+
+        progress.lastWorkout =
+            today;
+
+        saveProgress(progress);
+    }
+
+
+    localStorage.setItem(
+        "smartFitWorkoutCompletedToday_" +
+        currentUserEmail,
+        "true"
+    );
+
+
+    showCompletedState();
+
+
+    alert(
+        "🎉 Today's workout completed successfully!"
+    );
+
+
+    displayNextWorkout();
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+function submitFeedback(level) {
+
+    localStorage.setItem(
+        "smartFitLastFeedback_" +
+        currentUserEmail,
+        level
+    );
+
+
+    const messages = {
+
+        easy:
+            "Your next workout will be slightly more challenging.",
+
+        moderate:
+            "Great! Your next workout will stay balanced.",
+
+        hard:
+            "Your next workout will use reduced volume for better comfort."
+
+    };
+
+
+    document.getElementById(
+        "feedbackResult"
+    ).textContent =
+        messages[level];
+
+
+    setTimeout(
+        function() {
+
+            window.location.href =
+                "progress.html";
+
+        },
+        1800
+    );
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadWorkout();
+
+    }
+);
+
+</script>
+
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

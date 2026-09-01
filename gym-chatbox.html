@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gym Chatbox - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="workout.html">Workout</a>
+        <a href="nutrition.html">Nutrition</a>
+        <a href="progress.html">Progress</a>
+    </nav>
+
+</header>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+
+        <p>AI FITNESS ASSISTANT</p>
+
+        <h2>
+            Gym <span>Chatbox</span> 🤖
+        </h2>
+
+        <p>
+            Ask your beginner gym doubts and get simple explanations.
+        </p>
+
+    </div>
+
+
+    <!-- CHATBOX -->
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+
+            <div>
+                <h2>🤖 Gym AI Assistant</h2>
+
+                <p>
+                    Your beginner-friendly gym guide
+                </p>
+            </div>
+
+            <span class="online-dot">
+                ● Online
+            </span>
+
+        </div>
+
+
+        <!-- MESSAGES -->
+
+        <div id="chatMessages" class="chat-messages">
+
+            <div class="bot-message">
+
+                <div class="message-icon">
+                    🤖
+                </div>
+
+                <div class="message-content">
+
+                    <strong>Gym AI</strong>
+
+                    <p>
+                        Hi! 👋 I'm your Gym AI Assistant.
+                    </p>
+
+                    <p>
+                        Ask me anything about workouts,
+                        exercises, sets, reps, rest,
+                        warm-ups, nutrition or gym basics.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK QUESTIONS -->
+
+        <div class="quick-questions">
+
+            <p>Quick Questions</p>
+
+            <button onclick="askQuestion('What are sets and reps?')">
+                💪 Sets & Reps
+            </button>
+
+            <button onclick="askQuestion('What should I do before gym?')">
+                🔥 Before Gym
+            </button>
+
+            <button onclick="askQuestion('What should I eat after workout?')">
+                🍎 After Workout
+            </button>
+
+            <button onclick="askQuestion('How much rest should I take between sets?')">
+                ⏱️ Rest Time
+            </button>
+
+            <button onclick="askQuestion('What is progressive overload?')">
+                📈 Progressive Overload
+            </button>
+
+            <button onclick="askQuestion('How should a beginner start gym?')">
+                🏋️ Beginner Guide
+            </button>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div class="chat-input-area">
+
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Ask your gym doubt..."
+                autocomplete="off"
+            >
+
+            <button
+                class="primary-btn"
+                onclick="sendMessage()">
+
+                Send ➤
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="chat-disclaimer">
+
+        ⚠️ <strong>Important:</strong>
+        Gym AI provides general educational information.
+        It is not a replacement for a qualified fitness
+        professional or healthcare professional.
+
+    </div>
+
+</section>
+
+
+<script src="js/gym-chatbox.js"></script>
+
+</body>
+
+</html>

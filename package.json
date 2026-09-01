@@ -1,0 +1,24 @@
+{
+  "name": "smart-fit-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "description": "A beginner-friendly full-stack fitness project based on the SMART FIT AI concept.",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}

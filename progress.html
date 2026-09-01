@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Progress - SMART FIT AI</title>
+
+<link rel="stylesheet"
+      href="css/style.css">
+
+<style>
+
+.next-workout-box {
+
+    max-width:700px;
+    margin:40px auto;
+
+    background:#0e1e17;
+
+    border:1px solid #1d362b;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+}
+
+.next-workout-title {
+
+    color:#4ade80;
+
+    font-size:24px;
+
+    margin-bottom:15px;
+}
+
+.next-workout-date {
+
+    font-size:18px;
+
+    color:#9baea5;
+
+    margin-bottom:20px;
+}
+
+.locked-message {
+
+    background:#13251d;
+
+    border:1px solid #1d362b;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    color:#9baea5;
+}
+
+.history-item {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px;
+
+    margin:10px 0;
+
+    background:#13251d;
+
+    border-radius:12px;
+
+    border:1px solid #1d362b;
+
+    gap:15px;
+}
+
+.completed {
+
+    color:#4ade80;
+
+    font-weight:bold;
+}
+
+@media(max-width:600px) {
+
+    .history-item {
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+    <div class="logo">
+
+        SMART<span>FIT</span> AI
+
+    </div>
+
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="workout.html">
+            Workout
+        </a>
+
+        <a href="nutrition.html">
+            Nutrition
+        </a>
+
+        <a href="progress.html">
+            Progress
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<section class="features-section">
+
+
+<div class="section-heading">
+
+    <p>
+        PROGRESS TRACKING
+    </p>
+
+    <h2>
+        Your <span>Progress</span> 📊
+    </h2>
+
+    <p>
+        Track your completed workouts,
+        consistency and upcoming training.
+    </p>
+
+</div>
+
+
+
+<!-- =========================
+     STATISTICS
+========================= -->
+
+<div style="
+max-width:900px;
+margin:40px auto;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+">
+
+
+<div class="feature-card">
+
+    <div class="feature-icon">
+        🏋️
+    </div>
+
+    <h3>
+        Workouts Completed
+    </h3>
+
+    <p
+        id="totalWorkouts"
+        style="font-size:30px;">
+
+        0
+
+    </p>
+
+</div>
+
+
+
+<div class="feature-card">
+
+    <div class="feature-icon">
+        🔥
+    </div>
+
+    <h3>
+        Current Streak
+    </h3>
+
+    <p
+        id="streak"
+        style="font-size:30px;">
+
+        0
+
+    </p>
+
+</div>
+
+
+
+<div class="feature-card">
+
+    <div class="feature-icon">
+        📅
+    </div>
+
+    <h3>
+        This Week
+    </h3>
+
+    <p
+        id="weekly"
+        style="font-size:30px;">
+
+        0
+
+    </p>
+
+</div>
+
+
+
+<div class="feature-card">
+
+    <div class="feature-icon">
+        🎯
+    </div>
+
+    <h3>
+        Weekly Goal
+    </h3>
+
+    <p
+        id="weeklyGoal"
+        style="font-size:30px;">
+
+        3
+
+    </p>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     NEXT WORKOUT
+========================= -->
+
+<div class="next-workout-box">
+
+    <div class="next-workout-title">
+
+        🔜 Next Workout
+
+    </div>
+
+
+    <h2 id="nextWorkout">
+
+        Loading...
+
+    </h2>
+
+
+    <div
+        id="nextWorkoutDate"
+        class="next-workout-date">
+
+        Loading...
+
+    </div>
+
+
+    <div
+        id="nextWorkoutMessage"
+        class="locked-message">
+
+        Checking workout schedule...
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     WEEKLY PROGRESS
+========================= -->
+
+<div style="
+max-width:700px;
+margin:40px auto;
+background:#0e1e17;
+padding:30px;
+border-radius:18px;
+border:1px solid #1d362b;
+">
+
+
+<h2>
+    📈 Weekly Progress
+</h2>
+
+<br>
+
+
+<div style="
+background:#1b3026;
+height:20px;
+border-radius:20px;
+overflow:hidden;
+">
+
+
+<div
+id="progressBar"
+style="
+width:0%;
+height:100%;
+background:#4ade80;
+transition:0.5s;
+">
+
+</div>
+
+</div>
+
+
+<p
+id="progressText"
+style="
+text-align:center;
+margin-top:15px;
+">
+
+0% completed
+
+</p>
+
+</div>
+
+
+
+<!-- =========================
+     WORKOUT HISTORY
+========================= -->
+
+<div style="
+max-width:700px;
+margin:40px auto;
+background:#0e1e17;
+padding:30px;
+border-radius:18px;
+border:1px solid #1d362b;
+">
+
+
+<h2>
+    🗓️ Workout History
+</h2>
+
+<br>
+
+
+<div id="history">
+
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     BUTTONS
+========================= -->
+
+<div style="
+max-width:700px;
+margin:30px auto;
+text-align:center;
+">
+
+
+<button
+class="primary-btn"
+onclick="goToWorkout()">
+
+🏋️ Go To Workout
+
+</button>
+
+
+<br><br>
+
+
+<button
+class="secondary-btn"
+onclick="clearProgress()">
+
+Reset Progress
+
+</button>
+
+</div>
+
+
+</section>
+
+
+
+<script>
+
+/* =====================================================
+   LOGIN CHECK
+===================================================== */
+
+const loggedIn =
+    localStorage.getItem("smartFitLoggedIn");
+
+const currentUserEmail =
+    localStorage.getItem("smartFitCurrentUserEmail");
+
+
+if (
+    loggedIn !== "true" ||
+    !currentUserEmail
+) {
+
+    window.location.replace("login.html");
+
+}
+
+
+
+/* =====================================================
+   GET PROFILE
+===================================================== */
+
+function getProfile() {
+
+    try {
+
+        const profiles =
+            JSON.parse(
+                localStorage.getItem(
+                    "smartFitProfiles"
+                ) || "{}"
+            );
+
+        return (
+            profiles[currentUserEmail] || {}
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Profile error:",
+            error
+        );
+
+        return {};
+
+    }
+
+}
+
+
+
+/* =====================================================
+   GET USER PROGRESS
+
+   IMPORTANT:
+   SAME KEY USED BY workout.html
+===================================================== */
+
+function getProgressData() {
+
+    try {
+
+        const key =
+            "smartFitProgress_" +
+            currentUserEmail;
+
+
+        const data =
+            JSON.parse(
+                localStorage.getItem(key) || "null"
+            );
+
+
+        if (
+            data &&
+            typeof data === "object"
+        ) {
+
+            if (
+                !Array.isArray(
+                    data.workoutDates
+                )
+            ) {
+
+                data.workoutDates = [];
+
+            }
+
+
+            data.workoutsCompleted =
+                Number(
+                    data.workoutsCompleted
+                ) || data.workoutDates.length;
+
+
+            return data;
+
+        }
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Progress error:",
+            error
+        );
+
+    }
+
+
+    return {
+
+        workoutsCompleted:0,
+
+        workoutDates:[],
+
+        lastWorkout:null
+
+    };
+
+}
+
+
+
+/* =====================================================
+   SAVE PROGRESS
+
+   SAME KEY USED BY workout.html
+===================================================== */
+
+function saveProgressData(data) {
+
+    const key =
+        "smartFitProgress_" +
+        currentUserEmail;
+
+
+    localStorage.setItem(
+
+        key,
+
+        JSON.stringify(data)
+
+    );
+
+}
+
+
+
+/* =====================================================
+   TODAY STRING
+
+   LOCAL DATE — NOT UTC
+===================================================== */
+
+function getTodayString() {
+
+    const today =
+        new Date();
+
+
+    const year =
+        today.getFullYear();
+
+
+    const month =
+        String(
+            today.getMonth() + 1
+        ).padStart(2,"0");
+
+
+    const day =
+        String(
+            today.getDate()
+        ).padStart(2,"0");
+
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+
+}
+
+
+
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
+function formatDate(dateString) {
+
+    const parts =
+        dateString.split("-");
+
+
+    if (
+        parts.length !== 3
+    ) {
+
+        return dateString;
+
+    }
+
+
+    const date =
+        new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+
+
+    return date.toLocaleDateString(
+
+        "en-IN",
+
+        {
+            day:"2-digit",
+            month:"short",
+            year:"numeric"
+        }
+
+    );
+
+}
+
+
+
+/* =====================================================
+   WORKOUT PROGRAM
+===================================================== */
+
+const splitPrograms = {
+
+    ppl: [
+
+        "Push",
+        "Pull",
+        "Legs",
+        "Push",
+        "Pull",
+        "Legs",
+        "Rest"
+
+    ],
+
+    bro: [
+
+        "Chest",
+        "Back",
+        "Shoulders",
+        "Arms",
+        "Legs",
+        "Rest",
+        "Rest"
+
+    ],
+
+    "upper-lower": [
+
+        "Upper Body",
+        "Lower Body",
+        "Rest",
+        "Upper Body",
+        "Lower Body",
+        "Rest",
+        "Rest"
+
+    ],
+
+    "double-muscle": [
+
+        "Chest + Back",
+        "Shoulders + Arms",
+        "Legs + Core",
+        "Chest + Back",
+        "Shoulders + Arms",
+        "Legs + Core",
+        "Rest"
+
+    ],
+
+    "enhanced-ppl": [
+
+        "Upper",
+        "Lower",
+        "Rest",
+        "Push",
+        "Pull",
+        "Legs",
+        "Rest"
+
+    ]
+
+};
+
+
+
+/* =====================================================
+   GET SELECTED SPLIT
+
+   First user-specific,
+   then old global storage
+===================================================== */
+
+let selectedSplit =
+
+    localStorage.getItem(
+        "smartFitSelectedSplit_" +
+        currentUserEmail
+    );
+
+
+if (!selectedSplit) {
+
+    selectedSplit =
+        localStorage.getItem(
+            "smartFitSelectedSplit"
+        );
+
+}
+
+
+selectedSplit =
+    selectedSplit || "ppl";
+
+
+const program =
+    splitPrograms[selectedSplit] ||
+    splitPrograms.ppl;
+
+
+
+/* =====================================================
+   GET SPLIT NAME
+===================================================== */
+
+let selectedSplitName =
+
+    localStorage.getItem(
+        "smartFitSelectedSplitName_" +
+        currentUserEmail
+    );
+
+
+if (!selectedSplitName) {
+
+    selectedSplitName =
+        localStorage.getItem(
+            "smartFitSelectedSplitName"
+        );
+
+}
+
+
+selectedSplitName =
+    selectedSplitName ||
+    "Push Pull Legs";
+
+
+
+/* =====================================================
+   CHECK WHETHER DATE IS WORKOUT DAY
+===================================================== */
+
+function getWorkoutForDate(date) {
+
+    let day =
+        date.getDay();
+
+
+    const mondayIndex =
+        day === 0
+        ? 6
+        : day - 1;
+
+
+    return program[
+        mondayIndex % program.length
+    ];
+
+}
+
+
+
+/* =====================================================
+   NEXT WORKOUT
+===================================================== */
+
+function loadNextWorkout() {
+
+    const progress =
+        getProgressData();
+
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        0,0,0,0
+    );
+
+
+    const todayString =
+        getTodayString();
+
+
+    const dates =
+        Array.isArray(
+            progress.workoutDates
+        )
+        ? progress.workoutDates
+        : [];
+
+
+    const completedToday =
+        dates.includes(
+            todayString
+        );
+
+
+    let nextDate =
+        new Date(today);
+
+
+    /*
+       If today's workout is completed,
+       start searching from tomorrow.
+    */
+
+    if (completedToday) {
+
+        nextDate.setDate(
+            nextDate.getDate() + 1
+        );
+
+    }
+
+
+    let foundWorkout =
+        null;
+
+    let foundDate =
+        null;
+
+
+    for (
+        let i = 0;
+        i < 14;
+        i++
+    ) {
+
+        const checkDate =
+            new Date(nextDate);
+
+
+        checkDate.setDate(
+            nextDate.getDate() + i
+        );
+
+
+        const workout =
+            getWorkoutForDate(
+                checkDate
+            );
+
+
+        if (
+            workout &&
+            workout !== "Rest"
+        ) {
+
+            foundWorkout =
+                workout;
+
+            foundDate =
+                checkDate;
+
+            break;
+
+        }
+
+    }
+
+
+    if (!foundWorkout) {
+
+        document.getElementById(
+            "nextWorkout"
+        ).textContent =
+            "No workout scheduled";
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "nextWorkout"
+    ).textContent =
+        foundWorkout;
+
+
+    document.getElementById(
+        "nextWorkoutDate"
+    ).textContent =
+
+        foundDate.toLocaleDateString(
+
+            "en-IN",
+
+            {
+                weekday:"long",
+                day:"2-digit",
+                month:"short",
+                year:"numeric"
+            }
+
+        );
+
+
+    if (completedToday) {
+
+        document.getElementById(
+            "nextWorkoutMessage"
+        ).innerHTML =
+
+            "🔒 Today's workout is already completed." +
+
+            "<br><br>" +
+
+            "Your next workout is scheduled for " +
+
+            "<strong>" +
+
+            foundDate.toLocaleDateString(
+
+                "en-IN",
+
+                {
+                    day:"2-digit",
+                    month:"short"
+                }
+
+            ) +
+
+            "</strong>.";
+
+    }
+
+    else {
+
+        document.getElementById(
+            "nextWorkoutMessage"
+        ).innerHTML =
+
+            "Your next scheduled workout is shown above.";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD PROGRESS
+===================================================== */
+
+function loadProgress() {
+
+    const progress =
+        getProgressData();
+
+
+    const dates =
+
+        Array.isArray(
+            progress.workoutDates
+        )
+
+        ?
+
+        [
+            ...new Set(
+                progress.workoutDates
+            )
+        ]
+
+        :
+
+        [];
+
+
+
+    /* TOTAL */
+
+    document.getElementById(
+        "totalWorkouts"
+    ).textContent =
+        dates.length;
+
+
+
+    /* WEEKLY GOAL */
+
+    const profile =
+        getProfile();
+
+
+    const weeklyGoal =
+        Number(
+            profile.days ||
+            profile.workoutDays
+        ) || 3;
+
+
+    document.getElementById(
+        "weeklyGoal"
+    ).textContent =
+        weeklyGoal;
+
+
+
+    /* CURRENT WEEK */
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        0,0,0,0
+    );
+
+
+    const weekStart =
+        new Date(today);
+
+
+    const day =
+        today.getDay();
+
+
+    const difference =
+        day === 0
+        ? 6
+        : day - 1;
+
+
+    weekStart.setDate(
+
+        today.getDate() -
+        difference
+
+    );
+
+
+    const weeklyCount =
+
+        dates.filter(
+
+            function(dateString) {
+
+                const parts =
+                    dateString.split("-");
+
+
+                if (
+                    parts.length !== 3
+                ) {
+
+                    return false;
+
+                }
+
+
+                const date =
+                    new Date(
+
+                        Number(parts[0]),
+
+                        Number(parts[1]) - 1,
+
+                        Number(parts[2])
+
+                    );
+
+
+                date.setHours(
+                    0,0,0,0
+                );
+
+
+                return (
+                    date >= weekStart &&
+                    date <= today
+                );
+
+            }
+
+        ).length;
+
+
+
+    document.getElementById(
+        "weekly"
+    ).textContent =
+        weeklyCount;
+
+
+
+    /* PROGRESS BAR */
+
+    let percentage = 0;
+
+
+    if (
+        weeklyGoal > 0
+    ) {
+
+        percentage =
+            Math.round(
+
+                (
+                    weeklyCount /
+                    weeklyGoal
+                ) * 100
+
+            );
+
+    }
+
+
+    percentage =
+        Math.min(
+            100,
+            percentage
+        );
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        percentage + "%";
+
+
+    document.getElementById(
+        "progressText"
+    ).textContent =
+
+        weeklyCount +
+        " / " +
+        weeklyGoal +
+        " workouts completed (" +
+        percentage +
+        "%)";
+
+
+
+    calculateStreak(
+        dates
+    );
+
+
+    displayHistory(
+        dates
+    );
+
+
+    loadNextWorkout();
+
+}
+
+
+
+/* =====================================================
+   STREAK
+===================================================== */
+
+function calculateStreak(dates) {
+
+    const streakElement =
+        document.getElementById(
+            "streak"
+        );
+
+
+    if (
+        dates.length === 0
+    ) {
+
+        streakElement.textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    const sorted =
+
+        [...dates].sort(
+
+            function(a,b) {
+
+                return (
+                    new Date(b) -
+                    new Date(a)
+                );
+
+            }
+
+        );
+
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        0,0,0,0
+    );
+
+
+    const latest =
+        new Date(
+            sorted[0]
+        );
+
+
+    latest.setHours(
+        0,0,0,0
+    );
+
+
+    const daysAway =
+
+        Math.floor(
+
+            (
+                today -
+                latest
+            ) /
+
+            (
+                1000 *
+                60 *
+                60 *
+                24
+            )
+
+        );
+
+
+    if (
+        daysAway > 1
+    ) {
+
+        streakElement.textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    let streak = 1;
+
+
+    for (
+        let i = 0;
+        i < sorted.length - 1;
+        i++
+    ) {
+
+        const first =
+            new Date(
+                sorted[i]
+            );
+
+
+        const second =
+            new Date(
+                sorted[i + 1]
+            );
+
+
+        first.setHours(
+            0,0,0,0
+        );
+
+
+        second.setHours(
+            0,0,0,0
+        );
+
+
+        const difference =
+
+            Math.round(
+
+                (
+                    first -
+                    second
+                ) /
+
+                (
+                    1000 *
+                    60 *
+                    60 *
+                    24
+                )
+
+            );
+
+
+        if (
+            difference === 1
+        ) {
+
+            streak++;
+
+        }
+
+        else {
+
+            break;
+
+        }
+
+    }
+
+
+    streakElement.textContent =
+        streak;
+
+}
+
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
+
+function displayHistory(dates) {
+
+    const container =
+        document.getElementById(
+            "history"
+        );
+
+
+    if (
+        dates.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <p style="
+                text-align:center;
+                color:#9baea5;
+            ">
+
+                No workouts completed yet.
+
+                <br><br>
+
+                Start your first workout! 💪
+
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    const sorted =
+        [...dates].sort(
+
+            function(a,b) {
+
+                return (
+                    new Date(b) -
+                    new Date(a)
+                );
+
+            }
+
+        );
+
+
+    sorted.forEach(
+
+        function(date) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "history-item";
+
+
+            div.innerHTML = `
+
+                <span>
+
+                    📅
+                    ${formatDate(date)}
+
+                </span>
+
+
+                <span class="completed">
+
+                    ✅ Completed
+
+                </span>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+
+    );
+
+}
+
+
+
+/* =====================================================
+   GO TO WORKOUT
+===================================================== */
+
+function goToWorkout() {
+
+    window.location.href =
+        "workout.html";
+
+}
+
+
+
+/* =====================================================
+   RESET PROGRESS
+===================================================== */
+
+function clearProgress() {
+
+    const confirmReset =
+        confirm(
+
+            "Are you sure you want to reset your workout progress?"
+
+        );
+
+
+    if (!confirmReset) {
+
+        return;
+
+    }
+
+
+    const progressKey =
+        "smartFitProgress_" +
+        currentUserEmail;
+
+
+    localStorage.removeItem(
+        progressKey
+    );
+
+
+    localStorage.removeItem(
+
+        "smartFitWorkoutCompletedToday_" +
+        currentUserEmail
+
+    );
+
+
+    alert(
+        "Progress has been reset successfully."
+    );
+
+
+    loadProgress();
+
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    function() {
+
+        loadProgress();
+
+    }
+
+);
+
+</script>
+
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Workout Feedback - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+
+        .feedback-container {
+
+            max-width: 750px;
+
+            margin: 50px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .feedback-card {
+
+            background: #0e1e17;
+
+            border: 1px solid #1d362b;
+
+            border-radius: 20px;
+
+            padding: 35px;
+
+            text-align: center;
+
+        }
+
+
+        .feedback-options {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+
+            margin-top: 30px;
+
+        }
+
+
+        .feedback-option {
+
+            background: #12251c;
+
+            border: 2px solid #1d362b;
+
+            border-radius: 15px;
+
+            padding: 25px 15px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+        }
+
+
+        .feedback-option:hover {
+
+            transform: translateY(-5px);
+
+            border-color: #4ade80;
+
+        }
+
+
+        .feedback-option.selected {
+
+            border-color: #4ade80;
+
+            background: #183b29;
+
+        }
+
+
+        .feedback-emoji {
+
+            font-size: 42px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .feedback-option h3 {
+
+            margin: 8px 0;
+
+        }
+
+
+        .feedback-option p {
+
+            color: #9baea5;
+
+            font-size: 14px;
+
+        }
+
+
+        .adaptive-message {
+
+            margin-top: 30px;
+
+            padding: 20px;
+
+            background: #12251c;
+
+            border-radius: 15px;
+
+            border: 1px solid #1d362b;
+
+            display: none;
+
+        }
+
+
+        .submit-btn {
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #4ade80;
+
+            color: #06120d;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .submit-btn:hover {
+
+            background: #22c55e;
+
+        }
+
+
+        @media(max-width:600px) {
+
+            .feedback-options {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="workout.html">
+            Workout
+        </a>
+
+        <a href="nutrition.html">
+            Nutrition
+        </a>
+
+        <a href="progress.html">
+            Progress
+        </a>
+
+    </nav>
+
+</header>
+
+
+<section class="features-section">
+
+
+    <div class="section-heading">
+
+        <p>SMART FIT AI</p>
+
+        <h2>
+            How was your
+            <span>Workout?</span>
+        </h2>
+
+        <p>
+            Your feedback helps SMART FIT AI
+            adapt your future workouts.
+        </p>
+
+    </div>
+
+
+    <div class="feedback-container">
+
+
+        <div class="feedback-card">
+
+
+            <h2>
+                Rate Today's Workout
+            </h2>
+
+
+            <p style="color:#9baea5; margin-top:10px;">
+
+                Select the option that best describes
+                how today's workout felt.
+
+            </p>
+
+
+            <div class="feedback-options">
+
+
+                <!-- EASY -->
+
+                <div
+                    class="feedback-option"
+                    id="easyOption"
+                    onclick="selectFeedback('easy')">
+
+                    <div class="feedback-emoji">
+                        😊
+                    </div>
+
+                    <h3>
+                        Easy
+                    </h3>
+
+                    <p>
+                        I could comfortably
+                        complete the workout.
+                    </p>
+
+                </div>
+
+
+                <!-- MODERATE -->
+
+                <div
+                    class="feedback-option"
+                    id="moderateOption"
+                    onclick="selectFeedback('moderate')">
+
+                    <div class="feedback-emoji">
+                        🙂 
+                    </div>
+
+                    <h3>
+                        Moderate
+                    </h3>
+
+                    <p>
+                        It was challenging but
+                        comfortable.
+                    </p>
+
+                </div>
+
+
+                <!-- HARD -->
+
+                <div
+                    class="feedback-option"
+                    id="hardOption"
+                    onclick="selectFeedback('hard')">
+
+                    <div class="feedback-emoji">
+                        😓
+                    </div>
+
+                    <h3>
+                        Hard
+                    </h3>
+
+                    <p>
+                        It was difficult and
+                        challenging.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                id="adaptiveMessage"
+                class="adaptive-message">
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="saveFeedback()">
+
+                Save Feedback & Continue →
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+<script>
+
+
+/* ==========================================
+   SELECTED FEEDBACK
+========================================== */
+
+let selectedFeedback = null;
+
+
+/* ==========================================
+   SELECT FEEDBACK
+========================================== */
+
+function selectFeedback(level) {
+
+
+    selectedFeedback = level;
+
+
+    document
+        .getElementById("easyOption")
+        .classList.remove("selected");
+
+
+    document
+        .getElementById("moderateOption")
+        .classList.remove("selected");
+
+
+    document
+        .getElementById("hardOption")
+        .classList.remove("selected");
+
+
+    document
+        .getElementById(level + "Option")
+        .classList.add("selected");
+
+
+    const message =
+        document.getElementById(
+            "adaptiveMessage"
+        );
+
+
+    message.style.display = "block";
+
+
+    if (level === "easy") {
+
+        message.innerHTML = `
+            <strong>💡 SMART FIT AI</strong>
+
+            <p style="margin-top:10px;">
+                Your workout felt easy.
+                Your next workout may gradually
+                increase the challenge.
+            </p>
+        `;
+
+    }
+
+
+    else if (level === "moderate") {
+
+        message.innerHTML = `
+            <strong>👍 Good Balance</strong>
+
+            <p style="margin-top:10px;">
+                Your workout was at a comfortable
+                challenge level. SMART FIT AI will
+                maintain a similar difficulty.
+            </p>
+        `;
+
+    }
+
+
+    else if (level === "hard") {
+
+        message.innerHTML = `
+            <strong>🛡️ Recovery First</strong>
+
+            <p style="margin-top:10px;">
+                Your workout was difficult.
+                SMART FIT AI will reduce the
+                workload slightly for future
+                workouts if needed.
+            </p>
+        `;
+
+    }
+
+}
+
+
+/* ==========================================
+   SAVE FEEDBACK
+========================================== */
+
+function saveFeedback() {
+
+
+    if (!selectedFeedback) {
+
+        alert(
+            "Please select Easy, Moderate, or Hard."
+        );
+
+        return;
+
+    }
+
+
+    const today =
+        new Date()
+        .toISOString()
+        .split("T")[0];
+
+
+    /*
+       GET EXISTING FEEDBACK
+    */
+
+    let feedbackHistory =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitWorkoutFeedback"
+            )
+        ) || [];
+
+
+    /*
+       GET SELECTED SPLIT
+    */
+
+    const split =
+        localStorage.getItem(
+            "smartFitSelectedSplit"
+        ) || "default";
+
+
+    /*
+       GET PROFILE
+    */
+
+    const profile =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitProfile"
+            )
+        ) || {};
+
+
+    /*
+       CREATE FEEDBACK RECORD
+    */
+
+    const feedback = {
+
+        date: today,
+
+        difficulty: selectedFeedback,
+
+        split: split,
+
+        goal: profile.goal || "",
+
+        experience:
+            profile.experience || ""
+
+    };
+
+
+    /*
+       SAVE FEEDBACK
+    */
+
+    feedbackHistory.push(feedback);
+
+
+    localStorage.setItem(
+
+        "smartFitWorkoutFeedback",
+
+        JSON.stringify(
+            feedbackHistory
+        )
+
+    );
+
+
+    /*
+       UPDATE ADAPTIVE DATA
+    */
+
+    updateAdaptiveData(
+        selectedFeedback
+    );
+
+
+    alert(
+        "✅ Feedback saved! SMART FIT AI will use it to adapt your future workouts."
+    );
+
+
+    window.location.href =
+        "workout.html";
+
+}
+
+
+/* ==========================================
+   ADAPTIVE ENGINE
+========================================== */
+
+function updateAdaptiveData(level) {
+
+
+    let adaptive =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitAdaptiveData"
+            )
+        ) || {
+
+            easyCount: 0,
+
+            moderateCount: 0,
+
+            hardCount: 0,
+
+            difficultyAdjustment: 0
+
+        };
+
+
+    /*
+       COUNT FEEDBACK
+    */
+
+    if (level === "easy") {
+
+        adaptive.easyCount++;
+
+    }
+
+
+    else if (level === "moderate") {
+
+        adaptive.moderateCount++;
+
+    }
+
+
+    else if (level === "hard") {
+
+        adaptive.hardCount++;
+
+    }
+
+
+    /*
+       ADAPTIVE RULES
+    */
+
+
+    /*
+       Repeated EASY workouts
+       → increase difficulty
+    */
+
+    if (
+        adaptive.easyCount >= 2
+    ) {
+
+        adaptive.difficultyAdjustment++;
+
+        adaptive.easyCount = 0;
+
+    }
+
+
+    /*
+       Repeated HARD workouts
+       → decrease difficulty
+    */
+
+    if (
+        adaptive.hardCount >= 2
+    ) {
+
+        adaptive.difficultyAdjustment--;
+
+        adaptive.hardCount = 0;
+
+    }
+
+
+    /*
+       MODERATE
+       → maintain
+    */
+
+
+    localStorage.setItem(
+
+        "smartFitAdaptiveData",
+
+        JSON.stringify(
+            adaptive
+        )
+
+    );
+
+}
+
+
+</script>
+
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

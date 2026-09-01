@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+
+        /* =========================================
+           GYM CHATBOX
+        ========================================= */
+
+        .gym-chat-card {
+            max-width: 1000px;
+            margin: 45px auto;
+            padding: 35px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #0e1e17, #12251c);
+            border: 1px solid #294638;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .gym-chat-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .gym-chat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1d362b;
+            font-size: 30px;
+        }
+
+        .gym-chat-header h2 {
+            margin: 0;
+            color: white;
+        }
+
+        .gym-chat-header p {
+            margin-top: 5px;
+            color: #9baea5;
+        }
+
+        .chat-description {
+            color: #aebdb5;
+            line-height: 1.7;
+        }
+
+        .chat-preview {
+            margin-top: 25px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            border-radius: 14px;
+            background: #09140f;
+            border: 1px solid #1d362b;
+        }
+
+        .chat-message {
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .chat-ai {
+            background: #12251c;
+            color: #d7e3dc;
+        }
+
+        .chat-user {
+            background: #1d362b;
+            color: white;
+            text-align: right;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #304b3d;
+            background: #09140f;
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .chat-input:focus {
+            border-color: #4d8066;
+        }
+
+        .chat-send-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #2c6048;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .chat-send-btn:hover {
+            background: #397a5a;
+        }
+
+        .chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .chat-suggestion {
+            padding: 9px 13px;
+            border-radius: 20px;
+            border: 1px solid #304b3d;
+            background: #12251c;
+            color: #c9d8d0;
+            cursor: pointer;
+        }
+
+        .chat-suggestion:hover {
+            background: #1d362b;
+        }
+
+        @media(max-width:600px) {
+
+            .gym-chat-card {
+                margin: 25px 15px;
+                padding: 22px;
+            }
+
+            .chat-input-row {
+                flex-direction: column;
+            }
+
+            .chat-send-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="workout.html">
+            Workout
+        </a>
+
+        <a href="nutrition.html">
+            Nutrition
+        </a>
+
+        <a href="progress.html">
+            Progress
+        </a>
+
+    </nav>
+
+    <button
+        onclick="logout()"
+        style="
+            background:#1d362b;
+            color:white;
+            border:none;
+            padding:10px 15px;
+            border-radius:8px;
+            cursor:pointer;
+        ">
+
+        Logout
+
+    </button>
+
+</header>
+
+
+
+<!-- =========================================
+     DASHBOARD
+========================================= -->
+
+<section class="features-section">
+
+
+    <!-- =====================================
+         HEADING
+    ===================================== -->
+
+    <div class="section-heading">
+
+        <p>
+            YOUR PERSONAL FITNESS DASHBOARD
+        </p>
+
+        <h1>
+
+            Welcome,
+
+            <span id="userName">
+                User
+            </span>
+
+            👋
+
+        </h1>
+
+        <p id="dashboardMessage">
+
+            Loading your personalized dashboard...
+
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================================
+         PROFILE SUMMARY
+    ========================================= -->
+
+    <div style="
+        max-width:1000px;
+        margin:40px auto;
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:20px;
+    ">
+
+
+        <!-- WEIGHT -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ⚖️
+            </div>
+
+            <h3>
+                Weight
+            </h3>
+
+            <p
+                id="weight"
+                style="font-size:24px;">
+
+                -
+
+            </p>
+
+        </div>
+
+
+
+        <!-- GOAL -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🎯
+            </div>
+
+            <h3>
+                Goal
+            </h3>
+
+            <p
+                id="goal"
+                style="font-size:20px;">
+
+                -
+
+            </p>
+
+        </div>
+
+
+
+        <!-- LOCATION -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🏋️
+            </div>
+
+            <h3>
+                Workout Location
+            </h3>
+
+            <p
+                id="location"
+                style="font-size:20px;">
+
+                -
+
+            </p>
+
+        </div>
+
+
+
+        <!-- DAYS -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📅
+            </div>
+
+            <h3>
+                Workout Days
+            </h3>
+
+            <p
+                id="days"
+                style="font-size:24px;">
+
+                -
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         FOOD PREFERENCES
+    ========================================= -->
+
+    <div style="
+        max-width:1000px;
+        margin:40px auto;
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:20px;
+    ">
+
+
+        <!-- DIET -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🥗
+            </div>
+
+            <h3>
+                Diet
+            </h3>
+
+            <p
+                id="diet"
+                style="font-size:20px;">
+
+                -
+
+            </p>
+
+        </div>
+
+
+
+        <!-- PREFERRED FOODS -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ❤️
+            </div>
+
+            <h3>
+                Preferred Foods
+            </h3>
+
+            <p
+                id="preferredFoods"
+                style="font-size:16px;">
+
+                -
+
+            </p>
+
+        </div>
+
+
+
+        <!-- MEALS -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🍽️
+            </div>
+
+            <h3>
+                Meals Per Day
+            </h3>
+
+            <p
+                id="meals"
+                style="font-size:20px;">
+
+                -
+
+            </p>
+
+        </div>
+
+
+
+        <!-- BUDGET -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                💰
+            </div>
+
+            <h3>
+                Food Budget
+            </h3>
+
+            <p
+                id="budget"
+                style="font-size:20px;">
+
+                -
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         ACTION CARDS
+    ========================================= -->
+
+    <div style="
+        max-width:1000px;
+        margin:40px auto;
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        gap:20px;
+    ">
+
+
+        <!-- WORKOUT -->
+
+        <div class="feature-card">
+
+            <h3>
+                🏋️ Workout
+            </h3>
+
+            <p>
+                View your personalized workout.
+            </p>
+
+            <br>
+
+            <button
+                class="primary-btn"
+                onclick="goToWorkout()">
+
+                Start Workout →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- NUTRITION -->
+
+        <div class="feature-card">
+
+            <h3>
+                🥗 Nutrition
+            </h3>
+
+            <p>
+                View your personalized meal plan.
+            </p>
+
+            <br>
+
+            <button
+                class="primary-btn"
+                onclick="goToNutrition()">
+
+                View Nutrition →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- EDIT PROFILE -->
+
+        <div class="feature-card">
+
+            <h3>
+                ✏️ Edit Profile
+            </h3>
+
+            <p>
+                Change your fitness information.
+            </p>
+
+            <br>
+
+            <button
+                class="primary-btn"
+                onclick="editProfile()">
+
+                Edit Profile →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- EDIT FOOD -->
+
+        <div class="feature-card">
+
+            <h3>
+                🍽️ Edit Food
+            </h3>
+
+            <p>
+                Change food preferences and allergies.
+            </p>
+
+            <br>
+
+            <button
+                class="primary-btn"
+                onclick="editFood()">
+
+                Edit Food →
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         GYM CHATBOX
+    ========================================= -->
+
+    <div class="gym-chat-card">
+
+
+        <!-- CHAT HEADER -->
+
+        <div class="gym-chat-header">
+
+            <div class="gym-chat-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h2>
+                    GYM Chatbox 💪
+                </h2>
+
+                <p>
+                    Your AI fitness doubt assistant
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DESCRIPTION -->
+
+        <p class="chat-description">
+
+            Have a doubt about the gym?
+
+            Ask about workouts, exercises, sets,
+            reps, warm-up, rest, nutrition,
+            protein, cardio, equipment and
+            beginner fitness concepts.
+
+        </p>
+
+
+
+        <!-- CHAT -->
+
+        <div
+            class="chat-preview"
+            id="chatPreview">
+
+            <div class="chat-message chat-ai">
+
+                🤖 <strong>GYM AI:</strong>
+
+                <br><br>
+
+                Hi! I'm your GYM Chatbox. 👋
+
+                <br><br>
+
+                Ask me your gym doubt and I'll
+                explain it in simple language.
+
+            </div>
+
+        </div>
+
+
+
+        <!-- INPUT -->
+
+        <div class="chat-input-row">
+
+            <input
+                type="text"
+                id="gymQuestion"
+                class="chat-input"
+                placeholder="Ask your gym doubt..."
+                onkeydown="handleChatKey(event)"
+            >
+
+            <button
+                class="chat-send-btn"
+                onclick="askGymAI()">
+
+                Ask 🤖
+
+            </button>
+
+        </div>
+
+
+
+        <!-- QUICK QUESTIONS -->
+
+        <div class="chat-suggestions">
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('What are sets and reps?')">
+
+                Sets & Reps
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('What should I do before workout?')">
+
+                Before Workout
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('How much rest should I take?')">
+
+                Rest
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('What is protein?')">
+
+                Protein
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('What is warm up?')">
+
+                Warm-up
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('How can I build muscle?')">
+
+                Build Muscle
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('I am a beginner, how should I start gym?')">
+
+                Beginner
+
+            </button>
+
+
+            <button
+                class="chat-suggestion"
+                onclick="quickQuestion('What is cardio?')">
+
+                Cardio
+
+            </button>
+
+        </div>
+
+
+
+        <!-- FULL CHAT -->
+
+        <div style="
+            text-align:center;
+            margin-top:25px;
+        ">
+
+            <button
+                class="primary-btn"
+                onclick="openGymChat()">
+
+                Open Full GYM Chatbox →
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================================
+     JAVASCRIPT
+========================================= -->
+
+<script>
+
+
+/* =========================================
+   CHECK LOGIN
+========================================= */
+
+function checkLogin() {
+
+    const loggedIn =
+        localStorage.getItem("smartFitLoggedIn");
+
+    const currentEmail =
+        localStorage.getItem(
+            "smartFitCurrentUserEmail"
+        );
+
+    if (
+        loggedIn !== "true" ||
+        !currentEmail
+    ) {
+
+        window.location.replace("login.html");
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+
+/* =========================================
+   GET USERS
+========================================= */
+
+function getUsers() {
+
+    try {
+
+        const savedUsers =
+            localStorage.getItem("smartFitUsers");
+
+        if (!savedUsers) {
+
+            return [];
+
+        }
+
+        const users =
+            JSON.parse(savedUsers);
+
+        if (!Array.isArray(users)) {
+
+            return [];
+
+        }
+
+        return users;
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Error reading users:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+
+/* =========================================
+   GET CURRENT USER
+========================================= */
+
+function getCurrentUser() {
+
+    const currentEmail =
+        localStorage.getItem(
+            "smartFitCurrentUserEmail"
+        );
+
+    if (!currentEmail) {
+
+        return null;
+
+    }
+
+    const users =
+        getUsers();
+
+    return users.find(function(user) {
+
+        return String(user.email)
+            .toLowerCase()
+            ===
+            String(currentEmail)
+            .toLowerCase();
+
+    });
+
+}
+
+
+
+/* =========================================
+   GET PROFILE
+========================================= */
+
+function getCurrentProfile() {
+
+    const currentEmail =
+        localStorage.getItem(
+            "smartFitCurrentUserEmail"
+        );
+
+    if (!currentEmail) {
+
+        return null;
+
+    }
+
+    try {
+
+        const profiles =
+            JSON.parse(
+                localStorage.getItem(
+                    "smartFitProfiles"
+                ) || "{}"
+            );
+
+        return profiles[currentEmail] || null;
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Profile reading error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+
+/* =========================================
+   GET FOOD
+========================================= */
+
+function getCurrentFood() {
+
+    const currentEmail =
+        localStorage.getItem(
+            "smartFitCurrentUserEmail"
+        );
+
+    if (!currentEmail) {
+
+        return null;
+
+    }
+
+    try {
+
+        const allFood =
+            JSON.parse(
+                localStorage.getItem(
+                    "smartFitFoodPreferencesByUser"
+                ) || "{}"
+            );
+
+        if (
+            allFood &&
+            allFood[currentEmail]
+        ) {
+
+            return allFood[currentEmail];
+
+        }
+
+
+        const oldFood =
+            localStorage.getItem(
+                "smartFitFoodPreferences"
+            );
+
+        if (oldFood) {
+
+            return JSON.parse(oldFood);
+
+        }
+
+        return null;
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Food preference error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+
+/* =========================================
+   LOAD DASHBOARD
+========================================= */
+
+function loadDashboard() {
+
+    if (!checkLogin()) {
+
+        return;
+
+    }
+
+
+    const user =
+        getCurrentUser();
+
+
+    if (!user) {
+
+        alert(
+            "Your account could not be found. Please login again."
+        );
+
+        localStorage.removeItem(
+            "smartFitLoggedIn"
+        );
+
+        localStorage.removeItem(
+            "smartFitCurrentUserEmail"
+        );
+
+        window.location.replace(
+            "login.html"
+        );
+
+        return;
+
+    }
+
+
+
+    /* USER NAME */
+
+    document.getElementById(
+        "userName"
+    ).textContent =
+        user.name || "User";
+
+
+
+    /* PROFILE */
+
+    const profile =
+        getCurrentProfile();
+
+
+    if (profile) {
+
+        document.getElementById(
+            "weight"
+        ).textContent =
+            profile.weight
+                ? profile.weight + " kg"
+                : "-";
+
+
+        document.getElementById(
+            "goal"
+        ).textContent =
+            profile.goal
+                ? profile.goal
+                : "-";
+
+
+        document.getElementById(
+            "location"
+        ).textContent =
+            profile.location
+                ? profile.location
+                : "-";
+
+
+        document.getElementById(
+            "days"
+        ).textContent =
+            profile.days
+                ? profile.days + " days"
+                : "-";
+
+    }
+
+
+
+    /* FOOD */
+
+    const food =
+        getCurrentFood();
+
+
+    if (food) {
+
+        document.getElementById(
+            "diet"
+        ).textContent =
+            food.diet
+                ? food.diet
+                : "-";
+
+
+        document.getElementById(
+            "preferredFoods"
+        ).textContent =
+            food.preferredFoods
+                ? food.preferredFoods
+                : "-";
+
+
+        document.getElementById(
+            "meals"
+        ).textContent =
+            food.meals
+                ? food.meals + " meals"
+                : "-";
+
+
+        document.getElementById(
+            "budget"
+        ).textContent =
+            food.budget
+                ? food.budget
+                : "-";
+
+    }
+
+
+
+    /* MESSAGE */
+
+    const message =
+        document.getElementById(
+            "dashboardMessage"
+        );
+
+
+    if (
+        profile &&
+        food
+    ) {
+
+        message.textContent =
+            "Your personalized fitness profile and nutrition plan are ready.";
+
+    }
+
+    else if (profile) {
+
+        message.textContent =
+            "Your fitness profile is ready. Complete your food preferences to personalize nutrition.";
+
+    }
+
+    else {
+
+        message.textContent =
+            "Complete your fitness profile to get started.";
+
+    }
+
+}
+
+
+
+/* =========================================
+   GYM AI ANSWER ENGINE
+========================================= */
+
+function getGymAIAnswer(question) {
+
+    const q =
+        question
+        .toLowerCase()
+        .trim();
+
+
+
+    /* ================================
+       HELLO
+    ================================= */
+
+    if (
+        q.includes("hello") ||
+        q.includes("hi") ||
+        q.includes("hey")
+    ) {
+
+        return `
+            👋 Hi!
+
+            <br><br>
+
+            I'm your <strong>GYM AI Assistant</strong>.
+
+            <br><br>
+
+            You can ask me about workouts,
+            exercises, sets, reps, rest,
+            warm-up, nutrition, protein,
+            cardio and beginner gym doubts.
+        `;
+
+    }
+
+
+
+    /* ================================
+       SETS + REPS
+    ================================= */
+
+    if (
+        q.includes("set") ||
+        q.includes("rep")
+    ) {
+
+        return `
+            <strong>Sets and reps explained simply:</strong>
+
+            <br><br>
+
+            <strong>Rep</strong> means one complete
+            repetition of an exercise.
+
+            <br><br>
+
+            Example:
+            If you perform 10 squats,
+            that is <strong>10 reps</strong>.
+
+            <br><br>
+
+            A <strong>set</strong> is a group of reps.
+
+            <br><br>
+
+            Example:
+
+            <br>
+
+            <strong>3 sets × 10 reps</strong>
+
+            <br><br>
+
+            You perform 10 reps, rest, then repeat
+            until you complete 3 sets.
+        `;
+
+    }
+
+
+
+    /* ================================
+       WARM UP
+    ================================= */
+
+    if (
+        q.includes("warm") ||
+        q.includes("before workout") ||
+        q.includes("before gym")
+    ) {
+
+        return `
+            🔥 <strong>Warm-up</strong> prepares your
+            body for exercise.
+
+            <br><br>
+
+            A beginner can start with light walking,
+            cycling or another easy movement.
+
+            <br><br>
+
+            You can also do gentle dynamic movements.
+
+            <br><br>
+
+            Start your actual workout gradually
+            instead of immediately using heavy resistance.
+        `;
+
+    }
+
+
+
+    /* ================================
+       REST
+    ================================= */
+
+    if (
+        q.includes("rest") ||
+        q.includes("break")
+    ) {
+
+        return `
+            💤 Rest between sets allows your body
+            to recover.
+
+            <br><br>
+
+            For many beginner resistance exercises,
+            around <strong>1–3 minutes</strong> can be
+            a reasonable general starting point.
+
+            <br><br>
+
+            Heavier or more demanding exercises may
+            need longer recovery.
+
+            <br><br>
+
+            The correct amount depends on the exercise
+            and your effort.
+        `;
+
+    }
+
+
+
+    /* ================================
+       PROTEIN
+    ================================= */
+
+    if (
+        q.includes("protein")
+    ) {
+
+        return `
+            🥚 <strong>Protein</strong> is an important
+            nutrient used by your body for growth
+            and tissue repair.
+
+            <br><br>
+
+            Common food sources include:
+
+            <br>
+
+            • Eggs
+            <br>
+            • Milk
+            <br>
+            • Curd
+            <br>
+            • Paneer
+            <br>
+            • Dal
+            <br>
+            • Beans
+            <br>
+            • Soy foods
+            <br>
+            • Chicken
+            <br>
+            • Fish
+
+            <br><br>
+
+            You don't automatically need supplements.
+            A balanced diet can provide protein too.
+        `;
+
+    }
+
+
+
+    /* ================================
+       MUSCLE BUILDING
+    ================================= */
+
+    if (
+        q.includes("muscle") ||
+        q.includes("build muscle") ||
+        q.includes("gain muscle")
+    ) {
+
+        return `
+            💪 Building muscle takes consistency
+            and time.
+
+            <br><br>
+
+            Focus on:
+
+            <br>
+
+            • Resistance training
+            <br>
+            • Proper exercise technique
+            <br>
+            • Nutritious meals
+            <br>
+            • Enough protein from food
+            <br>
+            • Good sleep and recovery
+            <br>
+            • Gradual progression
+
+            <br><br>
+
+            Don't rush to use very heavy weights.
+            Good technique comes first.
+        `;
+
+    }
+
+
+
+    /* ================================
+       BEGINNER
+    ================================= */
+
+    if (
+        q.includes("beginner") ||
+        q.includes("start gym") ||
+        q.includes("new to gym") ||
+        q.includes("new gym")
+    ) {
+
+        return `
+            🏋️ If you're a beginner, keep things simple.
+
+            <br><br>
+
+            Start by learning the correct technique
+            for basic exercises.
+
+            <br><br>
+
+            Use a manageable resistance and focus
+            on controlled movement.
+
+            <br><br>
+
+            A good beginner approach is:
+
+            <br>
+
+            1️⃣ Warm up
+            <br>
+            2️⃣ Learn the exercise
+            <br>
+            3️⃣ Use manageable resistance
+            <br>
+            4️⃣ Complete your sets
+            <br>
+            5️⃣ Rest
+            <br>
+            6️⃣ Recover
+
+            <br><br>
+
+            Consistency is more important than
+            trying advanced exercises immediately.
+        `;
+
+    }
+
+
+
+    /* ================================
+       CARDIO
+    ================================= */
+
+    if (
+        q.includes("cardio") ||
+        q.includes("treadmill") ||
+        q.includes("running") ||
+        q.includes("walking")
+    ) {
+
+        return `
+            ❤️ <strong>Cardio</strong> means activities
+            that work your cardiovascular system.
+
+            <br><br>
+
+            Examples include:
+
+            <br>
+
+            • Walking
+            <br>
+            • Jogging
+            <br>
+            • Cycling
+            <br>
+            • Swimming
+            <br>
+            • Treadmill
+
+            <br><br>
+
+            If you're new to cardio, start at a
+            comfortable intensity and gradually
+            increase your activity.
+        `;
+
+    }
+
+
+
+    /* ================================
+       WORKOUT
+    ================================= */
+
+    if (
+        q.includes("workout") ||
+        q.includes("exercise")
+    ) {
+
+        return `
+            🏋️ A good beginner workout should focus
+            on learning basic movement patterns and
+            using manageable resistance.
+
+            <br><br>
+
+            Examples of common exercises include:
+
+            <br>
+
+            • Squats
+            <br>
+            • Push-ups
+            <br>
+            • Rows
+            <br>
+            • Lunges
+            <br>
+            • Chest press
+            <br>
+            • Lat pulldown
+
+            <br><br>
+
+            Start with proper technique and gradually
+            increase difficulty.
+        `;
+
+    }
+
+
+
+    /* ================================
+       GYM EQUIPMENT
+    ================================= */
+
+    if (
+        q.includes("equipment") ||
+        q.includes("machine") ||
+        q.includes("dumbbell") ||
+        q.includes("barbell")
+    ) {
+
+        return `
+            🏋️ Gym equipment is simply equipment
+            used to provide resistance or support
+            during exercise.
+
+            <br><br>
+
+            Common examples:
+
+            <br>
+
+            • Dumbbells
+            <br>
+            • Barbells
+            <br>
+            • Cable machines
+            <br>
+            • Chest press machine
+            <br>
+            • Lat pulldown machine
+            <br>
+            • Leg press
+
+            <br><br>
+
+            If you're unsure how to use a machine,
+            ask a qualified gym trainer to demonstrate
+            it safely.
+        `;
+
+    }
+
+
+
+    /* ================================
+       PAIN / INJURY
+    ================================= */
+
+    if (
+        q.includes("pain") ||
+        q.includes("injury") ||
+        q.includes("hurt")
+    ) {
+
+        return `
+            ⚠️ If an exercise causes sharp, severe
+            or unusual pain, stop the exercise.
+
+            <br><br>
+
+            Don't try to train through significant
+            pain.
+
+            <br><br>
+
+            If pain continues or is concerning,
+            tell a parent/guardian and speak with
+            a qualified healthcare professional.
+        `;
+
+    }
+
+
+
+    /* ================================
+       DIET
+    ================================= */
+
+    if (
+        q.includes("diet") ||
+        q.includes("food") ||
+        q.includes("eat")
+    ) {
+
+        return `
+            🥗 For fitness, focus on a balanced diet
+            rather than extreme restrictions.
+
+            <br><br>
+
+            Try to include:
+
+            <br>
+
+            • Vegetables and fruits
+            <br>
+            • Whole grains
+            <br>
+            • Protein-rich foods
+            <br>
+            • Dairy or suitable alternatives
+            <br>
+            • Healthy fats
+            <br>
+            • Enough water
+
+            <br><br>
+
+            Your food choices should support normal
+            growth, energy and recovery.
+        `;
+
+    }
+
+
+
+    /* ================================
+       WATER
+    ================================= */
+
+    if (
+        q.includes("water") ||
+        q.includes("hydration") ||
+        q.includes("drink")
+    ) {
+
+        return `
+            💧 Staying hydrated is important during
+            exercise.
+
+            <br><br>
+
+            Drink water regularly throughout the day
+            and have water available during workouts.
+
+            <br><br>
+
+            You don't need to force huge amounts
+            of water at once.
+        `;
+
+    }
+
+
+
+    /* ================================
+       SLEEP
+    ================================= */
+
+    if (
+        q.includes("sleep") ||
+        q.includes("recovery")
+    ) {
+
+        return `
+            😴 Recovery is an important part of fitness.
+
+            <br><br>
+
+            Your body needs enough sleep and rest
+            between challenging workouts.
+
+            <br><br>
+
+            Training every day without adequate
+            recovery isn't necessary for progress.
+        `;
+
+    }
+
+
+
+    /* ================================
+       DEFAULT
+    ================================= */
+
+    return `
+        🤖 I understand that you're asking about:
+
+        <br><br>
+
+        <strong>
+            "${escapeHTML(question)}"
+        </strong>
+
+        <br><br>
+
+        I can currently help with common gym topics
+        such as:
+
+        <br><br>
+
+        🏋️ Workouts
+        <br>
+        💪 Muscle building
+        <br>
+        🔢 Sets and reps
+        <br>
+        🔥 Warm-up
+        <br>
+        💤 Rest
+        <br>
+        🥚 Protein
+        <br>
+        🥗 Nutrition
+        <br>
+        ❤️ Cardio
+        <br>
+        🏋️ Gym equipment
+        <br>
+        😴 Recovery
+
+        <br><br>
+
+        For a truly open-ended AI that can answer
+        questions like ChatGPT, we need to connect
+        this chatbox to an AI API/backend.
+    `;
+
+}
+
+
+
+/* =========================================
+   ASK GYM AI
+========================================= */
+
+function askGymAI() {
+
+    const input =
+        document.getElementById(
+            "gymQuestion"
+        );
+
+    const question =
+        input.value.trim();
+
+
+    if (!question) {
+
+        return;
+
+    }
+
+
+    const chat =
+        document.getElementById(
+            "chatPreview"
+        );
+
+
+
+    /* USER MESSAGE */
+
+    const userMessage =
+        document.createElement("div");
+
+    userMessage.className =
+        "chat-message chat-user";
+
+    userMessage.innerHTML =
+        "<strong>You:</strong><br>" +
+        escapeHTML(question);
+
+    chat.appendChild(
+        userMessage
+    );
+
+
+
+    /* AI MESSAGE */
+
+    const aiMessage =
+        document.createElement("div");
+
+    aiMessage.className =
+        "chat-message chat-ai";
+
+    aiMessage.innerHTML =
+        "🤖 <strong>GYM AI:</strong><br><br>" +
+        getGymAIAnswer(question);
+
+    chat.appendChild(
+        aiMessage
+    );
+
+
+    /* CLEAR INPUT */
+
+    input.value = "";
+
+
+    /* SCROLL */
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+
+/* =========================================
+   QUICK QUESTION
+========================================= */
+
+function quickQuestion(question) {
+
+    const input =
+        document.getElementById(
+            "gymQuestion"
+        );
+
+    input.value =
+        question;
+
+    askGymAI();
+
+}
+
+
+
+/* =========================================
+   ENTER KEY
+========================================= */
+
+function handleChatKey(event) {
+
+    if (
+        event.key === "Enter"
+    ) {
+
+        event.preventDefault();
+
+        askGymAI();
+
+    }
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+
+/* =========================================
+   OPEN FULL CHAT
+========================================= */
+
+function openGymChat() {
+
+    window.location.href =
+        "gym-chatbox.html";
+
+}
+
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function goToWorkout() {
+
+    window.location.href =
+        "workout.html";
+
+}
+
+
+function goToNutrition() {
+
+    window.location.href =
+        "nutrition.html";
+
+}
+
+
+function editProfile() {
+
+    window.location.href =
+        "profile.html";
+
+}
+
+
+function editFood() {
+
+    window.location.href =
+        "food.html";
+
+}
+
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+function logout() {
+
+    localStorage.removeItem(
+        "smartFitLoggedIn"
+    );
+
+    localStorage.removeItem(
+        "smartFitCurrentUserEmail"
+    );
+
+    localStorage.removeItem(
+        "smartFitCurrentUser"
+    );
+
+    window.location.replace(
+        "login.html"
+    );
+
+}
+
+
+
+/* =========================================
+   START DASHBOARD
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadDashboard();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

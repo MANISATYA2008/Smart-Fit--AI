@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - SMART FIT AI</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        SMART<span>FIT</span> AI
+    </div>
+
+</header>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+
+        <p>WELCOME BACK</p>
+
+        <h1>
+            Login to <span>SMART FIT AI</span>
+        </h1>
+
+        <p>
+            Continue your personalized fitness journey.
+        </p>
+
+    </div>
+
+
+    <div style="
+        max-width:550px;
+        margin:40px auto;
+        background:#0e1e17;
+        padding:40px;
+        border-radius:18px;
+        border:1px solid #1d362b;
+    ">
+
+        <form id="loginForm">
+
+            <label for="loginEmail">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Enter your email"
+                required
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin:8px 0 25px;
+                    box-sizing:border-box;
+                "
+            >
+
+
+            <label for="loginPassword">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Enter your password"
+                required
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin:8px 0 25px;
+                    box-sizing:border-box;
+                "
+            >
+
+
+            <button
+                type="submit"
+                class="primary-btn"
+                style="width:100%;"
+            >
+                Login →
+            </button>
+
+        </form>
+
+
+        <p style="
+            text-align:center;
+            margin-top:25px;
+        ">
+
+            Don't have an account?
+
+            <a href="signup.html">
+                Create Account
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================================
+   LOGIN
+========================================= */
+
+document
+.getElementById("loginForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+
+    /* GET INPUT */
+
+    const email =
+        document
+        .getElementById("loginEmail")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const password =
+        document
+        .getElementById("loginPassword")
+        .value;
+
+
+    /* GET USERS */
+
+    let users = [];
+
+    try {
+
+        users =
+            JSON.parse(
+                localStorage.getItem("smartFitUsers")
+            ) || [];
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        users = [];
+
+    }
+
+
+    /* FIND USER */
+
+    const user =
+        users.find(function(account) {
+
+            return (
+                String(account.email)
+                .toLowerCase()
+                === email
+                &&
+                account.password
+                === password
+            );
+
+        });
+
+
+    /* INVALID LOGIN */
+
+    if (!user) {
+
+        alert(
+            "Invalid email or password."
+        );
+
+        return;
+
+    }
+
+
+    /* =========================================
+       LOGIN SUCCESS
+    ========================================= */
+
+    localStorage.setItem(
+        "smartFitLoggedIn",
+        "true"
+    );
+
+
+    /*
+       SAVE COMPLETE CURRENT USER
+    */
+
+    localStorage.setItem(
+        "smartFitCurrentUser",
+        JSON.stringify(user)
+    );
+
+
+    /*
+       SAVE EMAIL TOO
+       This is the unique key for
+       profile and food data.
+    */
+
+    localStorage.setItem(
+        "smartFitCurrentUserEmail",
+        user.email
+    );
+
+
+    console.log(
+        "CURRENT USER:",
+        user
+    );
+
+
+    /* =========================================
+       CHECK WHETHER PROFILE EXISTS
+    ========================================= */
+
+    let profiles = {};
+
+    try {
+
+        profiles =
+            JSON.parse(
+                localStorage.getItem(
+                    "smartFitProfiles"
+                )
+            ) || {};
+
+    }
+
+    catch(error) {
+
+        profiles = {};
+
+    }
+
+
+    const userProfile =
+        profiles[user.email];
+
+
+    /* =========================================
+       CHECK WHETHER FOOD EXISTS
+    ========================================= */
+
+    let foods = {};
+
+    try {
+
+        foods =
+            JSON.parse(
+                localStorage.getItem(
+                    "smartFitFoods"
+                )
+            ) || {};
+
+    }
+
+    catch(error) {
+
+        foods = {};
+
+    }
+
+
+    const userFood =
+        foods[user.email];
+
+
+    /* =========================================
+       SAVE OLD DATA INTO USER-SPECIFIC STORAGE
+       IF IT EXISTS
+    ========================================= */
+
+    /*
+       This allows old profile data to continue
+       working with the new system.
+    */
+
+    if (
+        !userProfile &&
+        localStorage.getItem("smartFitProfile")
+    ) {
+
+        try {
+
+            const oldProfile =
+                JSON.parse(
+                    localStorage.getItem(
+                        "smartFitProfile"
+                    )
+                );
+
+            profiles[user.email] =
+                oldProfile;
+
+            localStorage.setItem(
+                "smartFitProfiles",
+                JSON.stringify(profiles)
+            );
+
+        }
+
+        catch(error) {
+
+            console.log(
+                "Old profile not migrated."
+            );
+
+        }
+
+    }
+
+
+    if (
+        !userFood &&
+        localStorage.getItem(
+            "smartFitFoodPreferences"
+        )
+    ) {
+
+        try {
+
+            const oldFood =
+                JSON.parse(
+                    localStorage.getItem(
+                        "smartFitFoodPreferences"
+                    )
+                );
+
+            foods[user.email] =
+                oldFood;
+
+            localStorage.setItem(
+                "smartFitFoods",
+                JSON.stringify(foods)
+            );
+
+        }
+
+        catch(error) {
+
+            console.log(
+                "Old food data not migrated."
+            );
+
+        }
+
+    }
+
+
+    /* =========================================
+       SUCCESS
+    ========================================= */
+
+    alert(
+        "Login successful! ✅\n\n" +
+        "Welcome " +
+        user.name +
+        "!"
+    );
+
+
+    /* =========================================
+       GO TO DASHBOARD
+    ========================================= */
+
+    window.location.href =
+        "dashboard.html";
+
+});
+
+</script>
+
+
+</body>
+</html>
