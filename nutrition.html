@@ -2,12 +2,15 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Nutrition - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- FIXED PATH -->
+    <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -29,6 +32,7 @@
 
 
 <section class="features-section">
+
 
     <!-- ==============================
          HEADER
@@ -428,15 +432,23 @@ const loggedIn =
 const currentUser =
     localStorage.getItem("smartFitCurrentUser");
 
+const currentUserEmail =
+    localStorage.getItem("smartFitCurrentUserEmail");
+
 
 if (
     loggedIn !== "true" ||
-    !currentUser
+    (!currentUser && !currentUserEmail)
 ) {
 
-    window.location.href = "login.html";
+    window.location.replace("login.html");
 
 }
+
+
+const activeUser =
+    currentUserEmail ||
+    currentUser;
 
 
 /* =====================================================
@@ -458,8 +470,7 @@ function getSavedData(key) {
 
         return JSON.parse(data);
 
-    }
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Invalid saved data:",
@@ -474,7 +485,7 @@ function getSavedData(key) {
 
 
 /* =====================================================
-   GET CURRENT FOOD DATA
+   CURRENT FOOD DATA
 ===================================================== */
 
 function getCurrentFoodData() {
@@ -486,7 +497,7 @@ function getCurrentFoodData() {
 
 
     const userFood =
-        allFoods[currentUser];
+        allFoods[activeUser];
 
 
     if (userFood) {
@@ -495,7 +506,6 @@ function getCurrentFoodData() {
             "smartFitFoodPreferences",
             JSON.stringify(userFood)
         );
-
 
         return userFood;
 
@@ -548,8 +558,14 @@ function convertToArray(text) {
 
     return String(text)
         .split(",")
-        .map(item => normalize(item))
-        .filter(item => item !== "");
+        .map(
+            item =>
+                normalize(item)
+        )
+        .filter(
+            item =>
+                item !== ""
+        );
 
 }
 
@@ -669,7 +685,8 @@ function belongsToAllergyGroup(
     ) {
 
         return allergyGroups.nuts.some(
-            item => name.includes(item)
+            item =>
+                name.includes(item)
         );
 
     }
@@ -682,7 +699,8 @@ function belongsToAllergyGroup(
     ) {
 
         return allergyGroups.dairy.some(
-            item => name.includes(item)
+            item =>
+                name.includes(item)
         );
 
     }
@@ -693,7 +711,8 @@ function belongsToAllergyGroup(
     ) {
 
         return allergyGroups.egg.some(
-            item => name.includes(item)
+            item =>
+                name.includes(item)
         );
 
     }
@@ -705,7 +724,8 @@ function belongsToAllergyGroup(
     ) {
 
         return allergyGroups.soy.some(
-            item => name.includes(item)
+            item =>
+                name.includes(item)
         );
 
     }
@@ -717,7 +737,8 @@ function belongsToAllergyGroup(
     ) {
 
         return allergyGroups.gluten.some(
-            item => name.includes(item)
+            item =>
+                name.includes(item)
         );
 
     }
@@ -1071,7 +1092,7 @@ const supplementDatabase = {
 
 
 /* =====================================================
-   GET USER SUPPLEMENTS
+   USER SUPPLEMENTS
 ===================================================== */
 
 function getUserSupplements() {
@@ -1088,13 +1109,18 @@ function getUserSupplements() {
     if (Array.isArray(supplements)) {
 
         return supplements
-            .map(item => normalize(item))
+            .map(
+                item =>
+                    normalize(item)
+            )
             .filter(Boolean);
 
     }
 
 
-    if (typeof supplements === "string") {
+    if (
+        typeof supplements === "string"
+    ) {
 
         return convertToArray(
             supplements
@@ -1133,12 +1159,6 @@ function displaySupplements() {
         getUserSupplements();
 
 
-    console.log(
-        "Selected supplements:",
-        supplements
-    );
-
-
     if (!supplements.length) {
 
         list.innerHTML = `
@@ -1170,8 +1190,8 @@ function displaySupplements() {
 
             <br><br>
 
-            Your diet plan currently focuses on normal
-            food sources.
+            Your diet plan currently focuses on
+            normal food sources.
 
         `;
 
@@ -1286,7 +1306,9 @@ function getDietDatabase() {
     }
 
 
-    if (diet === "non-vegetarian") {
+    if (
+        diet === "non-vegetarian"
+    ) {
 
         return proteinDatabase[
             "non-vegetarian"
@@ -1328,7 +1350,9 @@ function filterByBudget(sources) {
 
 
     const selectedRank =
-        budgetRank(selectedBudget);
+        budgetRank(
+            selectedBudget
+        );
 
 
     return sources.filter(
@@ -1384,7 +1408,7 @@ function getPreferredFoods() {
 
 
 /* =====================================================
-   SORT
+   SORT BY PREFERENCE
 ===================================================== */
 
 function sortByPreference(
@@ -1552,17 +1576,6 @@ function displayProteinSources() {
             getSafeProteinSources()
         );
 
-
-    /*
-       ==========================================
-       PROTEIN POWDER
-       ==========================================
-
-       If selected, display it separately as
-       a supplement protein source.
-
-       We intentionally do not assign dosage.
-    */
 
     const supplements =
         getUserSupplements();
@@ -1984,9 +1997,7 @@ function createDailyMealPlan() {
         sources[0];
 
 
-    /* ==========================================
-       BREAKFAST
-    ========================================== */
+    /* BREAKFAST */
 
     const breakfast = [];
 
@@ -2026,9 +2037,7 @@ function createDailyMealPlan() {
     }
 
 
-    /* ==========================================
-       LUNCH
-    ========================================== */
+    /* LUNCH */
 
     const lunch = [];
 
@@ -2084,9 +2093,7 @@ function createDailyMealPlan() {
     }
 
 
-    /* ==========================================
-       DINNER
-    ========================================== */
+    /* DINNER */
 
     const dinner = [];
 
@@ -2142,47 +2149,28 @@ function createDailyMealPlan() {
     }
 
 
-    /* ==========================================
-       SELECTED SUPPLEMENTS
-    ========================================== */
-
     const supplementItems =
         getSupplementMealItems();
 
-
-    /*
-       Add selected supplements to
-       the final meal plan.
-
-       They are displayed as optional.
-    */
 
     function addSupplementsToMeal(
         meal
     ) {
 
-        if (
-            supplementItems.length
-        ) {
+        supplementItems.forEach(
+            supplement => {
 
-            supplementItems.forEach(
-                supplement => {
+                meal.push(
+                    supplement
+                );
 
-                    meal.push(
-                        supplement
-                    );
-
-                }
-            );
-
-        }
+            }
+        );
 
     }
 
 
-    /* ==========================================
-       3 MEALS
-    ========================================== */
+    /* 3 MEALS */
 
     if (meals === 3) {
 
@@ -2220,9 +2208,7 @@ function createDailyMealPlan() {
     }
 
 
-    /* ==========================================
-       4 MEALS
-    ========================================== */
+    /* 4 MEALS */
 
     if (meals === 4) {
 
@@ -2284,9 +2270,7 @@ function createDailyMealPlan() {
     }
 
 
-    /* ==========================================
-       5 MEALS
-    ========================================== */
+    /* 5+ MEALS */
 
     const eveningMeal = [
 
@@ -2410,29 +2394,11 @@ function loadNutrition() {
     }
 
 
-    console.log(
-        "SMART FIT AI food data:",
-        food
-    );
-
-
-    console.log(
-        "SMART FIT supplements:",
-        food.supplements
-    );
-
-
-    /* ==========================================
-       PROTEIN
-    ========================================== */
-
     proteinTarget =
         calculateProtein();
 
 
-    /* ==========================================
-       SUMMARY
-    ========================================== */
+    /* SUMMARY */
 
     document.getElementById(
         "weightDisplay"
@@ -2468,9 +2434,7 @@ function loadNutrition() {
         "Not specified";
 
 
-    /* ==========================================
-       FOOD PREFERENCES
-    ========================================== */
+    /* FOOD PREFERENCES */
 
     document.getElementById(
         "dietDisplay"
@@ -2504,9 +2468,7 @@ function loadNutrition() {
         "None specified";
 
 
-    /* ==========================================
-       HEADER
-    ========================================== */
+    /* HEADER */
 
     document.getElementById(
         "nutritionInfo"
@@ -2520,9 +2482,7 @@ function loadNutrition() {
         " g protein target";
 
 
-    /* ==========================================
-       PROTEIN EXPLANATION
-    ========================================== */
+    /* PROTEIN EXPLANATION */
 
     document.getElementById(
         "proteinExplanation"
@@ -2537,9 +2497,7 @@ function loadNutrition() {
         " g.";
 
 
-    /* ==========================================
-       MEAL DESCRIPTION
-    ========================================== */
+    /* MEAL DESCRIPTION */
 
     document.getElementById(
         "mealPlanDescription"
@@ -2548,9 +2506,7 @@ function loadNutrition() {
         "Your diet plan is generated using your diet type, preferred foods, allergies, foods to avoid, budget and selected number of meals. Selected supplements are shown separately as optional items and are not automatically counted toward your protein target.";
 
 
-    /* ==========================================
-       PROTEIN SOURCES DESCRIPTION
-    ========================================== */
+    /* PROTEIN SOURCES DESCRIPTION */
 
     document.getElementById(
         "proteinSourcesDescription"
@@ -2559,9 +2515,7 @@ function loadNutrition() {
         "Normal food protein sources are filtered according to your diet, budget, allergies and foods to avoid. If Protein Powder is selected in your preferences, it is also shown as a supplement protein source. Check the product label for its actual protein content.";
 
 
-    /* ==========================================
-       DISPLAY
-    ========================================== */
+    /* DISPLAY */
 
     displaySupplements();
 
@@ -2601,8 +2555,6 @@ function goToDashboard() {
 
 </script>
 
-
-<script src="js/script.js"></script>
-
 </body>
+
 </html>
