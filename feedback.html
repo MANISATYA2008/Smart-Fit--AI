@@ -10,165 +10,134 @@
 
     <title>Workout Feedback - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 
     <style>
 
         .feedback-container {
-
             max-width: 750px;
-
             margin: 50px auto;
-
             padding: 20px;
-
         }
 
 
         .feedback-card {
-
             background: #0e1e17;
-
             border: 1px solid #1d362b;
-
             border-radius: 20px;
-
             padding: 35px;
-
             text-align: center;
-
         }
 
 
         .feedback-options {
-
             display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
+            grid-template-columns: repeat(3, 1fr);
             gap: 18px;
-
             margin-top: 30px;
-
         }
 
 
         .feedback-option {
-
             background: #12251c;
-
             border: 2px solid #1d362b;
-
             border-radius: 15px;
-
             padding: 25px 15px;
-
             cursor: pointer;
-
             transition: 0.3s;
-
         }
 
 
         .feedback-option:hover {
-
             transform: translateY(-5px);
-
             border-color: #4ade80;
-
         }
 
 
         .feedback-option.selected {
-
             border-color: #4ade80;
-
             background: #183b29;
-
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.12);
         }
 
 
         .feedback-emoji {
-
             font-size: 42px;
-
             margin-bottom: 10px;
-
         }
 
 
         .feedback-option h3 {
-
             margin: 8px 0;
-
         }
 
 
         .feedback-option p {
-
             color: #9baea5;
-
             font-size: 14px;
-
+            line-height: 1.5;
         }
 
 
         .adaptive-message {
-
             margin-top: 30px;
-
             padding: 20px;
-
             background: #12251c;
-
             border-radius: 15px;
-
             border: 1px solid #1d362b;
-
             display: none;
+            text-align: left;
+            color: #d5e0da;
+        }
 
+
+        .adaptive-message p {
+            color: #9baea5;
+            line-height: 1.6;
         }
 
 
         .submit-btn {
-
             width: 100%;
-
             margin-top: 30px;
-
             padding: 15px;
-
             border: none;
-
             border-radius: 10px;
-
             background: #4ade80;
-
             color: #06120d;
-
             font-size: 16px;
-
             font-weight: bold;
-
             cursor: pointer;
-
+            transition: 0.2s;
         }
 
 
         .submit-btn:hover {
-
             background: #22c55e;
-
+            transform: translateY(-1px);
         }
 
 
-        @media(max-width:600px) {
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+        @media(max-width: 700px) {
+
+            .feedback-container {
+                margin: 25px auto;
+                padding: 10px;
+            }
+
+            .feedback-card {
+                padding: 25px 18px;
+            }
 
             .feedback-options {
-
                 grid-template-columns: 1fr;
-
             }
 
         }
@@ -186,6 +155,7 @@
     <div class="logo">
         SMART<span>FIT</span> AI
     </div>
+
 
     <nav>
 
@@ -210,6 +180,7 @@
 </header>
 
 
+
 <section class="features-section">
 
 
@@ -230,6 +201,7 @@
     </div>
 
 
+
     <div class="feedback-container">
 
 
@@ -247,6 +219,7 @@
                 how today's workout felt.
 
             </p>
+
 
 
             <div class="feedback-options">
@@ -275,6 +248,7 @@
                 </div>
 
 
+
                 <!-- MODERATE -->
 
                 <div
@@ -283,7 +257,7 @@
                     onclick="selectFeedback('moderate')">
 
                     <div class="feedback-emoji">
-                        🙂 
+                        🙂
                     </div>
 
                     <h3>
@@ -296,6 +270,7 @@
                     </p>
 
                 </div>
+
 
 
                 <!-- HARD -->
@@ -324,14 +299,20 @@
             </div>
 
 
+
+            <!-- ADAPTIVE MESSAGE -->
+
             <div
                 id="adaptiveMessage"
                 class="adaptive-message">
-
             </div>
 
 
+
+            <!-- SAVE -->
+
             <button
+                id="saveButton"
                 class="submit-btn"
                 onclick="saveFeedback()">
 
@@ -342,14 +323,129 @@
 
         </div>
 
-
     </div>
 
 
 </section>
 
 
+
 <script>
+
+"use strict";
+
+
+/* ==========================================
+   CURRENT USER
+========================================== */
+
+function getCurrentUser() {
+
+    return (
+        localStorage.getItem("smartFitCurrentUserEmail") ||
+        localStorage.getItem("smartFitCurrentUser") ||
+        ""
+    );
+
+}
+
+
+/* ==========================================
+   SAFE JSON READER
+========================================== */
+
+function getData(key, fallback = null) {
+
+    const raw =
+        localStorage.getItem(key);
+
+
+    if (!raw) {
+        return fallback;
+    }
+
+
+    try {
+
+        return JSON.parse(raw);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid localStorage data:",
+            key,
+            error
+        );
+
+        return fallback;
+
+    }
+
+}
+
+
+/* ==========================================
+   GET CURRENT PROFILE
+========================================== */
+
+function getCurrentProfile() {
+
+    const currentUser =
+        getCurrentUser();
+
+
+    if (!currentUser) {
+        return null;
+    }
+
+
+    const profiles =
+        getData("smartFitProfiles");
+
+
+    if (
+        profiles &&
+        typeof profiles === "object" &&
+        profiles[currentUser]
+    ) {
+
+        return profiles[currentUser];
+
+    }
+
+
+    return getData("smartFitProfile");
+
+}
+
+
+/* ==========================================
+   LOGIN CHECK
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const loggedIn =
+            localStorage.getItem(
+                "smartFitLoggedIn"
+            );
+
+
+        if (loggedIn !== "true") {
+
+            alert("Please login first.");
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+    }
+);
 
 
 /* ==========================================
@@ -365,9 +461,11 @@ let selectedFeedback = null;
 
 function selectFeedback(level) {
 
+    selectedFeedback =
+        level;
 
-    selectedFeedback = level;
 
+    /* Remove previous selection */
 
     document
         .getElementById("easyOption")
@@ -384,10 +482,24 @@ function selectFeedback(level) {
         .classList.remove("selected");
 
 
-    document
-        .getElementById(level + "Option")
-        .classList.add("selected");
+    /* Add current selection */
 
+    const selectedOption =
+        document.getElementById(
+            level + "Option"
+        );
+
+
+    if (selectedOption) {
+
+        selectedOption.classList.add(
+            "selected"
+        );
+
+    }
+
+
+    /* Adaptive message */
 
     const message =
         document.getElementById(
@@ -395,19 +507,24 @@ function selectFeedback(level) {
         );
 
 
-    message.style.display = "block";
+    message.style.display =
+        "block";
 
 
     if (level === "easy") {
 
         message.innerHTML = `
-            <strong>💡 SMART FIT AI</strong>
+
+            <strong>
+                💡 SMART FIT AI
+            </strong>
 
             <p style="margin-top:10px;">
                 Your workout felt easy.
                 Your next workout may gradually
                 increase the challenge.
             </p>
+
         `;
 
     }
@@ -416,13 +533,17 @@ function selectFeedback(level) {
     else if (level === "moderate") {
 
         message.innerHTML = `
-            <strong>👍 Good Balance</strong>
+
+            <strong>
+                👍 Good Balance
+            </strong>
 
             <p style="margin-top:10px;">
                 Your workout was at a comfortable
                 challenge level. SMART FIT AI will
                 maintain a similar difficulty.
             </p>
+
         `;
 
     }
@@ -431,7 +552,10 @@ function selectFeedback(level) {
     else if (level === "hard") {
 
         message.innerHTML = `
-            <strong>🛡️ Recovery First</strong>
+
+            <strong>
+                🛡️ Recovery First
+            </strong>
 
             <p style="margin-top:10px;">
                 Your workout was difficult.
@@ -439,6 +563,7 @@ function selectFeedback(level) {
                 workload slightly for future
                 workouts if needed.
             </p>
+
         `;
 
     }
@@ -452,6 +577,27 @@ function selectFeedback(level) {
 
 function saveFeedback() {
 
+    /* Check login */
+
+    const currentUser =
+        getCurrentUser();
+
+
+    if (!currentUser) {
+
+        alert(
+            "Please login before saving feedback."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    /* Check selection */
 
     if (!selectedFeedback) {
 
@@ -464,27 +610,29 @@ function saveFeedback() {
     }
 
 
+    /* Today's date */
+
     const today =
-        new Date()
-        .toISOString()
-        .split("T")[0];
+        getLocalDate();
 
 
-    /*
-       GET EXISTING FEEDBACK
-    */
+    /* Existing feedback */
 
     let feedbackHistory =
-        JSON.parse(
-            localStorage.getItem(
-                "smartFitWorkoutFeedback"
-            )
-        ) || [];
+        getData(
+            "smartFitWorkoutFeedback",
+            []
+        );
 
 
-    /*
-       GET SELECTED SPLIT
-    */
+    if (!Array.isArray(feedbackHistory)) {
+
+        feedbackHistory = [];
+
+    }
+
+
+    /* Selected split */
 
     const split =
         localStorage.getItem(
@@ -492,31 +640,30 @@ function saveFeedback() {
         ) || "default";
 
 
-    /*
-       GET PROFILE
-    */
+    /* Profile */
 
     const profile =
-        JSON.parse(
-            localStorage.getItem(
-                "smartFitProfile"
-            )
-        ) || {};
+        getCurrentProfile() || {};
 
 
-    /*
-       CREATE FEEDBACK RECORD
-    */
+    /* Feedback record */
 
     const feedback = {
 
-        date: today,
+        user:
+            currentUser,
 
-        difficulty: selectedFeedback,
+        date:
+            today,
 
-        split: split,
+        difficulty:
+            selectedFeedback,
 
-        goal: profile.goal || "",
+        split:
+            split,
+
+        goal:
+            profile.goal || "",
 
         experience:
             profile.experience || ""
@@ -525,31 +672,100 @@ function saveFeedback() {
 
 
     /*
-       SAVE FEEDBACK
+       Remove an existing feedback
+       record for this user/date.
     */
 
-    feedbackHistory.push(feedback);
+    feedbackHistory =
+        feedbackHistory.filter(
+            item =>
+                !(
+                    item.user === currentUser &&
+                    item.date === today
+                )
+        );
 
+
+    feedbackHistory.push(
+        feedback
+    );
+
+
+    /* Save global history */
 
     localStorage.setItem(
-
         "smartFitWorkoutFeedback",
-
         JSON.stringify(
             feedbackHistory
         )
-
     );
 
 
-    /*
+    /* ======================================
+       SAVE PER-USER FEEDBACK
+    ====================================== */
+
+    let userFeedback =
+        getData(
+            "smartFitWorkoutFeedbackByUser",
+            {}
+        );
+
+
+    if (
+        !userFeedback ||
+        typeof userFeedback !== "object"
+    ) {
+
+        userFeedback = {};
+
+    }
+
+
+    if (
+        !Array.isArray(
+            userFeedback[currentUser]
+        )
+    ) {
+
+        userFeedback[currentUser] = [];
+
+    }
+
+
+    userFeedback[currentUser] =
+        userFeedback[currentUser].filter(
+            item =>
+                item.date !== today
+        );
+
+
+    userFeedback[currentUser].push(
+        feedback
+    );
+
+
+    localStorage.setItem(
+        "smartFitWorkoutFeedbackByUser",
+        JSON.stringify(
+            userFeedback
+        )
+    );
+
+
+    /* ======================================
        UPDATE ADAPTIVE DATA
-    */
+    ====================================== */
 
     updateAdaptiveData(
-        selectedFeedback
+        selectedFeedback,
+        currentUser
     );
 
+
+    /* ======================================
+       SUCCESS
+    ====================================== */
 
     alert(
         "✅ Feedback saved! SMART FIT AI will use it to adapt your future workouts."
@@ -563,18 +779,73 @@ function saveFeedback() {
 
 
 /* ==========================================
+   LOCAL DATE
+   Avoid UTC date shifting
+========================================== */
+
+function getLocalDate() {
+
+    const now =
+        new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0");
+
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2, "0");
+
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+
+}
+
+
+/* ==========================================
    ADAPTIVE ENGINE
 ========================================== */
 
-function updateAdaptiveData(level) {
+function updateAdaptiveData(
+    level,
+    currentUser
+) {
 
+
+    /* Existing global data */
 
     let adaptive =
-        JSON.parse(
-            localStorage.getItem(
-                "smartFitAdaptiveData"
-            )
-        ) || {
+        getData(
+            "smartFitAdaptiveData",
+            {
+                easyCount: 0,
+                moderateCount: 0,
+                hardCount: 0,
+                difficultyAdjustment: 0
+            }
+        );
+
+
+    if (
+        !adaptive ||
+        typeof adaptive !== "object"
+    ) {
+
+        adaptive = {
 
             easyCount: 0,
 
@@ -586,10 +857,32 @@ function updateAdaptiveData(level) {
 
         };
 
+    }
 
-    /*
+
+    /* Make sure values are numbers */
+
+    adaptive.easyCount =
+        Number(adaptive.easyCount) || 0;
+
+
+    adaptive.moderateCount =
+        Number(adaptive.moderateCount) || 0;
+
+
+    adaptive.hardCount =
+        Number(adaptive.hardCount) || 0;
+
+
+    adaptive.difficultyAdjustment =
+        Number(
+            adaptive.difficultyAdjustment
+        ) || 0;
+
+
+    /* ======================================
        COUNT FEEDBACK
-    */
+    ====================================== */
 
     if (level === "easy") {
 
@@ -612,15 +905,10 @@ function updateAdaptiveData(level) {
     }
 
 
-    /*
-       ADAPTIVE RULES
-    */
-
-
-    /*
-       Repeated EASY workouts
-       → increase difficulty
-    */
+    /* ======================================
+       REPEATED EASY
+       Increase difficulty
+    ====================================== */
 
     if (
         adaptive.easyCount >= 2
@@ -633,10 +921,10 @@ function updateAdaptiveData(level) {
     }
 
 
-    /*
-       Repeated HARD workouts
-       → decrease difficulty
-    */
+    /* ======================================
+       REPEATED HARD
+       Decrease difficulty
+    ====================================== */
 
     if (
         adaptive.hardCount >= 2
@@ -649,29 +937,68 @@ function updateAdaptiveData(level) {
     }
 
 
-    /*
-       MODERATE
-       → maintain
-    */
+    /* ======================================
+       LIMIT ADJUSTMENT
+    ====================================== */
 
+    adaptive.difficultyAdjustment =
+        Math.max(
+            -3,
+            Math.min(
+                3,
+                adaptive.difficultyAdjustment
+            )
+        );
+
+
+    /* ======================================
+       SAVE GLOBAL
+    ====================================== */
 
     localStorage.setItem(
-
         "smartFitAdaptiveData",
-
         JSON.stringify(
             adaptive
         )
+    );
 
+
+    /* ======================================
+       SAVE PER USER
+    ====================================== */
+
+    let adaptiveByUser =
+        getData(
+            "smartFitAdaptiveDataByUser",
+            {}
+        );
+
+
+    if (
+        !adaptiveByUser ||
+        typeof adaptiveByUser !== "object"
+    ) {
+
+        adaptiveByUser = {};
+
+    }
+
+
+    adaptiveByUser[currentUser] =
+        adaptive;
+
+
+    localStorage.setItem(
+        "smartFitAdaptiveDataByUser",
+        JSON.stringify(
+            adaptiveByUser
+        )
     );
 
 }
 
-
 </script>
 
-
-<script src="js/script.js"></script>
 
 </body>
 
