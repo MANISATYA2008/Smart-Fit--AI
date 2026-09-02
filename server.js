@@ -62,6 +62,7 @@ if (isVercel) {
 /*
   Extra safety for Vercel.
 */
+
 const databaseParent =
   path.dirname(databasePath);
 
@@ -191,6 +192,7 @@ const exerciseSeed = [
     "Stand with feet comfortable, sit back under control, then stand tall.",
     "Knees collapsing inward; rushing the movement."
   ],
+
   [
     "Push-Up",
     "Chest",
@@ -199,6 +201,7 @@ const exerciseSeed = [
     "Keep a straight body line, lower under control, and press back up.",
     "Sagging hips; flaring elbows excessively."
   ],
+
   [
     "Dumbbell Goblet Squat",
     "Legs",
@@ -207,6 +210,7 @@ const exerciseSeed = [
     "Hold one dumbbell near the chest and squat under control.",
     "Rounding the back; losing foot contact."
   ],
+
   [
     "Dumbbell Row",
     "Back",
@@ -215,6 +219,7 @@ const exerciseSeed = [
     "Brace your torso and pull the dumbbell toward your hip.",
     "Twisting the torso; jerking the weight."
   ],
+
   [
     "Dumbbell Shoulder Press",
     "Shoulders",
@@ -223,6 +228,7 @@ const exerciseSeed = [
     "Press dumbbells overhead while keeping your trunk stable.",
     "Overarching the lower back; uncontrolled lowering."
   ],
+
   [
     "Dumbbell Biceps Curl",
     "Arms",
@@ -231,6 +237,7 @@ const exerciseSeed = [
     "Curl the weights while keeping upper arms mostly still.",
     "Swinging the body; dropping the weight quickly."
   ],
+
   [
     "Dumbbell Triceps Extension",
     "Arms",
@@ -239,6 +246,7 @@ const exerciseSeed = [
     "Use a controlled elbow extension with the upper arms stable.",
     "Excessive elbow flare; rushing."
   ],
+
   [
     "Calf Raise",
     "Calves",
@@ -247,6 +255,7 @@ const exerciseSeed = [
     "Rise onto the balls of the feet and lower slowly.",
     "Bouncing; using momentum."
   ],
+
   [
     "Glute Bridge",
     "Glutes",
@@ -255,6 +264,7 @@ const exerciseSeed = [
     "Lie on your back, drive through your feet, and lift your hips comfortably.",
     "Overarching the back; moving too fast."
   ],
+
   [
     "Plank",
     "Core",
@@ -310,11 +320,6 @@ app.use(
    FRONTEND
 --------------------------------- */
 
-/*
-  If a frontend folder exists, use it.
-
-  Otherwise use the same folder as server.js.
-*/
 const frontendFolder =
   path.join(__dirname, "../frontend");
 
@@ -334,9 +339,8 @@ app.use(
 
 /*
   Root route.
-  This fixes:
-    Cannot GET /
 */
+
 app.get("/", (req, res) => {
   const indexPath =
     path.join(
@@ -384,6 +388,53 @@ function auth(req, res, next) {
       error: "Please log in."
     });
   }
+}
+
+/* --------------------------------
+   OPTIONAL AUTH
+--------------------------------- */
+
+/*
+  AI Coach can work with your existing
+  localStorage frontend.
+
+  If a valid JWT is available, we use it
+  to get the database profile.
+
+  If there is no JWT, we simply continue
+  using the profile sent by the frontend.
+*/
+
+function optionalAuth(req, res, next) {
+  const authHeader =
+    req.headers.authorization || "";
+
+  const token =
+    authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : "";
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    req.user = jwt.verify(
+      token,
+      JWT_SECRET
+    );
+  } catch (error) {
+    /*
+      Invalid optional token should not
+      prevent AI Coach from working.
+    */
+
+    console.log(
+      "Optional AI Coach token was invalid."
+    );
+  }
+
+  next();
 }
 
 /* --------------------------------
@@ -542,7 +593,9 @@ function buildRulePlan(profile) {
     ).toLowerCase();
 
   const noEquipment =
-    equipment.includes("no equipment");
+    equipment.includes(
+      "no equipment"
+    );
 
   const homeWithoutEquipment =
     String(profile.location || "")
@@ -572,9 +625,12 @@ function buildRulePlan(profile) {
       }
 
       if (
-        !equipment.includes("dumbbell") &&
-        String(profile.location || "")
-          .toLowerCase() !== "gym"
+        !equipment.includes(
+          "dumbbell"
+        ) &&
+        String(
+          profile.location || ""
+        ).toLowerCase() !== "gym"
       ) {
         exercises =
           exercises.filter(
@@ -652,10 +708,11 @@ async function geminiPlan(profile) {
     return null;
   }
 
-  const ai = new GoogleGenAI({
-    apiKey:
-      process.env.GEMINI_API_KEY
-  });
+  const ai =
+    new GoogleGenAI({
+      apiKey:
+        process.env.GEMINI_API_KEY
+    });
 
   const prompt = `
 You are a cautious fitness planning assistant.
@@ -692,7 +749,9 @@ Required JSON structure:
 }
 
 User profile:
-${JSON.stringify(profile)}
+${JSON.stringify(
+  profile
+)}
 `;
 
   const response =
@@ -730,14 +789,23 @@ app.get(
   (req, res) => {
     res.json({
       status: "ok",
+
       message:
         "SMART FIT AI server is running.",
+
       environment:
         isVercel
           ? "vercel"
           : "local",
+
       database:
         databasePath,
+
+      gemini:
+        Boolean(
+          process.env.GEMINI_API_KEY
+        ),
+
       time:
         new Date().toISOString()
     });
@@ -1164,14 +1232,22 @@ app.post(
 
       if (!aiPlan) {
         return res.json({
-          source: "rule-based",
-          plan: buildRulePlan(profile)
+          source:
+            "rule-based",
+
+          plan:
+            buildRulePlan(
+              profile
+            )
         });
       }
 
       return res.json({
-        source: "gemini",
-        plan: aiPlan
+        source:
+          "gemini",
+
+        plan:
+          aiPlan
       });
     } catch (error) {
       console.error(
@@ -1182,6 +1258,453 @@ app.post(
       return res.status(500).json({
         error:
           "Could not generate AI plan."
+      });
+    }
+  }
+);
+
+/* --------------------------------
+   AI COACH CHAT API
+--------------------------------- */
+
+/*
+  IMPORTANT:
+
+  This endpoint intentionally uses
+  optionalAuth instead of auth.
+
+  Why?
+
+  Your current gym-chatbox frontend
+  uses localStorage login information.
+
+  It does not necessarily send:
+
+      Authorization: Bearer <JWT>
+
+  Therefore using auth here could
+  incorrectly return HTTP 401.
+
+  The endpoint can still personalize
+  from the profile sent by the frontend.
+
+  If a valid JWT is supplied, the
+  database profile is preferred.
+*/
+
+app.post(
+  "/api/ai-coach",
+  optionalAuth,
+  async (req, res) => {
+    try {
+      const {
+        message,
+        profile,
+        history
+      } = req.body || {};
+
+      /* ------------------------------
+         Validate message
+      ------------------------------- */
+
+      if (
+        !message ||
+        !String(message).trim()
+      ) {
+        return res.status(400).json({
+          error:
+            "Please enter a question."
+        });
+      }
+
+      /* ------------------------------
+         Check Gemini API key
+      ------------------------------- */
+
+      if (
+        !process.env.GEMINI_API_KEY
+      ) {
+        console.error(
+          "GEMINI_API_KEY is missing."
+        );
+
+        return res.status(500).json({
+          error:
+            "AI Coach is not configured on the server. Add GEMINI_API_KEY in Render Environment Variables."
+        });
+      }
+
+      /* ------------------------------
+         Gemini client
+      ------------------------------- */
+
+      const ai =
+        new GoogleGenAI({
+          apiKey:
+            process.env.GEMINI_API_KEY
+        });
+
+      /* ------------------------------
+         Profile
+      ------------------------------- */
+
+      let databaseProfile =
+        null;
+
+      if (
+        req.user &&
+        req.user.id
+      ) {
+        try {
+          databaseProfile =
+            getUserProfile(
+              req.user.id
+            );
+        } catch (profileError) {
+          console.error(
+            "AI PROFILE ERROR:",
+            profileError
+          );
+        }
+      }
+
+      const safeProfile =
+        databaseProfile ||
+        profile ||
+        {};
+
+      /* ------------------------------
+         Conversation history
+      ------------------------------- */
+
+      const conversation =
+        Array.isArray(history)
+          ? history
+              .slice(-12)
+              .map(item => {
+                const role =
+                  item.role ===
+                  "assistant"
+                    ? "model"
+                    : "user";
+
+                const content =
+                  String(
+                    item.content || ""
+                  ).trim();
+
+                return {
+                  role,
+
+                  parts: [
+                    {
+                      text:
+                        content
+                    }
+                  ]
+                };
+              })
+              .filter(
+                item =>
+                  item.parts[0]
+                    .text
+                    .length > 0
+              )
+          : [];
+
+      /* ------------------------------
+         System instructions
+      ------------------------------- */
+
+      const systemPrompt = `
+You are SMART FIT AI Coach.
+
+You are an intelligent, friendly and practical fitness assistant.
+
+You should understand natural language and answer ANY reasonable fitness or gym question.
+
+You are NOT limited to predefined questions.
+
+You can help with:
+
+• Gym workouts
+• Strength training
+• Muscle building
+• Hypertrophy
+• Fat loss
+• Weight management
+• Exercise selection
+• Exercise technique
+• Sets
+• Reps
+• Rest periods
+• Progressive overload
+• RPE
+• RIR
+• Push Pull Legs
+• Upper Lower
+• Full Body
+• Beginner workouts
+• Intermediate workouts
+• Advanced workouts
+• Home workouts
+• Gym workouts
+• Dumbbells
+• Barbells
+• Machines
+• Bodyweight training
+• Exercise substitutions
+• Cardio
+• Running
+• Walking
+• Mobility
+• Stretching
+• Warm-ups
+• Cool-downs
+• Recovery
+• Muscle soreness
+• Sleep
+• Protein
+• Calories
+• Macronutrients
+• Pre-workout nutrition
+• Post-workout nutrition
+• General fitness nutrition
+• Creatine
+• Protein powder
+• Common supplements
+• Workout scheduling
+• Workout planning
+• Fitness motivation
+• Gym terminology
+• Training progression
+• Rest days
+• Workout duration
+
+USER PROFILE:
+
+${JSON.stringify(
+  safeProfile,
+  null,
+  2
+)}
+
+PERSONALIZATION:
+
+Use the user's profile when it is relevant.
+
+If the user is a beginner:
+- explain concepts simply
+- prioritize safe basic movements
+- avoid unnecessarily complicated programming
+
+If the goal is muscle gain:
+- emphasize resistance training
+- hypertrophy
+- progressive overload
+- sufficient protein
+- recovery
+- consistent training
+
+If the goal is fat loss:
+- recommend sustainable calorie control
+- resistance training
+- adequate protein
+- reasonable activity
+- recovery
+
+If the user trains at home:
+- prioritize available equipment
+- provide bodyweight alternatives when useful
+
+If equipment is specified:
+- use that equipment
+
+If the user has a specific number of training days:
+- adapt recommendations to that schedule
+
+If the user has a specific workout duration:
+- make the recommendation fit that duration
+
+If the user asks for a workout:
+provide a structured workout with:
+- exercise name
+- sets
+- reps
+- rest
+- useful form cues when appropriate
+
+If the user asks how to perform an exercise:
+explain:
+- setup
+- movement
+- breathing
+- useful form cues
+- common mistakes
+
+If the user asks to compare exercises:
+clearly explain:
+- primary muscles
+- difficulty
+- equipment
+- when each option is useful
+
+RESPONSE STYLE:
+
+- Be friendly.
+- Be natural.
+- Answer the actual question directly.
+- Do not sound robotic.
+- Do not unnecessarily repeat the question.
+- Use headings and bullet points when helpful.
+- Give practical examples.
+- Keep simple questions concise.
+- Give more detail for complicated questions.
+- Do not overwhelm the user with unnecessary information.
+- If the user asks a follow-up, use previous conversation context.
+- If the user changes the subject to another fitness topic, answer it normally.
+
+SAFETY:
+
+You are a fitness assistant, not a doctor.
+
+Do not diagnose medical conditions.
+
+Do not prescribe medical treatment.
+
+If the user reports:
+- severe pain
+- chest pain
+- difficulty breathing
+- fainting
+- serious injury
+- sudden weakness
+- neurological symptoms
+- or another potentially urgent medical problem
+
+recommend stopping exercise and seeking appropriate medical care.
+
+Do not recommend:
+- dangerous dieting
+- extreme calorie restriction
+- dehydration
+- steroid misuse
+- unsafe supplement practices
+- intentionally harmful training
+
+For normal post-workout muscle soreness:
+- provide general recovery advice
+- do not diagnose an injury
+
+For questions depending heavily on medical history:
+- explain that individual medical guidance may be needed
+- do not claim certainty
+
+IMPORTANT:
+
+The user may ask something that was not included in this instruction.
+
+Do NOT respond with:
+"I only understand predefined questions."
+
+Instead, understand the user's intent and provide the most useful safe fitness answer possible.
+`;
+
+      /* ------------------------------
+         Current user message
+      ------------------------------- */
+
+      const currentMessage = {
+        role: "user",
+
+        parts: [
+          {
+            text:
+              String(
+                message
+              ).trim()
+          }
+        ]
+      };
+
+      /* ------------------------------
+         Gemini request
+      ------------------------------- */
+
+      const response =
+        await ai.models.generateContent({
+          model:
+            process.env.GEMINI_MODEL ||
+            "gemini-2.5-flash",
+
+          contents: [
+            ...conversation,
+            currentMessage
+          ],
+
+          config: {
+            systemInstruction:
+              systemPrompt,
+
+            temperature: 0.7,
+
+            maxOutputTokens: 1200
+          }
+        });
+
+      /* ------------------------------
+         Extract response
+      ------------------------------- */
+
+      const answer =
+        response &&
+        response.text
+          ? response.text.trim()
+          : "";
+
+      if (!answer) {
+        console.error(
+          "Gemini returned empty response."
+        );
+
+        return res.status(500).json({
+          error:
+            "AI Coach returned an empty response."
+        });
+      }
+
+      /* ------------------------------
+         Success
+      ------------------------------- */
+
+      return res.json({
+        answer
+      });
+
+    } catch (error) {
+      console.error(
+        "AI COACH ERROR:",
+        error
+      );
+
+      /*
+        Log useful Gemini error details
+        in Render logs.
+      */
+
+      if (
+        error &&
+        error.message
+      ) {
+        console.error(
+          "AI COACH ERROR MESSAGE:",
+          error.message
+        );
+      }
+
+      return res.status(500).json({
+        error:
+          "AI Coach could not generate a response. Please check your Gemini API configuration."
       });
     }
   }
@@ -1200,6 +1723,13 @@ app.listen(
   () => {
     console.log(
       `SMART FIT AI server running on port ${PORT}`
+    );
+
+    console.log(
+      "AI Coach:",
+      process.env.GEMINI_API_KEY
+        ? "Gemini configured"
+        : "Gemini API key missing"
     );
   }
 );
