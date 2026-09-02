@@ -7,7 +7,8 @@
 
     <title>Sign Up - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- CSS is in the same folder as signup.html -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -193,6 +194,7 @@ document
         alert("Please fill all fields.");
 
         return;
+
     }
 
 
@@ -201,6 +203,7 @@ document
         alert("Passwords do not match.");
 
         return;
+
     }
 
 
@@ -240,12 +243,15 @@ document
     if (existingUser) {
 
         alert(
-            "An account with this email already exists.\n\nPlease login instead."
+            "An account with this email already exists.\n\n" +
+            "Please login instead."
         );
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         return;
+
     }
 
 
@@ -296,6 +302,7 @@ document
         "smartFitProfile"
     );
 
+
     localStorage.removeItem(
         "smartFitFoodPreferences"
     );
@@ -313,7 +320,6 @@ document
 
     /*
        Save the email that was just registered.
-       Login page can use this.
     */
 
     localStorage.setItem(
@@ -344,6 +350,7 @@ document
 });
 
 </script>
+
 
 </body>
 </html>
