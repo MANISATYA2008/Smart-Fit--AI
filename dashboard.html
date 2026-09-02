@@ -9,7 +9,8 @@
 
     <title>Dashboard - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- IMPORTANT: style.css is in the same folder -->
+    <link rel="stylesheet" href="style.css">
 
     <style>
 
@@ -216,17 +217,12 @@
 </header>
 
 
-
 <!-- =========================================
      DASHBOARD
 ========================================= -->
 
 <section class="features-section">
 
-
-    <!-- =====================================
-         HEADING
-    ===================================== -->
 
     <div class="section-heading">
 
@@ -255,10 +251,7 @@
     </div>
 
 
-
-    <!-- =========================================
-         PROFILE SUMMARY
-    ========================================= -->
+    <!-- PROFILE SUMMARY -->
 
     <div style="
         max-width:1000px;
@@ -268,8 +261,6 @@
         gap:20px;
     ">
 
-
-        <!-- WEIGHT -->
 
         <div class="feature-card">
 
@@ -292,9 +283,6 @@
         </div>
 
 
-
-        <!-- GOAL -->
-
         <div class="feature-card">
 
             <div class="feature-icon">
@@ -316,9 +304,6 @@
         </div>
 
 
-
-        <!-- LOCATION -->
-
         <div class="feature-card">
 
             <div class="feature-icon">
@@ -339,9 +324,6 @@
 
         </div>
 
-
-
-        <!-- DAYS -->
 
         <div class="feature-card">
 
@@ -366,10 +348,7 @@
     </div>
 
 
-
-    <!-- =========================================
-         FOOD PREFERENCES
-    ========================================= -->
+    <!-- FOOD PREFERENCES -->
 
     <div style="
         max-width:1000px;
@@ -379,8 +358,6 @@
         gap:20px;
     ">
 
-
-        <!-- DIET -->
 
         <div class="feature-card">
 
@@ -403,9 +380,6 @@
         </div>
 
 
-
-        <!-- PREFERRED FOODS -->
-
         <div class="feature-card">
 
             <div class="feature-icon">
@@ -427,9 +401,6 @@
         </div>
 
 
-
-        <!-- MEALS -->
-
         <div class="feature-card">
 
             <div class="feature-icon">
@@ -450,9 +421,6 @@
 
         </div>
 
-
-
-        <!-- BUDGET -->
 
         <div class="feature-card">
 
@@ -477,10 +445,7 @@
     </div>
 
 
-
-    <!-- =========================================
-         ACTION CARDS
-    ========================================= -->
+    <!-- ACTION CARDS -->
 
     <div style="
         max-width:1000px;
@@ -490,8 +455,6 @@
         gap:20px;
     ">
 
-
-        <!-- WORKOUT -->
 
         <div class="feature-card">
 
@@ -516,9 +479,6 @@
         </div>
 
 
-
-        <!-- NUTRITION -->
-
         <div class="feature-card">
 
             <h3>
@@ -542,9 +502,6 @@
         </div>
 
 
-
-        <!-- EDIT PROFILE -->
-
         <div class="feature-card">
 
             <h3>
@@ -567,9 +524,6 @@
 
         </div>
 
-
-
-        <!-- EDIT FOOD -->
 
         <div class="feature-card">
 
@@ -596,15 +550,9 @@
     </div>
 
 
-
-    <!-- =========================================
-         GYM CHATBOX
-    ========================================= -->
+    <!-- GYM CHATBOX -->
 
     <div class="gym-chat-card">
-
-
-        <!-- CHAT HEADER -->
 
         <div class="gym-chat-header">
 
@@ -627,9 +575,6 @@
         </div>
 
 
-
-        <!-- DESCRIPTION -->
-
         <p class="chat-description">
 
             Have a doubt about the gym?
@@ -641,9 +586,6 @@
 
         </p>
 
-
-
-        <!-- CHAT -->
 
         <div
             class="chat-preview"
@@ -667,9 +609,6 @@
         </div>
 
 
-
-        <!-- INPUT -->
-
         <div class="chat-input-row">
 
             <input
@@ -690,9 +629,6 @@
 
         </div>
 
-
-
-        <!-- QUICK QUESTIONS -->
 
         <div class="chat-suggestions">
 
@@ -770,9 +706,6 @@
         </div>
 
 
-
-        <!-- FULL CHAT -->
-
         <div style="
             text-align:center;
             margin-top:25px;
@@ -788,17 +721,10 @@
 
         </div>
 
-
     </div>
-
 
 </section>
 
-
-
-<!-- =========================================
-     JAVASCRIPT
-========================================= -->
 
 <script>
 
@@ -831,7 +757,6 @@ function checkLogin() {
     return true;
 
 }
-
 
 
 /* =========================================
@@ -878,7 +803,6 @@ function getUsers() {
 }
 
 
-
 /* =========================================
    GET CURRENT USER
 ========================================= */
@@ -910,7 +834,6 @@ function getCurrentUser() {
     });
 
 }
-
 
 
 /* =========================================
@@ -955,7 +878,6 @@ function getCurrentProfile() {
     }
 
 }
-
 
 
 /* =========================================
@@ -1023,7 +945,6 @@ function getCurrentFood() {
 }
 
 
-
 /* =========================================
    LOAD DASHBOARD
 ========================================= */
@@ -1064,17 +985,11 @@ function loadDashboard() {
     }
 
 
-
-    /* USER NAME */
-
     document.getElementById(
         "userName"
     ).textContent =
         user.name || "User";
 
-
-
-    /* PROFILE */
 
     const profile =
         getCurrentProfile();
@@ -1116,9 +1031,6 @@ function loadDashboard() {
     }
 
 
-
-    /* FOOD */
-
     const food =
         getCurrentFood();
 
@@ -1159,9 +1071,6 @@ function loadDashboard() {
     }
 
 
-
-    /* MESSAGE */
-
     const message =
         document.getElementById(
             "dashboardMessage"
@@ -1195,7 +1104,6 @@ function loadDashboard() {
 }
 
 
-
 /* =========================================
    GYM AI ANSWER ENGINE
 ========================================= */
@@ -1207,11 +1115,6 @@ function getGymAIAnswer(question) {
         .toLowerCase()
         .trim();
 
-
-
-    /* ================================
-       HELLO
-    ================================= */
 
     if (
         q.includes("hello") ||
@@ -1236,11 +1139,6 @@ function getGymAIAnswer(question) {
 
     }
 
-
-
-    /* ================================
-       SETS + REPS
-    ================================= */
 
     if (
         q.includes("set") ||
@@ -1282,11 +1180,6 @@ function getGymAIAnswer(question) {
     }
 
 
-
-    /* ================================
-       WARM UP
-    ================================= */
-
     if (
         q.includes("warm") ||
         q.includes("before workout") ||
@@ -1315,11 +1208,6 @@ function getGymAIAnswer(question) {
     }
 
 
-
-    /* ================================
-       REST
-    ================================= */
-
     if (
         q.includes("rest") ||
         q.includes("break")
@@ -1339,24 +1227,12 @@ function getGymAIAnswer(question) {
 
             Heavier or more demanding exercises may
             need longer recovery.
-
-            <br><br>
-
-            The correct amount depends on the exercise
-            and your effort.
         `;
 
     }
 
 
-
-    /* ================================
-       PROTEIN
-    ================================= */
-
-    if (
-        q.includes("protein")
-    ) {
+    if (q.includes("protein")) {
 
         return `
             🥚 <strong>Protein</strong> is an important
@@ -1396,11 +1272,6 @@ function getGymAIAnswer(question) {
     }
 
 
-
-    /* ================================
-       MUSCLE BUILDING
-    ================================= */
-
     if (
         q.includes("muscle") ||
         q.includes("build muscle") ||
@@ -1437,11 +1308,6 @@ function getGymAIAnswer(question) {
 
     }
 
-
-
-    /* ================================
-       BEGINNER
-    ================================= */
 
     if (
         q.includes("beginner") ||
@@ -1480,20 +1346,10 @@ function getGymAIAnswer(question) {
             5️⃣ Rest
             <br>
             6️⃣ Recover
-
-            <br><br>
-
-            Consistency is more important than
-            trying advanced exercises immediately.
         `;
 
     }
 
-
-
-    /* ================================
-       CARDIO
-    ================================= */
 
     if (
         q.includes("cardio") ||
@@ -1532,11 +1388,6 @@ function getGymAIAnswer(question) {
     }
 
 
-
-    /* ================================
-       WORKOUT
-    ================================= */
-
     if (
         q.includes("workout") ||
         q.includes("exercise")
@@ -1549,7 +1400,7 @@ function getGymAIAnswer(question) {
 
             <br><br>
 
-            Examples of common exercises include:
+            Examples include:
 
             <br>
 
@@ -1574,11 +1425,6 @@ function getGymAIAnswer(question) {
     }
 
 
-
-    /* ================================
-       GYM EQUIPMENT
-    ================================= */
-
     if (
         q.includes("equipment") ||
         q.includes("machine") ||
@@ -1587,15 +1433,9 @@ function getGymAIAnswer(question) {
     ) {
 
         return `
-            🏋️ Gym equipment is simply equipment
-            used to provide resistance or support
-            during exercise.
+            🏋️ Common gym equipment includes:
 
             <br><br>
-
-            Common examples:
-
-            <br>
 
             • Dumbbells
             <br>
@@ -1603,9 +1443,9 @@ function getGymAIAnswer(question) {
             <br>
             • Cable machines
             <br>
-            • Chest press machine
+            • Chest press machines
             <br>
-            • Lat pulldown machine
+            • Lat pulldown machines
             <br>
             • Leg press
 
@@ -1618,11 +1458,6 @@ function getGymAIAnswer(question) {
 
     }
 
-
-
-    /* ================================
-       PAIN / INJURY
-    ================================= */
 
     if (
         q.includes("pain") ||
@@ -1642,17 +1477,12 @@ function getGymAIAnswer(question) {
             <br><br>
 
             If pain continues or is concerning,
-            tell a parent/guardian and speak with
-            a qualified healthcare professional.
+            speak with a qualified healthcare
+            professional.
         `;
 
     }
 
-
-
-    /* ================================
-       DIET
-    ================================= */
 
     if (
         q.includes("diet") ||
@@ -1681,20 +1511,10 @@ function getGymAIAnswer(question) {
             • Healthy fats
             <br>
             • Enough water
-
-            <br><br>
-
-            Your food choices should support normal
-            growth, energy and recovery.
         `;
 
     }
 
-
-
-    /* ================================
-       WATER
-    ================================= */
 
     if (
         q.includes("water") ||
@@ -1710,20 +1530,10 @@ function getGymAIAnswer(question) {
 
             Drink water regularly throughout the day
             and have water available during workouts.
-
-            <br><br>
-
-            You don't need to force huge amounts
-            of water at once.
         `;
 
     }
 
-
-
-    /* ================================
-       SLEEP
-    ================================= */
 
     if (
         q.includes("sleep") ||
@@ -1747,24 +1557,8 @@ function getGymAIAnswer(question) {
     }
 
 
-
-    /* ================================
-       DEFAULT
-    ================================= */
-
     return `
-        🤖 I understand that you're asking about:
-
-        <br><br>
-
-        <strong>
-            "${escapeHTML(question)}"
-        </strong>
-
-        <br><br>
-
-        I can currently help with common gym topics
-        such as:
+        🤖 I can help with common gym topics such as:
 
         <br><br>
 
@@ -1790,13 +1584,10 @@ function getGymAIAnswer(question) {
 
         <br><br>
 
-        For a truly open-ended AI that can answer
-        questions like ChatGPT, we need to connect
-        this chatbox to an AI API/backend.
+        Try asking me one of these questions.
     `;
 
 }
-
 
 
 /* =========================================
@@ -1827,9 +1618,6 @@ function askGymAI() {
         );
 
 
-
-    /* USER MESSAGE */
-
     const userMessage =
         document.createElement("div");
 
@@ -1844,9 +1632,6 @@ function askGymAI() {
         userMessage
     );
 
-
-
-    /* AI MESSAGE */
 
     const aiMessage =
         document.createElement("div");
@@ -1863,18 +1648,12 @@ function askGymAI() {
     );
 
 
-    /* CLEAR INPUT */
-
     input.value = "";
-
-
-    /* SCROLL */
 
     chat.scrollTop =
         chat.scrollHeight;
 
 }
-
 
 
 /* =========================================
@@ -1896,7 +1675,6 @@ function quickQuestion(question) {
 }
 
 
-
 /* =========================================
    ENTER KEY
 ========================================= */
@@ -1916,7 +1694,6 @@ function handleChatKey(event) {
 }
 
 
-
 /* =========================================
    ESCAPE HTML
 ========================================= */
@@ -1934,7 +1711,6 @@ function escapeHTML(text) {
 }
 
 
-
 /* =========================================
    OPEN FULL CHAT
 ========================================= */
@@ -1945,7 +1721,6 @@ function openGymChat() {
         "gym-chatbox.html";
 
 }
-
 
 
 /* =========================================
@@ -1984,7 +1759,6 @@ function editFood() {
 }
 
 
-
 /* =========================================
    LOGOUT
 ========================================= */
@@ -2008,7 +1782,6 @@ function logout() {
     );
 
 }
-
 
 
 /* =========================================
