@@ -5,8 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Workout Feedback - SMART FIT AI</title>
 
@@ -14,130 +13,562 @@
 
     <style>
 
-        .feedback-container {
-            max-width: 750px;
-            margin: 50px auto;
-            padding: 20px;
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        body {
+            min-height: 100vh;
         }
 
+        .feedback-page {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 45px 20px 70px;
+        }
+
+
+        /* =========================================
+           HERO
+        ========================================= */
+
+        .feedback-hero {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .feedback-hero .eyebrow {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 30px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            color: #4ade80;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+        }
+
+        .feedback-hero h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            margin: 0;
+        }
+
+        .feedback-hero h1 span {
+            color: #4ade80;
+        }
+
+        .feedback-hero p {
+            max-width: 650px;
+            margin: 12px auto 0;
+            color: #9baea5;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================
+           WEEKLY OVERVIEW
+        ========================================= */
+
+        .weekly-panel {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(74, 222, 128, 0.12),
+                    rgba(14, 30, 23, 0.95) 45%
+                );
+
+            border: 1px solid #1d362b;
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        }
+
+        .weekly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .weekly-header h2 {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        .weekly-header p {
+            margin: 6px 0 0;
+            color: #82958c;
+            font-size: 14px;
+        }
+
+        .week-badge {
+            background: #12251c;
+            border: 1px solid #284a38;
+            color: #4ade80;
+            padding: 9px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+
+        /* =========================================
+           STATS
+        ========================================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(9, 24, 17, 0.75);
+            border: 1px solid #1d362b;
+            border-radius: 18px;
+            padding: 20px;
+            transition: 0.25s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: #4ade80;
+        }
+
+        .stat-icon {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            color: #81948b;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+
+        /* =========================================
+           PROGRESS BAR
+        ========================================= */
+
+        .goal-progress {
+            margin-top: 25px;
+        }
+
+        .goal-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 14px;
+            margin-bottom: 9px;
+        }
+
+        .goal-row span:last-child {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 11px;
+            background: #0a1710;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #1b3026;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            background: #4ade80;
+            transition: width 0.8s ease;
+        }
+
+
+        /* =========================================
+           MAIN GRID
+        ========================================= */
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 0.8fr;
+            gap: 25px;
+        }
+
+
+        /* =========================================
+           FEEDBACK CARD
+        ========================================= */
 
         .feedback-card {
             background: #0e1e17;
             border: 1px solid #1d362b;
-            border-radius: 20px;
-            padding: 35px;
-            text-align: center;
+            border-radius: 24px;
+            padding: 30px;
         }
 
+        .card-heading {
+            margin-bottom: 25px;
+        }
+
+        .card-heading h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .card-heading p {
+            margin: 8px 0 0;
+            color: #81948b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           FEEDBACK OPTIONS
+        ========================================= */
 
         .feedback-options {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-top: 30px;
+            gap: 14px;
         }
-
 
         .feedback-option {
+            position: relative;
             background: #12251c;
             border: 2px solid #1d362b;
-            border-radius: 15px;
-            padding: 25px 15px;
+            border-radius: 18px;
+            padding: 24px 14px;
+            text-align: center;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.25s ease;
         }
-
 
         .feedback-option:hover {
             transform: translateY(-5px);
             border-color: #4ade80;
         }
 
-
         .feedback-option.selected {
-            border-color: #4ade80;
             background: #183b29;
-            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.12);
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.08);
         }
 
+        .check-mark {
+            display: none;
+            position: absolute;
+            top: 9px;
+            right: 10px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #4ade80;
+            color: #06120d;
+            font-size: 13px;
+            font-weight: 900;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-option.selected .check-mark {
+            display: flex;
+        }
 
         .feedback-emoji {
             font-size: 42px;
             margin-bottom: 10px;
         }
 
-
         .feedback-option h3 {
-            margin: 8px 0;
+            margin: 5px 0;
         }
 
-
         .feedback-option p {
-            color: #9baea5;
-            font-size: 14px;
+            color: #879a91;
+            font-size: 12px;
             line-height: 1.5;
         }
 
 
+        /* =========================================
+           ADAPTIVE MESSAGE
+        ========================================= */
+
         .adaptive-message {
-            margin-top: 30px;
-            padding: 20px;
-            background: #12251c;
-            border-radius: 15px;
-            border: 1px solid #1d362b;
             display: none;
-            text-align: left;
-            color: #d5e0da;
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 17px;
+            background: #12251c;
+            border: 1px solid #28513a;
         }
 
+        .adaptive-message strong {
+            color: #4ade80;
+        }
 
         .adaptive-message p {
+            margin: 7px 0 0;
             color: #9baea5;
+            font-size: 14px;
             line-height: 1.6;
         }
 
 
+        /* =========================================
+           SUBMIT
+        ========================================= */
+
         .submit-btn {
             width: 100%;
-            margin-top: 30px;
-            padding: 15px;
+            margin-top: 22px;
+            padding: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 14px;
             background: #4ade80;
             color: #06120d;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 800;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.25s ease;
         }
-
 
         .submit-btn:hover {
             background: #22c55e;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
 
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        /* =========================================
+           RIGHT SIDE
+        ========================================= */
+
+        .insight-card {
+            background: #0e1e17;
+            border: 1px solid #1d362b;
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .insight-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .insight-title span {
+            font-size: 25px;
+        }
+
+        .insight-title h3 {
+            margin: 0;
+        }
+
+        .insight-content {
+            color: #9baea5;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .insight-highlight {
+            color: #4ade80;
+            font-weight: 700;
         }
 
 
-        @media(max-width: 700px) {
+        /* =========================================
+           7 DAY ACTIVITY
+        ========================================= */
 
-            .feedback-container {
-                margin: 25px auto;
-                padding: 10px;
+        .activity-card {
+            background: #0e1e17;
+            border: 1px solid #1d362b;
+            border-radius: 24px;
+            padding: 25px;
+        }
+
+        .activity-card h3 {
+            margin: 0 0 20px;
+        }
+
+        .activity-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 7px;
+        }
+
+        .activity-day {
+            text-align: center;
+        }
+
+        .day-name {
+            color: #75877f;
+            font-size: 10px;
+            margin-bottom: 7px;
+        }
+
+        .day-box {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 9px;
+            background: #13251c;
+            border: 1px solid #1d362b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .day-box.completed {
+            background: #4ade80;
+            color: #06120d;
+            border-color: #4ade80;
+            font-weight: 900;
+        }
+
+        .day-box.feedback {
+            box-shadow: inset 0 0 0 2px #4ade80;
+        }
+
+
+        /* =========================================
+           STREAK
+        ========================================= */
+
+        .streak-box {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 17px;
+            background: #12251c;
+            border: 1px solid #1d362b;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .streak-icon {
+            font-size: 35px;
+        }
+
+        .streak-number {
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .streak-label {
+            color: #84978e;
+            font-size: 12px;
+        }
+
+
+        /* =========================================
+           NAVIGATION
+        ========================================= */
+
+        .bottom-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-link {
+            text-decoration: none;
+            color: #9baea5;
+            border: 1px solid #1d362b;
+            background: #0e1e17;
+            padding: 11px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .action-link:hover {
+            color: #4ade80;
+            border-color: #4ade80;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 850px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .feedback-card {
-                padding: 25px 18px;
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .feedback-page {
+                padding: 30px 14px 50px;
+            }
+
+            .weekly-panel,
+            .feedback-card,
+            .insight-card,
+            .activity-card {
+                padding: 20px;
+                border-radius: 19px;
+            }
+
+            .weekly-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
             }
 
             .feedback-options {
                 grid-template-columns: 1fr;
+            }
+
+            .feedback-option {
+                display: grid;
+                grid-template-columns: 55px 1fr;
+                text-align: left;
+                align-items: center;
+                column-gap: 10px;
+            }
+
+            .feedback-emoji {
+                grid-row: span 2;
+                text-align: center;
+                margin: 0;
+            }
+
+            .feedback-option h3 {
+                margin: 0;
+            }
+
+            .feedback-option p {
+                margin: 4px 0 0;
             }
 
         }
@@ -150,12 +581,15 @@
 <body>
 
 
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
 <header class="navbar">
 
     <div class="logo">
         SMART<span>FIT</span> AI
     </div>
-
 
     <nav>
 
@@ -181,45 +615,195 @@
 
 
 
-<section class="features-section">
+<main class="feedback-page">
 
 
-    <div class="section-heading">
+    <!-- =========================================
+         HERO
+    ========================================== -->
 
-        <p>SMART FIT AI</p>
+    <section class="feedback-hero">
 
-        <h2>
-            How was your
-            <span>Workout?</span>
-        </h2>
+        <div class="eyebrow">
+            🧠 SMART ADAPTIVE TRAINING
+        </div>
+
+        <h1>
+            Your Workout
+            <span>Feedback</span>
+        </h1>
 
         <p>
-            Your feedback helps SMART FIT AI
-            adapt your future workouts.
+            Tell SMART FIT AI how your workout felt.
+            Your feedback helps improve your training
+            recommendations and weekly progress.
         </p>
 
-    </div>
+    </section>
 
 
 
-    <div class="feedback-container">
+    <!-- =========================================
+         WEEKLY PROGRESS
+    ========================================== -->
 
+    <section class="weekly-panel">
+
+        <div class="weekly-header">
+
+            <div>
+
+                <h2>
+                    📊 This Week's Progress
+                </h2>
+
+                <p id="weekRange">
+                    Your latest fitness activity
+                </p>
+
+            </div>
+
+            <div class="week-badge">
+                LIVE PROGRESS
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🏋️
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="workoutsCompleted">
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Workouts Completed
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🎯
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="weeklyGoal">
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Weekly Goal
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔥
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="streak">
+                    0
+                </div>
+
+                <div class="stat-label">
+                    Day Streak
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⭐
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="averageDifficulty">
+                    —
+                </div>
+
+                <div class="stat-label">
+                    Avg Difficulty
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="goal-progress">
+
+            <div class="goal-row">
+
+                <span>
+                    Weekly completion
+                </span>
+
+                <span id="completionText">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill">
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <section class="main-grid">
+
+
+        <!-- FEEDBACK -->
 
         <div class="feedback-card">
 
+            <div class="card-heading">
 
-            <h2>
-                Rate Today's Workout
-            </h2>
+                <h2>
+                    How did today's workout feel?
+                </h2>
 
+                <p>
+                    Choose the difficulty that best
+                    matches your experience.
+                </p>
 
-            <p style="color:#9baea5; margin-top:10px;">
-
-                Select the option that best describes
-                how today's workout felt.
-
-            </p>
-
+            </div>
 
 
             <div class="feedback-options">
@@ -232,21 +816,28 @@
                     id="easyOption"
                     onclick="selectFeedback('easy')">
 
+                    <div class="check-mark">
+                        ✓
+                    </div>
+
                     <div class="feedback-emoji">
                         😊
                     </div>
 
-                    <h3>
-                        Easy
-                    </h3>
+                    <div>
 
-                    <p>
-                        I could comfortably
-                        complete the workout.
-                    </p>
+                        <h3>
+                            Easy
+                        </h3>
+
+                        <p>
+                            I could comfortably
+                            complete the workout.
+                        </p>
+
+                    </div>
 
                 </div>
-
 
 
                 <!-- MODERATE -->
@@ -256,21 +847,28 @@
                     id="moderateOption"
                     onclick="selectFeedback('moderate')">
 
+                    <div class="check-mark">
+                        ✓
+                    </div>
+
                     <div class="feedback-emoji">
                         🙂
                     </div>
 
-                    <h3>
-                        Moderate
-                    </h3>
+                    <div>
 
-                    <p>
-                        It was challenging but
-                        comfortable.
-                    </p>
+                        <h3>
+                            Moderate
+                        </h3>
+
+                        <p>
+                            Challenging but at
+                            a comfortable level.
+                        </p>
+
+                    </div>
 
                 </div>
-
 
 
                 <!-- HARD -->
@@ -280,24 +878,31 @@
                     id="hardOption"
                     onclick="selectFeedback('hard')">
 
+                    <div class="check-mark">
+                        ✓
+                    </div>
+
                     <div class="feedback-emoji">
                         😓
                     </div>
 
-                    <h3>
-                        Hard
-                    </h3>
+                    <div>
 
-                    <p>
-                        It was difficult and
-                        challenging.
-                    </p>
+                        <h3>
+                            Hard
+                        </h3>
+
+                        <p>
+                            Very challenging and
+                            difficult to complete.
+                        </p>
+
+                    </div>
 
                 </div>
 
 
             </div>
-
 
 
             <!-- ADAPTIVE MESSAGE -->
@@ -308,104 +913,189 @@
             </div>
 
 
-
-            <!-- SAVE -->
-
             <button
-                id="saveButton"
                 class="submit-btn"
                 onclick="saveFeedback()">
 
                 Save Feedback & Continue →
-
+                
             </button>
 
+        </div>
+
+
+
+        <!-- RIGHT COLUMN -->
+
+        <div>
+
+
+            <!-- AI INSIGHT -->
+
+            <div class="insight-card">
+
+                <div class="insight-title">
+
+                    <span>
+                        🤖
+                    </span>
+
+                    <h3>
+                        SMART FIT AI Insight
+                    </h3>
+
+                </div>
+
+                <div
+                    id="aiInsight"
+                    class="insight-content">
+
+                    Analyzing your weekly activity...
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ACTIVITY -->
+
+            <div class="activity-card">
+
+                <h3>
+                    📅 Last 7 Days
+                </h3>
+
+                <div
+                    id="activityDays"
+                    class="activity-days">
+                </div>
+
+
+                <div class="streak-box">
+
+                    <div class="streak-icon">
+                        🔥
+                    </div>
+
+                    <div>
+
+                        <div
+                            class="streak-number"
+                            id="streakLarge">
+                            0 days
+                        </div>
+
+                        <div class="streak-label">
+                            Keep your momentum going!
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         BOTTOM LINKS
+    ========================================== -->
+
+    <div class="bottom-actions">
+
+        <a
+            class="action-link"
+            href="workout.html">
+            🏋️ Workout
+        </a>
+
+        <a
+            class="action-link"
+            href="progress.html">
+            📈 Full Progress
+        </a>
+
+        <a
+            class="action-link"
+            href="dashboard.html">
+            🏠 Dashboard
+        </a>
 
     </div>
 
 
-</section>
+</main>
 
 
 
 <script>
 
-"use strict";
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+let selectedFeedback = null;
 
 
-/* ==========================================
+/* =========================================
    CURRENT USER
-========================================== */
+========================================= */
 
 function getCurrentUser() {
 
     return (
-        localStorage.getItem("smartFitCurrentUserEmail") ||
-        localStorage.getItem("smartFitCurrentUser") ||
+        localStorage.getItem(
+            "smartFitCurrentUserEmail"
+        ) ||
+        localStorage.getItem(
+            "smartFitCurrentUser"
+        ) ||
         ""
     );
 
 }
 
 
-/* ==========================================
-   SAFE JSON READER
-========================================== */
+/* =========================================
+   LOGIN CHECK
+========================================= */
 
-function getData(key, fallback = null) {
+const currentUser = getCurrentUser();
 
-    const raw =
-        localStorage.getItem(key);
+const loggedIn =
+    localStorage.getItem(
+        "smartFitLoggedIn"
+    );
 
+if (!currentUser || loggedIn !== "true") {
 
-    if (!raw) {
-        return fallback;
-    }
-
-
-    try {
-
-        return JSON.parse(raw);
-
-    } catch (error) {
-
-        console.error(
-            "Invalid localStorage data:",
-            key,
-            error
-        );
-
-        return fallback;
-
-    }
+    window.location.href = "login.html";
 
 }
 
 
-/* ==========================================
-   GET CURRENT PROFILE
-========================================== */
+/* =========================================
+   PROFILE
+========================================= */
 
-function getCurrentProfile() {
+function getProfile() {
 
-    const currentUser =
-        getCurrentUser();
-
-
-    if (!currentUser) {
-        return null;
-    }
-
-
-    const profiles =
-        getData("smartFitProfiles");
-
+    let profiles =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitProfiles"
+            )
+        ) || {};
 
     if (
-        profiles &&
-        typeof profiles === "object" &&
+        currentUser &&
         profiles[currentUser]
     ) {
 
@@ -414,50 +1104,871 @@ function getCurrentProfile() {
     }
 
 
-    return getData("smartFitProfile");
+    return (
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitProfile"
+            )
+        ) || {}
+    );
 
 }
 
 
-/* ==========================================
-   LOGIN CHECK
-========================================== */
+const profile = getProfile();
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
 
-        const loggedIn =
+
+/* =========================================
+   DATE HELPERS
+========================================= */
+
+function dateKey(date) {
+
+    const y =
+        date.getFullYear();
+
+    const m =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const d =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return `${y}-${m}-${d}`;
+
+}
+
+
+function parseDate(value) {
+
+    if (!value) return null;
+
+    const parts =
+        value.split("-")
+            .map(Number);
+
+    if (parts.length !== 3) {
+        return null;
+    }
+
+    return new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2]
+    );
+
+}
+
+
+/* =========================================
+   WEEK RANGE
+========================================= */
+
+function getWeekStart() {
+
+    const today = new Date();
+
+    const day =
+        today.getDay();
+
+    const difference =
+        day === 0 ? 6 : day - 1;
+
+    const monday =
+        new Date(today);
+
+    monday.setDate(
+        today.getDate() - difference
+    );
+
+    monday.setHours(
+        0, 0, 0, 0
+    );
+
+    return monday;
+
+}
+
+
+function getWeekDates() {
+
+    const monday =
+        getWeekStart();
+
+    const dates = [];
+
+    for (let i = 0; i < 7; i++) {
+
+        const d =
+            new Date(monday);
+
+        d.setDate(
+            monday.getDate() + i
+        );
+
+        dates.push(d);
+
+    }
+
+    return dates;
+
+}
+
+
+/* =========================================
+   FEEDBACK HISTORY
+========================================= */
+
+function getFeedbackHistory() {
+
+    let perUser =
+        JSON.parse(
             localStorage.getItem(
-                "smartFitLoggedIn"
+                "smartFitWorkoutFeedbackByUser"
+            )
+        ) || {};
+
+    if (
+        currentUser &&
+        Array.isArray(
+            perUser[currentUser]
+        )
+    ) {
+
+        return perUser[currentUser];
+
+    }
+
+
+    return (
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitWorkoutFeedback"
+            )
+        ) || []
+    );
+
+}
+
+
+/* =========================================
+   PROGRESS DATA
+========================================= */
+
+function getProgressData() {
+
+    const key =
+        "smartFitProgress_" +
+        currentUser;
+
+    return (
+        JSON.parse(
+            localStorage.getItem(key)
+        ) || []
+    );
+
+}
+
+
+/* =========================================
+   WORKOUT COMPLETION
+========================================= */
+
+function getCompletedDates() {
+
+    const completed = {};
+
+    const progress =
+        getProgressData();
+
+
+    if (Array.isArray(progress)) {
+
+        progress.forEach(item => {
+
+            if (!item) return;
+
+            const date =
+                item.date ||
+                item.day ||
+                item.completedDate;
+
+            if (date) {
+
+                completed[date] = true;
+
+            }
+
+        });
+
+    }
+
+
+    /*
+       Support object-based progress
+    */
+
+    if (
+        progress &&
+        typeof progress === "object" &&
+        !Array.isArray(progress)
+    ) {
+
+        Object.keys(progress).forEach(key => {
+
+            const item =
+                progress[key];
+
+            if (
+                item === true ||
+                item === "completed" ||
+                (
+                    item &&
+                    (
+                        item.completed === true ||
+                        item.status === "completed"
+                    )
+                )
+            ) {
+
+                completed[key] = true;
+
+            }
+
+        });
+
+    }
+
+
+    /*
+       Feedback itself is also treated as
+       workout activity if workout tracking
+       data isn't available.
+    */
+
+    const feedback =
+        getFeedbackHistory();
+
+    feedback.forEach(item => {
+
+        if (
+            item &&
+            item.date
+        ) {
+
+            if (
+                !completed[item.date]
+            ) {
+
+                completed[item.date] =
+                    true;
+
+            }
+
+        }
+
+    });
+
+
+    return completed;
+
+}
+
+
+/* =========================================
+   WEEKLY GOAL
+========================================= */
+
+function getWeeklyGoal() {
+
+    const goal =
+        Number(
+            profile.days ||
+            profile.workoutDays ||
+            profile.weeklyGoal
+        );
+
+    if (
+        Number.isFinite(goal) &&
+        goal > 0
+    ) {
+
+        return Math.min(goal, 7);
+
+    }
+
+    return 3;
+
+}
+
+
+/* =========================================
+   WEEKLY STATS
+========================================= */
+
+function calculateWeeklyStats() {
+
+    const dates =
+        getWeekDates();
+
+    const completed =
+        getCompletedDates();
+
+    const feedback =
+        getFeedbackHistory();
+
+
+    let completedCount = 0;
+
+    dates.forEach(date => {
+
+        if (
+            completed[
+                dateKey(date)
+            ]
+        ) {
+
+            completedCount++;
+
+        }
+
+    });
+
+
+    const weeklyFeedback =
+        feedback.filter(item => {
+
+            if (!item || !item.date) {
+                return false;
+            }
+
+            const d =
+                parseDate(item.date);
+
+            if (!d) return false;
+
+            return (
+                d >= dates[0] &&
+                d <= dates[6]
+            );
+
+        });
+
+
+    let difficultyTotal = 0;
+
+    let difficultyCount = 0;
+
+
+    weeklyFeedback.forEach(item => {
+
+        if (
+            item.difficulty === "easy"
+        ) {
+
+            difficultyTotal += 1;
+
+        }
+
+        else if (
+            item.difficulty === "moderate"
+        ) {
+
+            difficultyTotal += 2;
+
+        }
+
+        else if (
+            item.difficulty === "hard"
+        ) {
+
+            difficultyTotal += 3;
+
+        }
+
+        if (item.difficulty) {
+
+            difficultyCount++;
+
+        }
+
+    });
+
+
+    let average = null;
+
+
+    if (difficultyCount > 0) {
+
+        average =
+            difficultyTotal /
+            difficultyCount;
+
+    }
+
+
+    return {
+
+        completed: completedCount,
+
+        goal: getWeeklyGoal(),
+
+        feedback: weeklyFeedback,
+
+        average: average,
+
+        completedDates: completed
+
+    };
+
+}
+
+
+/* =========================================
+   DISPLAY WEEKLY STATS
+========================================= */
+
+function renderWeeklyStats() {
+
+    const stats =
+        calculateWeeklyStats();
+
+
+    document.getElementById(
+        "workoutsCompleted"
+    ).textContent =
+        stats.completed;
+
+
+    document.getElementById(
+        "weeklyGoal"
+    ).textContent =
+        stats.goal;
+
+
+    document.getElementById(
+        "averageDifficulty"
+    ).textContent =
+        getDifficultyLabel(
+            stats.average
+        );
+
+
+    const percentage =
+        Math.min(
+            100,
+            Math.round(
+                (
+                    stats.completed /
+                    stats.goal
+                ) * 100
+            )
+        );
+
+
+    document.getElementById(
+        "completionText"
+    ).textContent =
+        percentage + "%";
+
+
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        percentage + "%";
+
+
+    const dates =
+        getWeekDates();
+
+
+    const first =
+        dates[0];
+
+    const last =
+        dates[6];
+
+
+    document.getElementById(
+        "weekRange"
+    ).textContent =
+        formatShortDate(first) +
+        " – " +
+        formatShortDate(last);
+
+}
+
+
+/* =========================================
+   DIFFICULTY LABEL
+========================================= */
+
+function getDifficultyLabel(avg) {
+
+    if (!avg) {
+        return "—";
+    }
+
+    if (avg < 1.5) {
+        return "Easy";
+    }
+
+    if (avg < 2.5) {
+        return "Moderate";
+    }
+
+    return "Hard";
+
+}
+
+
+/* =========================================
+   DATE FORMAT
+========================================= */
+
+function formatShortDate(date) {
+
+    return date.toLocaleDateString(
+        undefined,
+        {
+            month: "short",
+            day: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================
+   ACTIVITY CALENDAR
+========================================= */
+
+function renderActivity() {
+
+    const container =
+        document.getElementById(
+            "activityDays"
+        );
+
+    container.innerHTML = "";
+
+
+    const dates =
+        getWeekDates();
+
+    const completed =
+        getCompletedDates();
+
+    const feedback =
+        getFeedbackHistory();
+
+
+    dates.forEach(date => {
+
+        const key =
+            dateKey(date);
+
+
+        const day =
+            document.createElement(
+                "div"
+            );
+
+        day.className =
+            "activity-day";
+
+
+        const name =
+            document.createElement(
+                "div"
+            );
+
+        name.className =
+            "day-name";
+
+        name.textContent =
+            date.toLocaleDateString(
+                undefined,
+                {
+                    weekday: "short"
+                }
+            ).slice(0, 2);
+
+
+        const box =
+            document.createElement(
+                "div"
+            );
+
+        box.className =
+            "day-box";
+
+
+        if (completed[key]) {
+
+            box.classList.add(
+                "completed"
+            );
+
+            box.textContent =
+                "✓";
+
+        }
+
+        else {
+
+            box.textContent =
+                "·";
+
+        }
+
+
+        const hasFeedback =
+            feedback.some(
+                item =>
+                    item &&
+                    item.date === key
             );
 
 
-        if (loggedIn !== "true") {
+        if (hasFeedback) {
 
-            alert("Please login first.");
+            box.classList.add(
+                "feedback"
+            );
 
-            window.location.href =
-                "login.html";
+        }
 
-            return;
+
+        day.appendChild(name);
+
+        day.appendChild(box);
+
+        container.appendChild(day);
+
+    });
+
+
+    const streak =
+        calculateStreak();
+
+
+    document.getElementById(
+        "streak"
+    ).textContent =
+        streak;
+
+
+    document.getElementById(
+        "streakLarge"
+    ).textContent =
+        streak +
+        (
+            streak === 1
+                ? " day"
+                : " days"
+        );
+
+}
+
+
+/* =========================================
+   STREAK
+========================================= */
+
+function calculateStreak() {
+
+    const completed =
+        getCompletedDates();
+
+
+    let streak = 0;
+
+    const today =
+        new Date();
+
+
+    /*
+       Count backwards from today.
+    */
+
+    for (
+        let i = 0;
+        i < 365;
+        i++
+    ) {
+
+        const d =
+            new Date(today);
+
+        d.setDate(
+            today.getDate() - i
+        );
+
+
+        const key =
+            dateKey(d);
+
+
+        if (completed[key]) {
+
+            streak++;
+
+        }
+
+        else {
+
+            break;
 
         }
 
     }
-);
 
 
-/* ==========================================
-   SELECTED FEEDBACK
-========================================== */
+    return streak;
 
-let selectedFeedback = null;
+}
 
 
-/* ==========================================
+/* =========================================
+   AI WEEKLY INSIGHT
+========================================= */
+
+function renderAIInsight() {
+
+    const stats =
+        calculateWeeklyStats();
+
+    const insight =
+        document.getElementById(
+            "aiInsight"
+        );
+
+
+    const percentage =
+        Math.min(
+            100,
+            Math.round(
+                (
+                    stats.completed /
+                    stats.goal
+                ) * 100
+            )
+        );
+
+
+    if (
+        stats.completed === 0
+    ) {
+
+        insight.innerHTML = `
+            Start your week strong 💪
+            <br><br>
+            Complete your first workout and
+            SMART FIT AI will begin analyzing
+            your consistency and training intensity.
+        `;
+
+        return;
+
+    }
+
+
+    if (
+        percentage >= 100 &&
+        stats.average &&
+        stats.average <= 1.5
+    ) {
+
+        insight.innerHTML = `
+            🔥 <span class="insight-highlight">
+            Excellent consistency!</span>
+            <br><br>
+            You reached your weekly goal and
+            your workouts are feeling relatively easy.
+            SMART FIT AI can gradually increase
+            your training challenge.
+        `;
+
+        return;
+
+    }
+
+
+    if (
+        percentage >= 100
+    ) {
+
+        insight.innerHTML = `
+            🏆 <span class="insight-highlight">
+            Weekly goal completed!</span>
+            <br><br>
+            Your consistency is looking strong.
+            Focus on recovery, sleep and maintaining
+            good exercise form.
+        `;
+
+        return;
+
+    }
+
+
+    if (
+        stats.average &&
+        stats.average >= 2.5
+    ) {
+
+        insight.innerHTML = `
+            🛡️ <span class="insight-highlight">
+            Recovery may be important.</span>
+            <br><br>
+            Your recent workouts are feeling hard.
+            SMART FIT AI recommends prioritizing
+            recovery before increasing intensity.
+        `;
+
+        return;
+
+    }
+
+
+    if (
+        stats.average &&
+        stats.average >= 1.5
+    ) {
+
+        insight.innerHTML = `
+            👍 <span class="insight-highlight">
+            You're training at a good intensity.</span>
+            <br><br>
+            Keep building consistency and give
+            SMART FIT AI regular feedback so it can
+            fine-tune your future workouts.
+        `;
+
+        return;
+
+    }
+
+
+    insight.innerHTML = `
+        🚀 <span class="insight-highlight">
+        You're building momentum!</span>
+        <br><br>
+        Keep completing your planned workouts
+        this week to reach your goal.
+    `;
+
+}
+
+
+/* =========================================
    SELECT FEEDBACK
-========================================== */
+========================================= */
 
 function selectFeedback(level) {
 
@@ -465,41 +1976,25 @@ function selectFeedback(level) {
         level;
 
 
-    /* Remove previous selection */
-
     document
         .getElementById("easyOption")
         .classList.remove("selected");
 
-
     document
         .getElementById("moderateOption")
         .classList.remove("selected");
-
 
     document
         .getElementById("hardOption")
         .classList.remove("selected");
 
 
-    /* Add current selection */
-
-    const selectedOption =
-        document.getElementById(
+    document
+        .getElementById(
             level + "Option"
-        );
+        )
+        .classList.add("selected");
 
-
-    if (selectedOption) {
-
-        selectedOption.classList.add(
-            "selected"
-        );
-
-    }
-
-
-    /* Adaptive message */
 
     const message =
         document.getElementById(
@@ -511,59 +2006,50 @@ function selectFeedback(level) {
         "block";
 
 
-    if (level === "easy") {
+    if (
+        level === "easy"
+    ) {
 
         message.innerHTML = `
+            <strong>🚀 Ready to progress?</strong>
 
-            <strong>
-                💡 SMART FIT AI
-            </strong>
-
-            <p style="margin-top:10px;">
+            <p>
                 Your workout felt easy.
-                Your next workout may gradually
-                increase the challenge.
+                SMART FIT AI may gradually increase
+                the challenge in future workouts.
             </p>
-
         `;
 
     }
 
 
-    else if (level === "moderate") {
+    else if (
+        level === "moderate"
+    ) {
 
         message.innerHTML = `
+            <strong>👍 Perfect training zone</strong>
 
-            <strong>
-                👍 Good Balance
-            </strong>
-
-            <p style="margin-top:10px;">
-                Your workout was at a comfortable
-                challenge level. SMART FIT AI will
-                maintain a similar difficulty.
+            <p>
+                This is a balanced intensity.
+                SMART FIT AI will aim to maintain
+                a similar challenge level.
             </p>
-
         `;
 
     }
 
 
-    else if (level === "hard") {
+    else {
 
         message.innerHTML = `
+            <strong>🛡️ Recovery comes first</strong>
 
-            <strong>
-                🛡️ Recovery First
-            </strong>
-
-            <p style="margin-top:10px;">
-                Your workout was difficult.
-                SMART FIT AI will reduce the
-                workload slightly for future
-                workouts if needed.
+            <p>
+                That was a demanding session.
+                SMART FIT AI will consider reducing
+                workload or increasing recovery.
             </p>
-
         `;
 
     }
@@ -571,33 +2057,11 @@ function selectFeedback(level) {
 }
 
 
-/* ==========================================
+/* =========================================
    SAVE FEEDBACK
-========================================== */
+========================================= */
 
 function saveFeedback() {
-
-    /* Check login */
-
-    const currentUser =
-        getCurrentUser();
-
-
-    if (!currentUser) {
-
-        alert(
-            "Please login before saving feedback."
-        );
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    /* Check selection */
 
     if (!selectedFeedback) {
 
@@ -610,77 +2074,68 @@ function saveFeedback() {
     }
 
 
-    /* Today's date */
-
     const today =
-        getLocalDate();
-
-
-    /* Existing feedback */
-
-    let feedbackHistory =
-        getData(
-            "smartFitWorkoutFeedback",
-            []
+        dateKey(
+            new Date()
         );
 
 
-    if (!Array.isArray(feedbackHistory)) {
+    /*
+       FEEDBACK HISTORY
+    */
 
-        feedbackHistory = [];
+    let feedbackHistory =
+        getFeedbackHistory();
 
-    }
 
+    /*
+       PROFILE
+    */
 
-    /* Selected split */
-
-    const split =
+    const selectedSplit =
         localStorage.getItem(
             "smartFitSelectedSplit"
         ) || "default";
 
 
-    /* Profile */
-
-    const profile =
-        getCurrentProfile() || {};
-
-
-    /* Feedback record */
+    /*
+       CREATE RECORD
+    */
 
     const feedback = {
 
-        user:
-            currentUser,
+        user: currentUser,
 
-        date:
-            today,
+        date: today,
 
         difficulty:
             selectedFeedback,
 
         split:
-            split,
+            selectedSplit,
 
         goal:
             profile.goal || "",
 
         experience:
-            profile.experience || ""
+            profile.experience || "",
+
+        timestamp:
+            new Date().toISOString()
 
     };
 
 
     /*
-       Remove an existing feedback
-       record for this user/date.
+       REMOVE OLD FEEDBACK
+       FOR SAME USER + DATE
     */
 
     feedbackHistory =
         feedbackHistory.filter(
             item =>
                 !(
-                    item.user === currentUser &&
+                    item &&
                     item.date === today
                 )
         );
@@ -691,84 +2146,64 @@ function saveFeedback() {
     );
 
 
-    /* Save global history */
+    /*
+       SAVE PER USER
+    */
+
+    let perUser =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitWorkoutFeedbackByUser"
+            )
+        ) || {};
+
+
+    perUser[currentUser] =
+        feedbackHistory;
+
 
     localStorage.setItem(
+
+        "smartFitWorkoutFeedbackByUser",
+
+        JSON.stringify(
+            perUser
+        )
+
+    );
+
+
+    /*
+       ALSO SAVE GLOBAL
+       FOR COMPATIBILITY
+    */
+
+    localStorage.setItem(
+
         "smartFitWorkoutFeedback",
+
         JSON.stringify(
             feedbackHistory
         )
+
     );
 
 
-    /* ======================================
-       SAVE PER-USER FEEDBACK
-    ====================================== */
-
-    let userFeedback =
-        getData(
-            "smartFitWorkoutFeedbackByUser",
-            {}
-        );
-
-
-    if (
-        !userFeedback ||
-        typeof userFeedback !== "object"
-    ) {
-
-        userFeedback = {};
-
-    }
-
-
-    if (
-        !Array.isArray(
-            userFeedback[currentUser]
-        )
-    ) {
-
-        userFeedback[currentUser] = [];
-
-    }
-
-
-    userFeedback[currentUser] =
-        userFeedback[currentUser].filter(
-            item =>
-                item.date !== today
-        );
-
-
-    userFeedback[currentUser].push(
-        feedback
-    );
-
-
-    localStorage.setItem(
-        "smartFitWorkoutFeedbackByUser",
-        JSON.stringify(
-            userFeedback
-        )
-    );
-
-
-    /* ======================================
-       UPDATE ADAPTIVE DATA
-    ====================================== */
+    /*
+       UPDATE ADAPTIVE ENGINE
+    */
 
     updateAdaptiveData(
-        selectedFeedback,
-        currentUser
+        selectedFeedback
     );
 
 
-    /* ======================================
-       SUCCESS
-    ====================================== */
+    /*
+       SHOW SUCCESS
+    */
 
     alert(
-        "✅ Feedback saved! SMART FIT AI will use it to adapt your future workouts."
+        "✅ Feedback saved! SMART FIT AI will use your weekly performance to adapt future workouts."
     );
 
 
@@ -778,74 +2213,23 @@ function saveFeedback() {
 }
 
 
-/* ==========================================
-   LOCAL DATE
-   Avoid UTC date shifting
-========================================== */
-
-function getLocalDate() {
-
-    const now =
-        new Date();
-
-
-    const year =
-        now.getFullYear();
-
-
-    const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(2, "0");
-
-
-    const day =
-        String(
-            now.getDate()
-        ).padStart(2, "0");
-
-
-    return (
-        year +
-        "-" +
-        month +
-        "-" +
-        day
-    );
-
-}
-
-
-/* ==========================================
+/* =========================================
    ADAPTIVE ENGINE
-========================================== */
+========================================= */
 
-function updateAdaptiveData(
-    level,
-    currentUser
-) {
+function updateAdaptiveData(level) {
 
+    let allAdaptive =
+        JSON.parse(
+            localStorage.getItem(
+                "smartFitAdaptiveDataByUser"
+            )
+        ) || {};
 
-    /* Existing global data */
 
     let adaptive =
-        getData(
-            "smartFitAdaptiveData",
-            {
-                easyCount: 0,
-                moderateCount: 0,
-                hardCount: 0,
-                difficultyAdjustment: 0
-            }
-        );
-
-
-    if (
-        !adaptive ||
-        typeof adaptive !== "object"
-    ) {
-
-        adaptive = {
+        allAdaptive[currentUser] ||
+        {
 
             easyCount: 0,
 
@@ -853,62 +2237,42 @@ function updateAdaptiveData(
 
             hardCount: 0,
 
-            difficultyAdjustment: 0
+            difficultyAdjustment: 0,
+
+            lastUpdated: null
 
         };
 
-    }
 
-
-    /* Make sure values are numbers */
-
-    adaptive.easyCount =
-        Number(adaptive.easyCount) || 0;
-
-
-    adaptive.moderateCount =
-        Number(adaptive.moderateCount) || 0;
-
-
-    adaptive.hardCount =
-        Number(adaptive.hardCount) || 0;
-
-
-    adaptive.difficultyAdjustment =
-        Number(
-            adaptive.difficultyAdjustment
-        ) || 0;
-
-
-    /* ======================================
-       COUNT FEEDBACK
-    ====================================== */
-
-    if (level === "easy") {
+    if (
+        level === "easy"
+    ) {
 
         adaptive.easyCount++;
 
     }
 
-
-    else if (level === "moderate") {
+    else if (
+        level === "moderate"
+    ) {
 
         adaptive.moderateCount++;
 
     }
 
-
-    else if (level === "hard") {
+    else if (
+        level === "hard"
+    ) {
 
         adaptive.hardCount++;
 
     }
 
 
-    /* ======================================
+    /*
        REPEATED EASY
-       Increase difficulty
-    ====================================== */
+       Increase challenge
+    */
 
     if (
         adaptive.easyCount >= 2
@@ -921,10 +2285,10 @@ function updateAdaptiveData(
     }
 
 
-    /* ======================================
+    /*
        REPEATED HARD
-       Decrease difficulty
-    ====================================== */
+       Reduce challenge
+    */
 
     if (
         adaptive.hardCount >= 2
@@ -937,9 +2301,9 @@ function updateAdaptiveData(
     }
 
 
-    /* ======================================
-       LIMIT ADJUSTMENT
-    ====================================== */
+    /*
+       Keep adjustment within safe range
+    */
 
     adaptive.difficultyAdjustment =
         Math.max(
@@ -951,54 +2315,54 @@ function updateAdaptiveData(
         );
 
 
-    /* ======================================
-       SAVE GLOBAL
-    ====================================== */
-
-    localStorage.setItem(
-        "smartFitAdaptiveData",
-        JSON.stringify(
-            adaptive
-        )
-    );
+    adaptive.lastUpdated =
+        new Date().toISOString();
 
 
-    /* ======================================
-       SAVE PER USER
-    ====================================== */
-
-    let adaptiveByUser =
-        getData(
-            "smartFitAdaptiveDataByUser",
-            {}
-        );
-
-
-    if (
-        !adaptiveByUser ||
-        typeof adaptiveByUser !== "object"
-    ) {
-
-        adaptiveByUser = {};
-
-    }
-
-
-    adaptiveByUser[currentUser] =
+    allAdaptive[currentUser] =
         adaptive;
 
 
     localStorage.setItem(
+
         "smartFitAdaptiveDataByUser",
+
         JSON.stringify(
-            adaptiveByUser
+            allAdaptive
         )
+
+    );
+
+
+    /*
+       Compatibility with existing workout code
+    */
+
+    localStorage.setItem(
+
+        "smartFitAdaptiveData",
+
+        JSON.stringify(
+            adaptive
+        )
+
     );
 
 }
 
-</script>
 
+/* =========================================
+   INITIALIZE
+========================================= */
+
+renderWeeklyStats();
+
+renderActivity();
+
+renderAIInsight();
+
+
+</script>
 
 </body>
 
