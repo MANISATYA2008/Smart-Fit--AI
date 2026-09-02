@@ -1,1036 +1,1217 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Gym Chatbox - SMART FIT AI</title>
+    <title>AI Gym Coach - SMART FIT AI</title>
 
     <link rel="stylesheet" href="style.css">
 
     <style>
-        .chat-container {
-            max-width: 850px;
-            margin: 40px auto 20px;
-            background: #0e1e17;
-            border: 1px solid #1d362b;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        * {
+            box-sizing: border-box;
         }
 
-        .chat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 22px 25px;
-            border-bottom: 1px solid #1d362b;
-            background: #10251c;
-        }
-
-        .chat-header h2 {
-            margin: 0 0 5px;
-        }
-
-        .chat-header p {
+        body {
             margin: 0;
-            color: #9baea5;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 35%),
+                #07110c;
+            color: #fff;
         }
 
-        .online-dot {
-            color: #7ee2a8;
-            font-size: 14px;
-        }
-
-        .chat-messages {
-            height: 430px;
-            overflow-y: auto;
-            padding: 25px;
+        .coach-page {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 18px;
         }
 
-        .bot-message,
-        .user-message {
-            display: flex;
-            gap: 12px;
-            max-width: 85%;
-        }
+        /* HEADER */
 
-        .user-message {
-            margin-left: auto;
-            flex-direction: row-reverse;
-        }
-
-        .message-icon {
-            width: 40px;
-            height: 40px;
-            min-width: 40px;
-            border-radius: 50%;
+        .coach-header {
+            height: 76px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: #193629;
+            justify-content: space-between;
+            padding: 0 28px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            background: rgba(7,17,12,.95);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
 
-        .message-content {
-            padding: 14px 17px;
-            border-radius: 15px;
-            background: #15291f;
-            border: 1px solid #244235;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .user-message .message-content {
-            background: #1b3a2a;
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #22c55e;
+            color: #06110a;
+            font-size: 23px;
+            font-weight: bold;
         }
 
-        .message-content strong {
-            display: block;
-            margin-bottom: 7px;
+        .brand h1 {
+            margin: 0;
+            font-size: 20px;
         }
 
-        .message-content p {
-            margin: 5px 0;
-            line-height: 1.6;
-            color: #d5e0da;
+        .brand p {
+            margin: 4px 0 0;
+            color: #9ca3af;
+            font-size: 12px;
         }
 
-        .quick-questions {
-            padding: 20px 25px;
-            border-top: 1px solid #1d362b;
+        .header-actions {
+            display: flex;
+            gap: 9px;
         }
 
-        .quick-questions > p {
-            margin: 0 0 12px;
-            color: #9baea5;
-            font-weight: 600;
-        }
-
-        .quick-questions button {
-            margin: 5px;
-            padding: 9px 13px;
-            border: 1px solid #294638;
-            border-radius: 20px;
-            background: #12261c;
-            color: #d8e5df;
+        .header-btn {
+            border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.05);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .quick-questions button:hover {
-            background: #1c392a;
+        .header-btn:hover {
+            background: rgba(255,255,255,.1);
+        }
+
+        /* LAYOUT */
+
+        .coach-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: calc(100vh - 76px);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            padding: 22px;
+            border-right: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.015);
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .quick-question {
+            width: 100%;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.035);
+            color: #e5e7eb;
+            padding: 13px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .quick-question:hover {
+            border-color: rgba(34,197,94,.55);
+            background: rgba(34,197,94,.08);
             transform: translateY(-1px);
         }
 
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-            padding: 20px 25px;
-            border-top: 1px solid #1d362b;
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            min-width: 0;
-            padding: 14px 16px;
-            border-radius: 10px;
-            border: 1px solid #294638;
-            background: #09150f;
-            color: white;
-            outline: none;
-        }
-
-        .chat-input-area input:focus {
-            border-color: #4b8065;
-        }
-
-        .chat-disclaimer {
-            max-width: 850px;
-            margin: 15px auto;
-            padding: 15px 20px;
-            border-radius: 12px;
-            background: #111d18;
-            border: 1px solid #283a31;
-            color: #9baea5;
-            font-size: 13px;
+        .coach-note {
+            margin-top: 24px;
+            padding: 15px;
+            border-radius: 14px;
+            background: rgba(34,197,94,.08);
+            border: 1px solid rgba(34,197,94,.18);
+            color: #d1fae5;
+            font-size: 12px;
             line-height: 1.6;
         }
 
-        @media (max-width: 700px) {
+        /* CHAT */
 
-            .chat-container {
-                margin: 25px 10px;
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .chat-status {
+            padding: 13px 22px;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            color: #9ca3af;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .online-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px rgba(34,197,94,.7);
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 28px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message-row {
+            width: 100%;
+            display: flex;
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message {
+            max-width: min(760px, 85%);
+            padding: 14px 16px;
+            border-radius: 17px;
+            line-height: 1.6;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .message.ai {
+            background: rgba(255,255,255,.055);
+            border: 1px solid rgba(255,255,255,.08);
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user {
+            background: #16a34a;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message strong {
+            color: #86efac;
+        }
+
+        .message.user strong {
+            color: white;
+        }
+
+        .message p {
+            margin: 7px 0;
+        }
+
+        .message ul,
+        .message ol {
+            padding-left: 22px;
+            margin: 8px 0;
+        }
+
+        .message li {
+            margin: 4px 0;
+        }
+
+        /* TYPING */
+
+        .typing {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            width: fit-content;
+            padding: 12px 15px;
+            border-radius: 14px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .typing span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #9ca3af;
+            animation: typing 1.2s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .15s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .3s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: .5;
             }
 
-            .chat-header {
-                padding: 18px;
+            30% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
+        }
+
+        /* INPUT */
+
+        .input-area {
+            padding: 18px 22px 22px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            background: rgba(7,17,12,.96);
+        }
+
+        .input-wrapper {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.05);
+            color: white;
+            border-radius: 14px;
+            padding: 15px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        #userInput:focus {
+            border-color: rgba(34,197,94,.65);
+            box-shadow: 0 0 0 3px rgba(34,197,94,.08);
+        }
+
+        #sendBtn {
+            border: none;
+            background: #22c55e;
+            color: #06110a;
+            padding: 0 22px;
+            border-radius: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #sendBtn:hover {
+            background: #4ade80;
+        }
+
+        #sendBtn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .input-help {
+            max-width: 1000px;
+            margin: 8px auto 0;
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .coach-layout {
+                grid-template-columns: 1fr;
             }
 
-            .chat-messages {
-                height: 400px;
-                padding: 18px;
+            .sidebar {
+                display: none;
             }
 
-            .chat-input-area {
-                padding: 15px;
+            .coach-header {
+                padding: 0 15px;
             }
 
-            .chat-input-area .primary-btn {
-                padding: 10px 14px;
+            .brand h1 {
+                font-size: 17px;
             }
 
-            .bot-message,
-            .user-message {
-                max-width: 95%;
+            .brand p {
+                display: none;
             }
 
-            .navbar nav {
-                gap: 8px;
+            .header-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .chat-box {
+                padding: 18px 14px;
+            }
+
+            .message {
+                max-width: 92%;
+            }
+
+            .input-area {
+                padding: 12px;
+            }
+
+            #sendBtn {
+                padding: 0 17px;
             }
         }
     </style>
-
 </head>
-
 
 <body>
 
+<div class="coach-page">
 
-<header class="navbar">
+    <!-- HEADER -->
 
-    <div class="logo">
-        SMART<span>FIT</span> AI
-    </div>
+    <header class="coach-header">
 
-    <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="workout.html">Workout</a>
-        <a href="nutrition.html">Nutrition</a>
-        <a href="progress.html">Progress</a>
-    </nav>
+        <div class="brand">
 
-</header>
-
-
-
-<section class="features-section">
-
-
-    <div class="section-heading">
-
-        <p>AI FITNESS ASSISTANT</p>
-
-        <h2>
-            Gym <span>Chatbox</span> 🤖
-        </h2>
-
-        <p>
-            Ask your beginner gym doubts and get simple explanations.
-        </p>
-
-    </div>
-
-
-
-    <!-- CHATBOX -->
-
-    <div class="chat-container">
-
-
-        <!-- HEADER -->
-
-        <div class="chat-header">
+            <div class="brand-icon">
+                🧠
+            </div>
 
             <div>
-
-                <h2>
-                    🤖 Gym AI Assistant
-                </h2>
-
-                <p>
-                    Your beginner-friendly gym guide
-                </p>
-
-            </div>
-
-            <span class="online-dot">
-                ● Online
-            </span>
-
-        </div>
-
-
-
-        <!-- MESSAGES -->
-
-        <div
-            id="chatMessages"
-            class="chat-messages"
-        >
-
-            <div class="bot-message">
-
-                <div class="message-icon">
-                    🤖
-                </div>
-
-                <div class="message-content">
-
-                    <strong>
-                        Gym AI
-                    </strong>
-
-                    <p>
-                        Hi! 👋 I'm your Gym AI Assistant.
-                    </p>
-
-                    <p>
-                        Ask me anything about workouts,
-                        exercises, sets, reps, rest,
-                        warm-ups, nutrition or gym basics.
-                    </p>
-
-                </div>
-
+                <h1>SMART FIT AI Coach</h1>
+                <p>Your personal intelligent fitness assistant</p>
             </div>
 
         </div>
 
-
-
-        <!-- QUICK QUESTIONS -->
-
-        <div class="quick-questions">
-
-            <p>
-                Quick Questions
-            </p>
-
+        <div class="header-actions">
 
             <button
-                onclick="askQuestion('What are sets and reps?')"
-            >
-                💪 Sets & Reps
+                class="header-btn"
+                onclick="clearChat()">
+                Clear
             </button>
 
-
             <button
-                onclick="askQuestion('What should I do before gym?')"
-            >
-                🔥 Before Gym
-            </button>
-
-
-            <button
-                onclick="askQuestion('What should I eat after workout?')"
-            >
-                🍎 After Workout
-            </button>
-
-
-            <button
-                onclick="askQuestion('How much rest should I take between sets?')"
-            >
-                ⏱️ Rest Time
-            </button>
-
-
-            <button
-                onclick="askQuestion('What is progressive overload?')"
-            >
-                📈 Progressive Overload
-            </button>
-
-
-            <button
-                onclick="askQuestion('How should a beginner start gym?')"
-            >
-                🏋️ Beginner Guide
+                class="header-btn"
+                onclick="window.location.href='dashboard.html'">
+                Dashboard
             </button>
 
         </div>
 
+    </header>
 
 
-        <!-- INPUT -->
+    <!-- MAIN -->
 
-        <div class="chat-input-area">
+    <main class="coach-layout">
 
-            <input
-                type="text"
-                id="userInput"
-                placeholder="Ask your gym doubt..."
-                autocomplete="off"
-            >
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-title">
+                ⚡ Quick Questions
+            </div>
 
             <button
-                class="primary-btn"
-                onclick="sendMessage()"
-            >
-                Send ➤
+                class="quick-question"
+                onclick="askQuestion('How should I train for muscle growth?')">
+                💪 How should I train for muscle growth?
             </button>
 
-        </div>
+            <button
+                class="quick-question"
+                onclick="askQuestion('How many sets and reps should I do?')">
+                📊 How many sets and reps?
+            </button>
 
-    </div>
+            <button
+                class="quick-question"
+                onclick="askQuestion('How much protein should I eat?')">
+                🥗 How much protein?
+            </button>
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('How long should I rest between sets?')">
+                ⏱️ Rest between sets?
+            </button>
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('What is progressive overload?')">
+                📈 Progressive overload?
+            </button>
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('Can I train the same muscle twice a week?')">
+                🔥 Train muscle twice?
+            </button>
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('What should I eat before a workout?')">
+                🍌 Pre-workout food?
+            </button>
+
+            <button
+                class="quick-question"
+                onclick="askQuestion('How can I recover faster after training?')">
+                😴 Better recovery?
+            </button>
+
+            <div class="coach-note">
+
+                <strong>🤖 Real AI Coach</strong>
+
+                <br><br>
+
+                Ask questions naturally.
+
+                <br><br>
+
+                You don't need to select a predefined question.
+
+                <br><br>
+
+                Ask about workouts, exercises, nutrition,
+                gym equipment, recovery, cardio,
+                muscle building, fat loss, or general fitness.
+
+            </div>
+
+        </aside>
 
 
+        <!-- CHAT -->
 
-    <!-- DISCLAIMER -->
+        <section class="chat-section">
 
-    <div class="chat-disclaimer">
+            <div class="chat-status">
 
-        ⚠️ <strong>Important:</strong>
-        Gym AI provides general educational information.
-        It is not a replacement for a qualified fitness
-        professional or healthcare professional.
+                <span class="online-dot"></span>
 
-    </div>
+                AI Coach Online
+
+            </div>
 
 
-</section>
+            <div
+                id="chatBox"
+                class="chat-box">
 
+                <div class="message-row">
+
+                    <div class="message ai">
+
+                        <p>
+                            👋 <strong>Hey! I'm your SMART FIT AI Coach.</strong>
+                        </p>
+
+                        <p>
+                            Ask me anything about gym training,
+                            workouts, exercises, nutrition,
+                            recovery, cardio, equipment,
+                            or general fitness.
+                        </p>
+
+                        <p>
+                            You can ask your questions naturally.
+                            I'm powered by AI, so I'm not limited
+                            to predefined keywords.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="typing"
+                    class="typing">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <!-- INPUT -->
+
+            <div class="input-area">
+
+                <div class="input-wrapper">
+
+                    <input
+                        id="userInput"
+                        type="text"
+                        placeholder="Ask anything about the gym..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        id="sendBtn"
+                        onclick="sendMessage()">
+                        Send
+                    </button>
+
+                </div>
+
+                <div class="input-help">
+                    Press Enter to send
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 
 <script>
 
-"use strict";
+    // ==========================================
+    // AUTH
+    // ==========================================
 
-
-/* =========================================
-   LOGIN CHECK
-========================================= */
-
-document.addEventListener("DOMContentLoaded", function () {
+    const currentUser =
+        localStorage.getItem("smartFitCurrentUserEmail") ||
+        localStorage.getItem("smartFitCurrentUser") ||
+        "";
 
     const loggedIn =
         localStorage.getItem("smartFitLoggedIn");
 
-    if (loggedIn !== "true") {
 
-        alert("Please login first.");
+    if (!currentUser || loggedIn !== "true") {
 
         window.location.href = "login.html";
 
-        return;
     }
 
-    const input =
+
+    // ==========================================
+    // ELEMENTS
+    // ==========================================
+
+    const chatBox =
+        document.getElementById("chatBox");
+
+    const userInput =
         document.getElementById("userInput");
 
-    input.focus();
+    const sendBtn =
+        document.getElementById("sendBtn");
 
-});
+    const typing =
+        document.getElementById("typing");
 
 
+    // ==========================================
+    // STORAGE
+    // ==========================================
 
-/* =========================================
-   ADD USER MESSAGE
-========================================= */
+    const chatStorageKey =
+        "smartFitAIChat_" + currentUser;
 
-function addUserMessage(message) {
 
-    const chatMessages =
-        document.getElementById("chatMessages");
+    let conversation = [];
 
 
-    const wrapper =
-        document.createElement("div");
+    // ==========================================
+    // GET PROFILE
+    // ==========================================
 
-    wrapper.className =
-        "user-message";
+    function getUserProfile() {
 
+        try {
 
-    wrapper.innerHTML = `
+            const profiles =
+                JSON.parse(
+                    localStorage.getItem("smartFitProfiles") || "{}"
+                );
 
-        <div class="message-icon">
-            👤
-        </div>
+            if (profiles[currentUser]) {
+                return profiles[currentUser];
+            }
 
-        <div class="message-content">
+        } catch (error) {
 
-            <strong>
-                You
-            </strong>
+            console.error(
+                "Profile error:",
+                error
+            );
 
-            <p>
-                ${escapeHTML(message)}
-            </p>
+        }
 
-        </div>
 
-    `;
+        try {
 
+            const profile =
+                JSON.parse(
+                    localStorage.getItem("smartFitProfile") || "null"
+                );
 
-    chatMessages.appendChild(wrapper);
+            return profile || {};
 
-    scrollToBottom();
+        } catch (error) {
 
-}
+            return {};
 
-
-
-/* =========================================
-   ADD BOT MESSAGE
-========================================= */
-
-function addBotMessage(message) {
-
-    const chatMessages =
-        document.getElementById("chatMessages");
-
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "bot-message";
-
-
-    wrapper.innerHTML = `
-
-        <div class="message-icon">
-            🤖
-        </div>
-
-        <div class="message-content">
-
-            <strong>
-                Gym AI
-            </strong>
-
-            ${formatBotMessage(message)}
-
-        </div>
-
-    `;
-
-
-    chatMessages.appendChild(wrapper);
-
-    scrollToBottom();
-
-}
-
-
-
-/* =========================================
-   FORMAT BOT RESPONSE
-========================================= */
-
-function formatBotMessage(message) {
-
-    const paragraphs =
-        message.split("\n");
-
-
-    return paragraphs
-        .filter(text => text.trim() !== "")
-        .map(text => `<p>${escapeHTML(text)}</p>`)
-        .join("");
-
-}
-
-
-
-/* =========================================
-   ESCAPE HTML
-========================================= */
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        text;
-
-    return div.innerHTML;
-
-}
-
-
-
-/* =========================================
-   SCROLL CHAT
-========================================= */
-
-function scrollToBottom() {
-
-    const chatMessages =
-        document.getElementById("chatMessages");
-
-    chatMessages.scrollTop =
-        chatMessages.scrollHeight;
-
-}
-
-
-
-/* =========================================
-   SEND MESSAGE
-========================================= */
-
-function sendMessage() {
-
-    const input =
-        document.getElementById("userInput");
-
-
-    const question =
-        input.value.trim();
-
-
-    if (!question) {
-
-        return;
+        }
 
     }
 
 
-    addUserMessage(question);
+    // ==========================================
+    // GET FOOD PREFERENCES
+    // ==========================================
+
+    function getFoodPreferences() {
+
+        try {
+
+            const foods =
+                JSON.parse(
+                    localStorage.getItem(
+                        "smartFitFoodPreferencesByUser"
+                    ) || "{}"
+                );
+
+            if (foods[currentUser]) {
+                return foods[currentUser];
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Food preference error:",
+                error
+            );
+
+        }
 
 
-    input.value = "";
+        try {
+
+            const foods =
+                JSON.parse(
+                    localStorage.getItem(
+                        "smartFitFoods"
+                    ) || "{}"
+                );
+
+            if (foods[currentUser]) {
+                return foods[currentUser];
+            }
+
+        } catch (error) {}
+
+        return {};
+
+    }
 
 
-    setTimeout(function () {
+    // ==========================================
+    // LOAD CHAT
+    // ==========================================
 
-        const answer =
-            getGymAIResponse(question);
+    function loadChat() {
 
-        addBotMessage(answer);
+        try {
 
-    }, 350);
-
-}
-
-
-
-/* =========================================
-   QUICK QUESTION
-========================================= */
-
-function askQuestion(question) {
-
-    const input =
-        document.getElementById("userInput");
-
-    input.value =
-        question;
-
-    sendMessage();
-
-}
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        chatStorageKey
+                    ) || "[]"
+                );
 
 
+            if (
+                !Array.isArray(saved) ||
+                saved.length === 0
+            ) {
 
-/* =========================================
-   GYM AI RESPONSE ENGINE
-========================================= */
+                return;
 
-function getGymAIResponse(question) {
-
-    const q =
-        question.toLowerCase().trim();
-
+            }
 
 
-    /* SETS AND REPS */
+            conversation =
+                saved;
 
-    if (
-        q.includes("sets") &&
-        q.includes("reps")
+
+            const oldMessages =
+                chatBox.querySelectorAll(
+                    ".message-row"
+                );
+
+
+            oldMessages.forEach(
+                message => message.remove()
+            );
+
+
+            conversation.forEach(item => {
+
+                addMessageToUI(
+                    item.content,
+                    item.role === "assistant"
+                        ? "ai"
+                        : "user"
+                );
+
+            });
+
+
+            scrollToBottom();
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not load chat:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // SAVE CHAT
+    // ==========================================
+
+    function saveChat() {
+
+        try {
+
+            conversation =
+                conversation.slice(-30);
+
+
+            localStorage.setItem(
+                chatStorageKey,
+                JSON.stringify(conversation)
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not save chat:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHTML(text) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            text;
+
+        return div.innerHTML;
+
+    }
+
+
+    // ==========================================
+    // FORMAT AI RESPONSE
+    // ==========================================
+
+    function formatAIResponse(text) {
+
+        let html =
+            escapeHTML(text);
+
+
+        html =
+            html.replace(
+                /\*\*(.*?)\*\*/g,
+                "<strong>$1</strong>"
+            );
+
+
+        html =
+            html.replace(
+                /^[-•]\s+(.*)$/gm,
+                "<li>$1</li>"
+            );
+
+
+        html =
+            html.replace(
+                /^\d+\.\s+(.*)$/gm,
+                "<li>$1</li>"
+            );
+
+
+        html =
+            html.replace(
+                /(<li>.*?<\/li>\s*)+/gs,
+                match => `<ul>${match}</ul>`
+            );
+
+
+        html =
+            html
+                .split(/\n{2,}/)
+                .map(part => {
+
+                    if (
+                        part.trim().startsWith("<ul>")
+                    ) {
+                        return part;
+                    }
+
+                    return `<p>${part.replace(/\n/g, "<br>")}</p>`;
+
+                })
+                .join("");
+
+
+        return html;
+
+    }
+
+
+    // ==========================================
+    // ADD MESSAGE UI
+    // ==========================================
+
+    function addMessageToUI(
+        content,
+        type
     ) {
 
-        return `
-Sets = how many rounds you perform.
+        const row =
+            document.createElement("div");
 
-Reps = how many times you perform an exercise in one set.
 
-Example: 3 sets × 10 reps means you perform 10 repetitions, rest, and repeat for 3 total sets.
+        row.className =
+            "message-row " +
+            (
+                type === "user"
+                    ? "user"
+                    : ""
+            );
 
-For a beginner, focus on controlled technique and a comfortable number of repetitions rather than lifting very heavy weights.
-        `;
+
+        const message =
+            document.createElement("div");
+
+
+        message.className =
+            "message " +
+            (
+                type === "user"
+                    ? "user"
+                    : "ai"
+            );
+
+
+        if (type === "user") {
+
+            message.textContent =
+                content;
+
+        } else {
+
+            message.innerHTML =
+                formatAIResponse(content);
+
+        }
+
+
+        row.appendChild(
+            message
+        );
+
+
+        chatBox.insertBefore(
+            row,
+            typing
+        );
 
     }
 
 
-
-    /* BEFORE GYM */
-
-    if (
-        q.includes("before gym") ||
-        q.includes("warm up") ||
-        q.includes("warm-up") ||
-        q.includes("before workout")
+    function addMessage(
+        content,
+        type
     ) {
 
-        return `
-Before your workout, start with 5–10 minutes of easy movement such as walking or cycling.
+        addMessageToUI(
+            content,
+            type
+        );
 
-Then do a few gentle mobility movements and lighter warm-up sets for your first exercise.
-
-Avoid starting your first heavy set when your muscles are completely cold.
-        `;
+        scrollToBottom();
 
     }
 
 
+    // ==========================================
+    // SCROLL
+    // ==========================================
 
-    /* AFTER WORKOUT */
+    function scrollToBottom() {
 
-    if (
-        q.includes("after workout") ||
-        q.includes("post workout") ||
-        q.includes("post-workout") ||
-        q.includes("eat after")
+        setTimeout(() => {
+
+            chatBox.scrollTop =
+                chatBox.scrollHeight;
+
+        }, 30);
+
+    }
+
+
+    // ==========================================
+    // TYPING
+    // ==========================================
+
+    function showTyping() {
+
+        typing.style.display =
+            "flex";
+
+        scrollToBottom();
+
+    }
+
+
+    function hideTyping() {
+
+        typing.style.display =
+            "none";
+
+    }
+
+
+    // ==========================================
+    // SEND MESSAGE
+    // ==========================================
+
+    async function sendMessage() {
+
+        const message =
+            userInput.value.trim();
+
+
+        if (!message) {
+            return;
+        }
+
+
+        sendBtn.disabled =
+            true;
+
+        userInput.disabled =
+            true;
+
+
+        // USER MESSAGE
+
+        addMessage(
+            message,
+            "user"
+        );
+
+
+        conversation.push({
+            role: "user",
+            content: message
+        });
+
+
+        saveChat();
+
+
+        userInput.value =
+            "";
+
+
+        showTyping();
+
+
+        try {
+
+            const profile =
+                getUserProfile();
+
+
+            const food =
+                getFoodPreferences();
+
+
+            const response =
+                await fetch(
+                    "/api/ai-coach",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            message: message,
+
+                            profile: {
+                                ...profile,
+                                foodPreferences: food
+                            },
+
+                            history:
+                                conversation.slice(-12)
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "AI Coach request failed."
+                );
+
+            }
+
+
+            const answer =
+                data.answer ||
+                "Sorry, I couldn't generate an answer right now.";
+
+
+            hideTyping();
+
+
+            addMessage(
+                answer,
+                "ai"
+            );
+
+
+            conversation.push({
+                role: "assistant",
+                content: answer
+            });
+
+
+            saveChat();
+
+
+        } catch (error) {
+
+            console.error(
+                "AI Coach error:",
+                error
+            );
+
+
+            hideTyping();
+
+
+            const errorMessage =
+                "⚠️ I couldn't connect to the AI Coach right now. Please check your AI server configuration and try again.";
+
+
+            addMessage(
+                errorMessage,
+                "ai"
+            );
+
+
+        } finally {
+
+            sendBtn.disabled =
+                false;
+
+            userInput.disabled =
+                false;
+
+            userInput.focus();
+
+        }
+
+    }
+
+
+    // ==========================================
+    // QUICK QUESTION
+    // ==========================================
+
+    function askQuestion(
+        question
     ) {
 
-        return `
-After training, aim for a normal balanced meal containing protein, carbohydrates, vegetables or fruit, and enough fluids.
+        userInput.value =
+            question;
 
-Examples include eggs with rice, dal with rice, paneer with roti, or yogurt with fruit.
-
-You do not need an expensive supplement immediately after every workout.
-        `;
+        sendMessage();
 
     }
 
 
-
-    /* REST */
-
-    if (
-        q.includes("rest") &&
-        (
-            q.includes("between") ||
-            q.includes("set") ||
-            q.includes("sets")
-        )
-    ) {
-
-        return `
-For many beginner strength exercises, around 1–3 minutes of rest between sets is a useful starting point.
-
-Take enough rest to perform the next set with good technique.
-
-Heavier or more demanding exercises may need longer rest.
-        `;
-
-    }
-
-
-
-    /* PROGRESSIVE OVERLOAD */
-
-    if (
-        q.includes("progressive overload") ||
-        q.includes("progress")
-    ) {
-
-        return `
-Progressive overload means gradually making your training more challenging over time.
-
-You can progress by adding a small amount of weight, doing an extra repetition, improving your technique, or gradually increasing training volume.
-
-Do not increase everything at once. Small, consistent improvements are better.
-        `;
-
-    }
-
-
-
-    /* BEGINNER GUIDE */
-
-    if (
-        q.includes("beginner") ||
-        q.includes("start gym") ||
-        q.includes("start the gym") ||
-        q.includes("new to gym")
-    ) {
-
-        return `
-If you're a beginner, start with 2–4 training days per week.
-
-Learn the basic movement patterns, use manageable weights, and prioritize good technique.
-
-A simple full-body routine can include a squat or leg movement, a push, a pull, a hip movement, and some core work.
-
-Start gradually and give your body enough recovery time.
-        `;
-
-    }
-
-
-
-    /* MUSCLE BUILDING */
-
-    if (
-        q.includes("muscle") ||
-        q.includes("build")
-    ) {
-
-        return `
-Building muscle generally requires consistent resistance training, enough food, adequate protein, and good recovery.
-
-Train each major muscle group regularly and gradually make your exercises more challenging.
-
-Sleep and recovery are also important parts of progress.
-        `;
-
-    }
-
-
-
-    /* WEIGHT LOSS */
-
-    if (
-        q.includes("weight loss") ||
-        q.includes("lose weight") ||
-        q.includes("fat loss") ||
-        q.includes("lose fat")
-    ) {
-
-        return `
-For fat loss, focus on sustainable eating habits and regular activity rather than extreme dieting.
-
-Strength training can help maintain muscle while you work toward your goal.
-
-Walking, sleep, hydration, and consistent meals can also support a healthy routine.
-        `;
-
-    }
-
-
-
-    /* CARDIO */
-
-    if (
-        q.includes("cardio") ||
-        q.includes("running") ||
-        q.includes("treadmill")
-    ) {
-
-        return `
-Cardio includes activities such as walking, cycling, jogging, swimming, and using a treadmill.
-
-For beginners, start at a comfortable intensity and gradually increase duration.
-
-You don't need to exhaust yourself every session.
-        `;
-
-    }
-
-
-
-    /* PROTEIN */
-
-    if (
-        q.includes("protein") ||
-        q.includes("protein powder")
-    ) {
-
-        return `
-Protein helps support muscle repair and growth.
-
-Good food sources include eggs, milk, yogurt, paneer, dal, beans, soy, fish, chicken, and other protein-rich foods.
-
-Protein powder is optional. It can be convenient, but it is not required if you can meet your nutrition needs through food.
-        `;
-
-    }
-
-
-
-    /* CREATINE */
-
-    if (
-        q.includes("creatine")
-    ) {
-
-        return `
-Creatine is a widely studied sports supplement that can help support high-intensity exercise performance.
-
-It is not required for beginners, and supplements should not replace a balanced diet and proper training.
-
-If you are considering a supplement, especially if you have any health concerns, discuss it with a qualified healthcare professional.
-        `;
-
-    }
-
-
-
-    /* SQUATS */
-
-    if (
-        q.includes("squat")
-    ) {
-
-        return `
-A basic squat trains your legs and hips.
-
-Keep your feet in a comfortable stance, brace your core, bend your knees and hips, and lower yourself under control.
-
-Use a comfortable range of motion and start with bodyweight or a light load while learning the movement.
-        `;
-
-    }
-
-
-
-    /* PUSH UPS */
-
-    if (
-        q.includes("push up") ||
-        q.includes("push-up")
-    ) {
-
-        return `
-Push-ups mainly train the chest, shoulders, and triceps.
-
-Keep your body in a straight line, brace your core, and lower yourself under control.
-
-If regular push-ups are difficult, start with an easier variation such as incline push-ups.
-        `;
-
-    }
-
-
-
-    /* DUMBBELLS */
-
-    if (
-        q.includes("dumbbell") ||
-        q.includes("weights")
-    ) {
-
-        return `
-Start with a weight that allows you to perform the exercise with controlled technique.
-
-The correct weight is not necessarily the heaviest weight you can lift.
-
-If your form breaks down, reduce the weight and focus on the movement.
-        `;
-
-    }
-
-
-
-    /* GYM FREQUENCY */
-
-    if (
-        q.includes("how many days") ||
-        q.includes("days per week") ||
-        q.includes("frequency")
-    ) {
-
-        return `
-Many beginners can make good progress training around 2–4 days per week.
-
-The best schedule is one you can follow consistently while allowing enough recovery between demanding sessions.
-        `;
-
-    }
-
-
-
-    /* WATER */
-
-    if (
-        q.includes("water") ||
-        q.includes("hydration") ||
-        q.includes("drink")
-    ) {
-
-        return `
-Drink fluids regularly throughout the day and around your workouts.
-
-Your needs increase with heat, sweating, and longer exercise sessions.
-
-A simple approach is to drink when thirsty and make sure you replace fluids after substantial sweating.
-        `;
-
-    }
-
-
-
-    /* SLEEP */
-
-    if (
-        q.includes("sleep") ||
-        q.includes("recovery")
-    ) {
-
-        return `
-Recovery is an important part of fitness.
-
-Aim for a consistent sleep schedule and give trained muscles enough time to recover.
-
-Training harder every day is not always better. Rest helps your body adapt to exercise.
-        `;
-
-    }
-
-
-
-    /* PAIN / INJURY */
-
-    if (
-        q.includes("pain") ||
-        q.includes("injury") ||
-        q.includes("hurt")
-    ) {
-
-        return `
-Do not try to push through sharp, severe, or unusual pain.
-
-Stop the exercise and, if the pain persists or is concerning, seek advice from a qualified healthcare professional.
-
-Normal muscle fatigue is different from injury pain.
-        `;
-
-    }
-
-
-
-    /* DEFAULT */
-
-    return `
-I can help with beginner-friendly gym topics such as:
-
-• Sets and reps
-• Workout exercises
-• Warm-ups
-• Rest time
-• Progressive overload
-• Muscle building
-• Weight loss basics
-• Cardio
-• Protein and nutrition basics
-• Gym equipment
-• Recovery and sleep
-
-Try asking one of these topics and I'll explain it simply.
-    `;
-
-}
-
-
-
-/* =========================================
-   ENTER KEY
-========================================= */
-
-document
-    .getElementById("userInput")
-    .addEventListener(
+    // ==========================================
+    // ENTER KEY
+    // ==========================================
+
+    userInput.addEventListener(
         "keydown",
-        function (event) {
+        function(event) {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
 
                 event.preventDefault();
 
@@ -1041,9 +1222,64 @@ document
         }
     );
 
+
+    // ==========================================
+    // CLEAR CHAT
+    // ==========================================
+
+    function clearChat() {
+
+        const confirmed =
+            confirm(
+                "Clear your SMART FIT AI Coach conversation?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        conversation =
+            [];
+
+
+        localStorage.removeItem(
+            chatStorageKey
+        );
+
+
+        const messages =
+            chatBox.querySelectorAll(
+                ".message-row"
+            );
+
+
+        messages.forEach(
+            message => message.remove()
+        );
+
+
+        addMessageToUI(
+            "👋 **Chat cleared!**\n\nI'm ready for your next fitness question.",
+            "ai"
+        );
+
+
+        scrollToBottom();
+
+    }
+
+
+    // ==========================================
+    // START
+    // ==========================================
+
+    loadChat();
+
+    userInput.focus();
+
 </script>
 
-
 </body>
-
 </html>
