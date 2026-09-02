@@ -10,8 +10,9 @@
 
 <title>Progress - SMART FIT AI</title>
 
+<!-- FIXED: style.css is in the same folder -->
 <link rel="stylesheet"
-      href="css/style.css">
+      href="style.css">
 
 <style>
 
@@ -60,6 +61,7 @@
     padding:15px;
 
     color:#9baea5;
+
 }
 
 .history-item {
@@ -97,6 +99,7 @@
         flex-direction:column;
 
         align-items:flex-start;
+
     }
 
 }
@@ -442,8 +445,15 @@ Reset Progress
 const loggedIn =
     localStorage.getItem("smartFitLoggedIn");
 
+
+/*
+   Use the same user key as the
+   updated Login, Dashboard and Workout pages.
+*/
+
 const currentUserEmail =
-    localStorage.getItem("smartFitCurrentUserEmail");
+    localStorage.getItem("smartFitCurrentUserEmail") ||
+    localStorage.getItem("smartFitCurrentUser");
 
 
 if (
@@ -495,9 +505,6 @@ function getProfile() {
 
 /* =====================================================
    GET USER PROGRESS
-
-   IMPORTANT:
-   SAME KEY USED BY workout.html
 ===================================================== */
 
 function getProgressData() {
@@ -531,10 +538,18 @@ function getProgressData() {
             }
 
 
+            /*
+               Remove duplicate dates
+            */
+
+            data.workoutDates =
+                [...new Set(
+                    data.workoutDates
+                )];
+
+
             data.workoutsCompleted =
-                Number(
-                    data.workoutsCompleted
-                ) || data.workoutDates.length;
+                data.workoutDates.length;
 
 
             return data;
@@ -555,11 +570,11 @@ function getProgressData() {
 
     return {
 
-        workoutsCompleted:0,
+        workoutsCompleted: 0,
 
-        workoutDates:[],
+        workoutDates: [],
 
-        lastWorkout:null
+        lastWorkout: null
 
     };
 
@@ -569,8 +584,6 @@ function getProgressData() {
 
 /* =====================================================
    SAVE PROGRESS
-
-   SAME KEY USED BY workout.html
 ===================================================== */
 
 function saveProgressData(data) {
@@ -594,8 +607,6 @@ function saveProgressData(data) {
 
 /* =====================================================
    TODAY STRING
-
-   LOCAL DATE — NOT UTC
 ===================================================== */
 
 function getTodayString() {
@@ -638,6 +649,11 @@ function getTodayString() {
 
 function formatDate(dateString) {
 
+    if (!dateString) {
+        return "";
+    }
+
+
     const parts =
         dateString.split("-");
 
@@ -664,6 +680,7 @@ function formatDate(dateString) {
         "en-IN",
 
         {
+            weekday:"short",
             day:"2-digit",
             month:"short",
             year:"numeric"
@@ -693,6 +710,7 @@ const splitPrograms = {
 
     ],
 
+
     bro: [
 
         "Chest",
@@ -704,6 +722,7 @@ const splitPrograms = {
         "Rest"
 
     ],
+
 
     "upper-lower": [
 
@@ -717,6 +736,7 @@ const splitPrograms = {
 
     ],
 
+
     "double-muscle": [
 
         "Chest + Back",
@@ -728,6 +748,7 @@ const splitPrograms = {
         "Rest"
 
     ],
+
 
     "enhanced-ppl": [
 
@@ -747,9 +768,6 @@ const splitPrograms = {
 
 /* =====================================================
    GET SELECTED SPLIT
-
-   First user-specific,
-   then old global storage
 ===================================================== */
 
 let selectedSplit =
@@ -809,12 +827,12 @@ selectedSplitName =
 
 
 /* =====================================================
-   CHECK WHETHER DATE IS WORKOUT DAY
+   GET WORKOUT FOR DATE
 ===================================================== */
 
 function getWorkoutForDate(date) {
 
-    let day =
+    const day =
         date.getDay();
 
 
@@ -847,7 +865,10 @@ function loadNextWorkout() {
 
 
     today.setHours(
-        0,0,0,0
+        0,
+        0,
+        0,
+        0
     );
 
 
@@ -887,11 +908,9 @@ function loadNextWorkout() {
     }
 
 
-    let foundWorkout =
-        null;
+    let foundWorkout = null;
 
-    let foundDate =
-        null;
+    let foundDate = null;
 
 
     for (
@@ -939,6 +958,13 @@ function loadNextWorkout() {
             "nextWorkout"
         ).textContent =
             "No workout scheduled";
+
+
+        document.getElementById(
+            "nextWorkoutDate"
+        ).textContent =
+            "";
+
 
         return;
 
@@ -1042,7 +1068,7 @@ function loadProgress() {
 
 
 
-    /* TOTAL */
+    /* TOTAL WORKOUTS */
 
     document.getElementById(
         "totalWorkouts"
@@ -1078,7 +1104,10 @@ function loadProgress() {
 
 
     today.setHours(
-        0,0,0,0
+        0,
+        0,
+        0,
+        0
     );
 
 
@@ -1101,6 +1130,14 @@ function loadProgress() {
         today.getDate() -
         difference
 
+    );
+
+
+    weekStart.setHours(
+        0,
+        0,
+        0,
+        0
     );
 
 
@@ -1136,7 +1173,10 @@ function loadProgress() {
 
 
                 date.setHours(
-                    0,0,0,0
+                    0,
+                    0,
+                    0,
+                    0
                 );
 
 
@@ -1206,15 +1246,21 @@ function loadProgress() {
 
 
 
+    /* STREAK */
+
     calculateStreak(
         dates
     );
 
 
+    /* HISTORY */
+
     displayHistory(
         dates
     );
 
+
+    /* NEXT WORKOUT */
 
     loadNextWorkout();
 
@@ -1267,7 +1313,10 @@ function calculateStreak(dates) {
 
 
     today.setHours(
-        0,0,0,0
+        0,
+        0,
+        0,
+        0
     );
 
 
@@ -1278,7 +1327,10 @@ function calculateStreak(dates) {
 
 
     latest.setHours(
-        0,0,0,0
+        0,
+        0,
+        0,
+        0
     );
 
 
@@ -1300,6 +1352,11 @@ function calculateStreak(dates) {
 
         );
 
+
+    /*
+       If the last workout was more
+       than one day ago, streak is 0.
+    */
 
     if (
         daysAway > 1
@@ -1335,12 +1392,18 @@ function calculateStreak(dates) {
 
 
         first.setHours(
-            0,0,0,0
+            0,
+            0,
+            0,
+            0
         );
 
 
         second.setHours(
-            0,0,0,0
+            0,
+            0,
+            0,
+            0
         );
 
 
@@ -1540,6 +1603,14 @@ function clearProgress() {
     );
 
 
+    localStorage.removeItem(
+
+        "smartFitLastFeedback_" +
+        currentUserEmail
+
+    );
+
+
     alert(
         "Progress has been reset successfully."
     );
@@ -1569,8 +1640,11 @@ document.addEventListener(
 
 </script>
 
-
-<script src="js/script.js"></script>
+<!--
+    No js/script.js here.
+    Your current project structure does not show
+    a js folder or script.js file.
+-->
 
 </body>
 
