@@ -5,13 +5,11 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Fitness Profile - SMART FIT AI</title>
 
-<link rel="stylesheet"
-      href="css/style.css">
+<link rel="stylesheet" href="style.css">
 
 <style>
 
@@ -63,9 +61,7 @@
 
 </head>
 
-
 <body>
-
 
 <header class="navbar">
 
@@ -75,10 +71,7 @@
 
 </header>
 
-
-
 <section class="features-section">
-
 
 <div class="section-heading">
 
@@ -96,346 +89,318 @@
 
 </div>
 
-
-
 <div class="profile-container">
 
+    <!-- NAME -->
 
-<!-- NAME -->
+    <label for="name">
+        Name
+    </label>
 
-<label for="name">
-    Name
-</label>
+    <input
+        id="name"
+        type="text"
+        placeholder="Enter your name"
+    >
 
-<input
-    id="name"
-    type="text"
-    placeholder="Enter your name"
->
 
+    <!-- AGE -->
 
+    <label for="age">
+        Age
+    </label>
 
-<!-- AGE -->
+    <input
+        id="age"
+        type="number"
+        min="1"
+        max="120"
+        placeholder="Enter your age"
+    >
 
-<label for="age">
-    Age
-</label>
 
-<input
-    id="age"
-    type="number"
-    min="1"
-    max="120"
-    placeholder="Enter your age"
->
+    <!-- HEIGHT -->
 
+    <label for="height">
+        Height (cm)
+    </label>
 
+    <input
+        id="height"
+        type="number"
+        min="50"
+        max="250"
+        placeholder="Enter your height"
+    >
 
-<!-- HEIGHT -->
 
-<label for="height">
-    Height (cm)
-</label>
+    <!-- WEIGHT -->
 
-<input
-    id="height"
-    type="number"
-    min="50"
-    max="250"
-    placeholder="Enter your height"
->
+    <label for="weight">
+        Weight (kg)
+    </label>
 
+    <input
+        id="weight"
+        type="number"
+        min="20"
+        max="300"
+        step="0.1"
+        placeholder="Enter your weight"
+    >
 
 
-<!-- WEIGHT -->
+    <!-- EXPERIENCE -->
 
-<label for="weight">
-    Weight (kg)
-</label>
+    <label for="experience">
+        Fitness Experience
+    </label>
 
-<input
-    id="weight"
-    type="number"
-    min="20"
-    max="300"
-    step="0.1"
-    placeholder="Enter your weight"
->
+    <select id="experience">
 
+        <option value="Beginner">
+            Beginner
+        </option>
 
+        <option value="Intermediate">
+            Intermediate
+        </option>
 
-<!-- EXPERIENCE -->
+        <option value="Advanced">
+            Advanced
+        </option>
 
-<label for="experience">
-    Fitness Experience
-</label>
+    </select>
 
-<select id="experience">
 
-    <option value="Beginner">
-        Beginner
-    </option>
+    <!-- GOAL -->
 
-    <option value="Intermediate">
-        Intermediate
-    </option>
+    <label for="goal">
+        Fitness Goal
+    </label>
 
-    <option value="Advanced">
-        Advanced
-    </option>
+    <select id="goal">
 
-</select>
+        <option value="General Fitness">
+            General Fitness
+        </option>
 
+        <option value="Build Strength">
+            Build Strength
+        </option>
 
+        <option value="Improve Fitness">
+            Improve Fitness
+        </option>
 
-<!-- GOAL -->
+        <option value="Build Muscle">
+            Build Muscle
+        </option>
 
-<label for="goal">
-    Fitness Goal
-</label>
+        <option value="Weight Loss">
+            Weight Loss
+        </option>
 
-<select id="goal">
+    </select>
 
-    <option value="General Fitness">
-        General Fitness
-    </option>
 
-    <option value="Build Strength">
-        Build Strength
-    </option>
+    <!-- DAYS -->
 
-    <option value="Improve Fitness">
-        Improve Fitness
-    </option>
+    <label for="days">
+        Workout Days Per Week
+    </label>
 
-    <option value="Build Muscle">
-        Build Muscle
-    </option>
+    <select id="days">
 
-    <option value="Weight Loss">
-        Weight Loss
-    </option>
+        <option value="3">
+            3 Days
+        </option>
 
-</select>
+        <option value="4">
+            4 Days
+        </option>
 
+        <option value="5">
+            5 Days
+        </option>
 
+        <option value="6">
+            6 Days
+        </option>
 
-<!-- DAYS -->
+    </select>
 
-<label for="days">
-    Workout Days Per Week
-</label>
 
-<select id="days">
+    <!-- WORKOUT TIME -->
 
-    <option value="3">
-        3 Days
-    </option>
+    <label for="workoutTime">
+        Available Workout Time
+    </label>
 
-    <option value="4">
-        4 Days
-    </option>
+    <select id="workoutTime">
 
-    <option value="5">
-        5 Days
-    </option>
+        <option value="30">
+            30 Minutes
+        </option>
 
-    <option value="6">
-        6 Days
-    </option>
+        <option value="45">
+            45 Minutes
+        </option>
 
-</select>
+        <option value="60">
+            60 Minutes
+        </option>
 
+        <option value="75">
+            75 Minutes
+        </option>
 
+        <option value="90">
+            90 Minutes
+        </option>
 
-<!-- WORKOUT TIME -->
+        <option value="105">
+            105 Minutes
+        </option>
 
-<label for="workoutTime">
-    Available Workout Time
-</label>
+        <option value="120">
+            120 Minutes
+        </option>
 
-<select id="workoutTime">
+    </select>
 
-    <option value="30">
-        30 Minutes
-    </option>
 
-    <option value="45">
-        45 Minutes
-    </option>
+    <!-- LOCATION -->
 
-    <option value="60">
-        60 Minutes
-    </option>
+    <label for="location">
+        Workout Location
+    </label>
 
-    <option value="75">
-        75 Minutes
-    </option>
+    <select id="location">
 
-    <option value="90">
-        90 Minutes
-    </option>
+        <option value="Gym">
+            Gym
+        </option>
 
-    <option value="105">
-        105 Minutes
-    </option>
+        <option value="Home">
+            Home
+        </option>
 
-    <option value="120">
-        120 Minutes
-    </option>
+    </select>
 
-</select>
 
+    <!-- EQUIPMENT -->
 
+    <label for="equipment">
+        Available Equipment
+    </label>
 
-<!-- LOCATION -->
+    <input
+        id="equipment"
+        type="text"
+        placeholder="Example: Dumbbells, Bench, Resistance Bands"
+    >
 
-<label for="location">
-    Workout Location
-</label>
 
-<select id="location">
+    <!-- WORKOUT SPLIT -->
 
-    <option value="Gym">
-        Gym
-    </option>
+    <label for="split">
+        Workout Split
+    </label>
 
-    <option value="Home">
-        Home
-    </option>
+    <select id="split">
 
-</select>
+        <option value="ppl">
+            Push Pull Legs (PPL)
+        </option>
 
+        <option value="bro">
+            Bro Split
+        </option>
 
+        <option value="upper-lower">
+            Upper / Lower Split
+        </option>
 
-<!-- EQUIPMENT -->
+        <option value="double-muscle">
+            Double Muscle Split
+        </option>
 
-<label for="equipment">
-    Available Equipment
-</label>
+        <option value="enhanced-ppl">
+            Advanced PPL
+        </option>
 
-<input
-    id="equipment"
-    type="text"
-    placeholder="Example: Dumbbells, Bench, Resistance Bands"
->
+    </select>
 
 
+    <div class="split-info">
 
-<!-- =========================================
-     WORKOUT SPLIT
-========================================= -->
+        💡 <strong>Workout Split Guide</strong>
 
-<label for="split">
-    Workout Split
-</label>
+        <br><br>
 
-<select id="split">
+        <strong>PPL:</strong>
+        Push → Pull → Legs
 
-    <option value="ppl">
-        Push Pull Legs (PPL)
-    </option>
+        <br>
 
-    <option value="bro">
-        Bro Split
-    </option>
+        <strong>Bro Split:</strong>
+        Chest → Back → Shoulders → Arms → Legs
 
-    <option value="upper-lower">
-        Upper / Lower Split
-    </option>
+        <br>
 
-    <option value="double-muscle">
-        Double Muscle Split
-    </option>
+        <strong>Upper / Lower:</strong>
+        Upper body and lower body training
 
-    <option value="enhanced-ppl">
-        Advanced PPL
-    </option>
+        <br>
 
-</select>
+        <strong>Double Muscle:</strong>
+        Two major muscle groups per session
 
+        <br>
 
-<div class="split-info">
+        <strong>Advanced PPL:</strong>
+        Upper → Lower → Rest → Push → Pull → Legs
 
-    💡 <strong>Workout Split Guide</strong>
+    </div>
 
-    <br><br>
 
-    <strong>PPL:</strong>
-    Push → Pull → Legs
+    <!-- SAVE BUTTON -->
 
-    <br>
+    <button
+        class="primary-btn"
+        style="width:100%;"
+        onclick="saveProfile()">
 
-    <strong>Bro Split:</strong>
-    Chest → Back → Shoulders → Arms → Legs
+        Save Profile & Continue →
 
-    <br>
-
-    <strong>Upper / Lower:</strong>
-    Upper body and lower body training
-
-    <br>
-
-    <strong>Double Muscle:</strong>
-    Two major muscle groups per session
-
-    <br>
-
-    <strong>Advanced PPL:</strong>
-    Upper → Lower → Rest → Push → Pull → Legs
-
-</div>
-
-
-
-<!-- SAVE BUTTON -->
-
-<button
-    class="primary-btn"
-    style="width:100%;"
-    onclick="saveProfile()">
-
-    Save Profile & Continue →
-
-</button>
-
+    </button>
 
 </div>
 
 </section>
 
 
-
 <script>
-
 
 /* =====================================================
    LOGIN CHECK
 ===================================================== */
 
 const loggedIn =
-    localStorage.getItem(
-        "smartFitLoggedIn"
-    );
-
+    localStorage.getItem("smartFitLoggedIn");
 
 const currentUserEmail =
-    localStorage.getItem(
-        "smartFitCurrentUserEmail"
-    );
-
+    localStorage.getItem("smartFitCurrentUserEmail");
 
 if (
     loggedIn !== "true" ||
     !currentUserEmail
 ) {
 
-    window.location.replace(
-        "login.html"
-    );
+    window.location.replace("login.html");
 
 }
-
 
 
 /* =====================================================
@@ -447,14 +412,10 @@ function getUsers() {
     try {
 
         return JSON.parse(
-            localStorage.getItem(
-                "smartFitUsers"
-            ) || "[]"
+            localStorage.getItem("smartFitUsers") || "[]"
         );
 
-    }
-
-    catch(error) {
+    } catch (error) {
 
         console.error(
             "User data error:",
@@ -468,35 +429,25 @@ function getUsers() {
 }
 
 
-
 /* =====================================================
    GET CURRENT USER
 ===================================================== */
 
 function getCurrentUser() {
 
-    const users =
-        getUsers();
+    const users = getUsers();
 
+    return users.find(function(user) {
 
-    return users.find(
-        function(user) {
+        return user.email === currentUserEmail;
 
-            return (
-                user.email ===
-                currentUserEmail
-            );
-
-        }
-    );
+    });
 
 }
 
 
-
 const currentUser =
     getCurrentUser();
-
 
 
 /* =====================================================
@@ -507,62 +458,43 @@ window.addEventListener(
     "DOMContentLoaded",
     function() {
 
-
         if (!currentUser) {
 
             alert(
                 "User account not found. Please login again."
             );
 
-            window.location.replace(
-                "login.html"
-            );
+            window.location.replace("login.html");
 
             return;
 
         }
 
 
-
-        /* =============================================
-           GET SAVED PROFILES
-        ============================================= */
-
         let profiles = {};
 
         try {
 
-            profiles =
-                JSON.parse(
-                    localStorage.getItem(
-                        "smartFitProfiles"
-                    ) || "{}"
-                );
+            profiles = JSON.parse(
+                localStorage.getItem("smartFitProfiles") || "{}"
+            );
 
-        }
-
-        catch(error) {
+        } catch (error) {
 
             profiles = {};
 
         }
 
 
-
         const profile =
             profiles[currentUserEmail];
 
 
-
-        /* =============================================
-           NEW USER
-        ============================================= */
+        /* NEW USER */
 
         if (!profile) {
 
-            document.getElementById(
-                "name"
-            ).value =
+            document.getElementById("name").value =
                 currentUser.name || "";
 
             return;
@@ -570,85 +502,52 @@ window.addEventListener(
         }
 
 
+        /* LOAD PROFILE DATA */
 
-        /* =============================================
-           LOAD PROFILE DATA
-        ============================================= */
+        document.getElementById("name").value =
+            profile.name ||
+            currentUser.name ||
+            "";
 
-        document.getElementById(
-            "name"
-        ).value =
-            profile.name || currentUser.name || "";
-
-
-        document.getElementById(
-            "age"
-        ).value =
+        document.getElementById("age").value =
             profile.age || "";
 
-
-        document.getElementById(
-            "height"
-        ).value =
+        document.getElementById("height").value =
             profile.height || "";
 
-
-        document.getElementById(
-            "weight"
-        ).value =
+        document.getElementById("weight").value =
             profile.weight || "";
 
+        document.getElementById("experience").value =
+            profile.experience ||
+            "Beginner";
 
-        document.getElementById(
-            "experience"
-        ).value =
-            profile.experience || "Beginner";
+        document.getElementById("goal").value =
+            profile.goal ||
+            "General Fitness";
 
+        document.getElementById("days").value =
+            profile.days ||
+            "3";
 
-        document.getElementById(
-            "goal"
-        ).value =
-            profile.goal || "General Fitness";
+        document.getElementById("workoutTime").value =
+            profile.workoutTime ||
+            "30";
 
+        document.getElementById("location").value =
+            profile.location ||
+            "Gym";
 
-        document.getElementById(
-            "days"
-        ).value =
-            profile.days || "3";
+        document.getElementById("equipment").value =
+            profile.equipment ||
+            "";
 
-
-        document.getElementById(
-            "workoutTime"
-        ).value =
-            profile.workoutTime || "30";
-
-
-        document.getElementById(
-            "location"
-        ).value =
-            profile.location || "Gym";
-
-
-        document.getElementById(
-            "equipment"
-        ).value =
-            profile.equipment || "";
-
-
-
-        /* =============================================
-           LOAD SAVED SPLIT
-        ============================================= */
-
-        document.getElementById(
-            "split"
-        ).value =
-            profile.split || "ppl";
+        document.getElementById("split").value =
+            profile.split ||
+            "ppl";
 
     }
-
 );
-
 
 
 /* =====================================================
@@ -657,126 +556,76 @@ window.addEventListener(
 
 function saveProfile() {
 
-
     const name =
-        document.getElementById(
-            "name"
-        ).value.trim();
-
+        document.getElementById("name").value.trim();
 
     const age =
-        document.getElementById(
-            "age"
-        ).value;
-
+        document.getElementById("age").value;
 
     const height =
-        document.getElementById(
-            "height"
-        ).value;
-
+        document.getElementById("height").value;
 
     const weight =
-        document.getElementById(
-            "weight"
-        ).value;
-
+        document.getElementById("weight").value;
 
     const experience =
-        document.getElementById(
-            "experience"
-        ).value;
-
+        document.getElementById("experience").value;
 
     const goal =
-        document.getElementById(
-            "goal"
-        ).value;
-
+        document.getElementById("goal").value;
 
     const days =
-        document.getElementById(
-            "days"
-        ).value;
-
+        document.getElementById("days").value;
 
     const workoutTime =
-        document.getElementById(
-            "workoutTime"
-        ).value;
-
+        document.getElementById("workoutTime").value;
 
     const location =
-        document.getElementById(
-            "location"
-        ).value;
-
+        document.getElementById("location").value;
 
     const equipment =
-        document.getElementById(
-            "equipment"
-        ).value.trim();
-
+        document.getElementById("equipment").value.trim();
 
     const split =
-        document.getElementById(
-            "split"
-        ).value;
+        document.getElementById("split").value;
 
 
-
-    /* =================================================
-       VALIDATION
-    ================================================= */
+    /* VALIDATION */
 
     if (!name) {
 
-        alert(
-            "Please enter your name."
-        );
+        alert("Please enter your name.");
 
         return;
 
     }
-
 
     if (!age) {
 
-        alert(
-            "Please enter your age."
-        );
+        alert("Please enter your age.");
 
         return;
 
     }
-
 
     if (!height) {
 
-        alert(
-            "Please enter your height."
-        );
+        alert("Please enter your height.");
 
         return;
 
     }
-
 
     if (!weight) {
 
-        alert(
-            "Please enter your weight."
-        );
+        alert("Please enter your weight.");
 
         return;
 
     }
 
 
-
-    /* =================================================
-       SPLIT NAMES
-    ================================================= */
+    /* SPLIT NAMES */
 
     const splitNames = {
 
@@ -803,10 +652,7 @@ function saveProfile() {
         "Push Pull Legs";
 
 
-
-    /* =================================================
-       CREATE PROFILE
-    ================================================= */
+    /* CREATE PROFILE */
 
     const profile = {
 
@@ -852,69 +698,47 @@ function saveProfile() {
     };
 
 
-
-    /* =================================================
-       SAVE PROFILE PER USER
-    ================================================= */
+    /* SAVE PROFILE PER USER */
 
     let profiles = {};
 
     try {
 
-        profiles =
-            JSON.parse(
-                localStorage.getItem(
-                    "smartFitProfiles"
-                ) || "{}"
-            );
+        profiles = JSON.parse(
+            localStorage.getItem("smartFitProfiles") || "{}"
+        );
 
-    }
-
-    catch(error) {
+    } catch (error) {
 
         profiles = {};
 
     }
 
 
-
     profiles[currentUserEmail] =
         profile;
 
 
-
     localStorage.setItem(
         "smartFitProfiles",
-        JSON.stringify(
-            profiles
-        )
+        JSON.stringify(profiles)
     );
 
 
-
-    /* =================================================
-       SAVE CURRENT USER PROFILE
-       FOR WORKOUT + NUTRITION
-    ================================================= */
+    /* CURRENT USER PROFILE */
 
     localStorage.setItem(
         "smartFitProfile",
-        JSON.stringify(
-            profile
-        )
+        JSON.stringify(profile)
     );
 
 
-
-    /* =================================================
-       ⭐ IMPORTANT WORKOUT SPLIT DATA
-    ================================================= */
+    /* WORKOUT SPLIT */
 
     localStorage.setItem(
         "smartFitSelectedSplit",
         split
     );
-
 
     localStorage.setItem(
         "smartFitSelectedSplitName",
@@ -922,10 +746,7 @@ function saveProfile() {
     );
 
 
-
-    /* =================================================
-       SUCCESS
-    ================================================= */
+    /* SUCCESS */
 
     alert(
         "Profile saved successfully! ✅\n\n" +
@@ -934,20 +755,13 @@ function saveProfile() {
     );
 
 
+    /* NEXT PAGE */
 
-    /* =================================================
-       NEXT PAGE
-    ================================================= */
-
-    window.location.replace(
-        "food.html"
-    );
+    window.location.replace("food.html");
 
 }
 
-
 </script>
-
 
 </body>
 
