@@ -7,10 +7,196 @@
 
     <title>Gym Chatbox - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .chat-container {
+            max-width: 850px;
+            margin: 40px auto 20px;
+            background: #0e1e17;
+            border: 1px solid #1d362b;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 25px;
+            border-bottom: 1px solid #1d362b;
+            background: #10251c;
+        }
+
+        .chat-header h2 {
+            margin: 0 0 5px;
+        }
+
+        .chat-header p {
+            margin: 0;
+            color: #9baea5;
+        }
+
+        .online-dot {
+            color: #7ee2a8;
+            font-size: 14px;
+        }
+
+        .chat-messages {
+            height: 430px;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .bot-message,
+        .user-message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+        }
+
+        .user-message {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #193629;
+        }
+
+        .message-content {
+            padding: 14px 17px;
+            border-radius: 15px;
+            background: #15291f;
+            border: 1px solid #244235;
+        }
+
+        .user-message .message-content {
+            background: #1b3a2a;
+        }
+
+        .message-content strong {
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .message-content p {
+            margin: 5px 0;
+            line-height: 1.6;
+            color: #d5e0da;
+        }
+
+        .quick-questions {
+            padding: 20px 25px;
+            border-top: 1px solid #1d362b;
+        }
+
+        .quick-questions > p {
+            margin: 0 0 12px;
+            color: #9baea5;
+            font-weight: 600;
+        }
+
+        .quick-questions button {
+            margin: 5px;
+            padding: 9px 13px;
+            border: 1px solid #294638;
+            border-radius: 20px;
+            background: #12261c;
+            color: #d8e5df;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quick-questions button:hover {
+            background: #1c392a;
+            transform: translateY(-1px);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px 25px;
+            border-top: 1px solid #1d362b;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            min-width: 0;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid #294638;
+            background: #09150f;
+            color: white;
+            outline: none;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #4b8065;
+        }
+
+        .chat-disclaimer {
+            max-width: 850px;
+            margin: 15px auto;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: #111d18;
+            border: 1px solid #283a31;
+            color: #9baea5;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 700px) {
+
+            .chat-container {
+                margin: 25px 10px;
+            }
+
+            .chat-header {
+                padding: 18px;
+            }
+
+            .chat-messages {
+                height: 400px;
+                padding: 18px;
+            }
+
+            .chat-input-area {
+                padding: 15px;
+            }
+
+            .chat-input-area .primary-btn {
+                padding: 10px 14px;
+            }
+
+            .bot-message,
+            .user-message {
+                max-width: 95%;
+            }
+
+            .navbar nav {
+                gap: 8px;
+            }
+        }
+    </style>
+
 </head>
 
+
 <body>
+
 
 <header class="navbar">
 
@@ -28,7 +214,9 @@
 </header>
 
 
+
 <section class="features-section">
+
 
     <div class="section-heading">
 
@@ -45,18 +233,26 @@
     </div>
 
 
+
     <!-- CHATBOX -->
 
     <div class="chat-container">
 
+
+        <!-- HEADER -->
+
         <div class="chat-header">
 
             <div>
-                <h2>🤖 Gym AI Assistant</h2>
+
+                <h2>
+                    🤖 Gym AI Assistant
+                </h2>
 
                 <p>
                     Your beginner-friendly gym guide
                 </p>
+
             </div>
 
             <span class="online-dot">
@@ -66,9 +262,13 @@
         </div>
 
 
+
         <!-- MESSAGES -->
 
-        <div id="chatMessages" class="chat-messages">
+        <div
+            id="chatMessages"
+            class="chat-messages"
+        >
 
             <div class="bot-message">
 
@@ -78,7 +278,9 @@
 
                 <div class="message-content">
 
-                    <strong>Gym AI</strong>
+                    <strong>
+                        Gym AI
+                    </strong>
 
                     <p>
                         Hi! 👋 I'm your Gym AI Assistant.
@@ -97,37 +299,59 @@
         </div>
 
 
+
         <!-- QUICK QUESTIONS -->
 
         <div class="quick-questions">
 
-            <p>Quick Questions</p>
+            <p>
+                Quick Questions
+            </p>
 
-            <button onclick="askQuestion('What are sets and reps?')">
+
+            <button
+                onclick="askQuestion('What are sets and reps?')"
+            >
                 💪 Sets & Reps
             </button>
 
-            <button onclick="askQuestion('What should I do before gym?')">
+
+            <button
+                onclick="askQuestion('What should I do before gym?')"
+            >
                 🔥 Before Gym
             </button>
 
-            <button onclick="askQuestion('What should I eat after workout?')">
+
+            <button
+                onclick="askQuestion('What should I eat after workout?')"
+            >
                 🍎 After Workout
             </button>
 
-            <button onclick="askQuestion('How much rest should I take between sets?')">
+
+            <button
+                onclick="askQuestion('How much rest should I take between sets?')"
+            >
                 ⏱️ Rest Time
             </button>
 
-            <button onclick="askQuestion('What is progressive overload?')">
+
+            <button
+                onclick="askQuestion('What is progressive overload?')"
+            >
                 📈 Progressive Overload
             </button>
 
-            <button onclick="askQuestion('How should a beginner start gym?')">
+
+            <button
+                onclick="askQuestion('How should a beginner start gym?')"
+            >
                 🏋️ Beginner Guide
             </button>
 
         </div>
+
 
 
         <!-- INPUT -->
@@ -143,16 +367,18 @@
 
             <button
                 class="primary-btn"
-                onclick="sendMessage()">
-
+                onclick="sendMessage()"
+            >
                 Send ➤
-
             </button>
 
         </div>
 
     </div>
 
+
+
+    <!-- DISCLAIMER -->
 
     <div class="chat-disclaimer">
 
@@ -163,10 +389,660 @@
 
     </div>
 
+
 </section>
 
 
-<script src="js/gym-chatbox.js"></script>
+
+<script>
+
+"use strict";
+
+
+/* =========================================
+   LOGIN CHECK
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const loggedIn =
+        localStorage.getItem("smartFitLoggedIn");
+
+    if (loggedIn !== "true") {
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+    const input =
+        document.getElementById("userInput");
+
+    input.focus();
+
+});
+
+
+
+/* =========================================
+   ADD USER MESSAGE
+========================================= */
+
+function addUserMessage(message) {
+
+    const chatMessages =
+        document.getElementById("chatMessages");
+
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "user-message";
+
+
+    wrapper.innerHTML = `
+
+        <div class="message-icon">
+            👤
+        </div>
+
+        <div class="message-content">
+
+            <strong>
+                You
+            </strong>
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+        </div>
+
+    `;
+
+
+    chatMessages.appendChild(wrapper);
+
+    scrollToBottom();
+
+}
+
+
+
+/* =========================================
+   ADD BOT MESSAGE
+========================================= */
+
+function addBotMessage(message) {
+
+    const chatMessages =
+        document.getElementById("chatMessages");
+
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "bot-message";
+
+
+    wrapper.innerHTML = `
+
+        <div class="message-icon">
+            🤖
+        </div>
+
+        <div class="message-content">
+
+            <strong>
+                Gym AI
+            </strong>
+
+            ${formatBotMessage(message)}
+
+        </div>
+
+    `;
+
+
+    chatMessages.appendChild(wrapper);
+
+    scrollToBottom();
+
+}
+
+
+
+/* =========================================
+   FORMAT BOT RESPONSE
+========================================= */
+
+function formatBotMessage(message) {
+
+    const paragraphs =
+        message.split("\n");
+
+
+    return paragraphs
+        .filter(text => text.trim() !== "")
+        .map(text => `<p>${escapeHTML(text)}</p>`)
+        .join("");
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+
+/* =========================================
+   SCROLL CHAT
+========================================= */
+
+function scrollToBottom() {
+
+    const chatMessages =
+        document.getElementById("chatMessages");
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+
+/* =========================================
+   SEND MESSAGE
+========================================= */
+
+function sendMessage() {
+
+    const input =
+        document.getElementById("userInput");
+
+
+    const question =
+        input.value.trim();
+
+
+    if (!question) {
+
+        return;
+
+    }
+
+
+    addUserMessage(question);
+
+
+    input.value = "";
+
+
+    setTimeout(function () {
+
+        const answer =
+            getGymAIResponse(question);
+
+        addBotMessage(answer);
+
+    }, 350);
+
+}
+
+
+
+/* =========================================
+   QUICK QUESTION
+========================================= */
+
+function askQuestion(question) {
+
+    const input =
+        document.getElementById("userInput");
+
+    input.value =
+        question;
+
+    sendMessage();
+
+}
+
+
+
+/* =========================================
+   GYM AI RESPONSE ENGINE
+========================================= */
+
+function getGymAIResponse(question) {
+
+    const q =
+        question.toLowerCase().trim();
+
+
+
+    /* SETS AND REPS */
+
+    if (
+        q.includes("sets") &&
+        q.includes("reps")
+    ) {
+
+        return `
+Sets = how many rounds you perform.
+
+Reps = how many times you perform an exercise in one set.
+
+Example: 3 sets × 10 reps means you perform 10 repetitions, rest, and repeat for 3 total sets.
+
+For a beginner, focus on controlled technique and a comfortable number of repetitions rather than lifting very heavy weights.
+        `;
+
+    }
+
+
+
+    /* BEFORE GYM */
+
+    if (
+        q.includes("before gym") ||
+        q.includes("warm up") ||
+        q.includes("warm-up") ||
+        q.includes("before workout")
+    ) {
+
+        return `
+Before your workout, start with 5–10 minutes of easy movement such as walking or cycling.
+
+Then do a few gentle mobility movements and lighter warm-up sets for your first exercise.
+
+Avoid starting your first heavy set when your muscles are completely cold.
+        `;
+
+    }
+
+
+
+    /* AFTER WORKOUT */
+
+    if (
+        q.includes("after workout") ||
+        q.includes("post workout") ||
+        q.includes("post-workout") ||
+        q.includes("eat after")
+    ) {
+
+        return `
+After training, aim for a normal balanced meal containing protein, carbohydrates, vegetables or fruit, and enough fluids.
+
+Examples include eggs with rice, dal with rice, paneer with roti, or yogurt with fruit.
+
+You do not need an expensive supplement immediately after every workout.
+        `;
+
+    }
+
+
+
+    /* REST */
+
+    if (
+        q.includes("rest") &&
+        (
+            q.includes("between") ||
+            q.includes("set") ||
+            q.includes("sets")
+        )
+    ) {
+
+        return `
+For many beginner strength exercises, around 1–3 minutes of rest between sets is a useful starting point.
+
+Take enough rest to perform the next set with good technique.
+
+Heavier or more demanding exercises may need longer rest.
+        `;
+
+    }
+
+
+
+    /* PROGRESSIVE OVERLOAD */
+
+    if (
+        q.includes("progressive overload") ||
+        q.includes("progress")
+    ) {
+
+        return `
+Progressive overload means gradually making your training more challenging over time.
+
+You can progress by adding a small amount of weight, doing an extra repetition, improving your technique, or gradually increasing training volume.
+
+Do not increase everything at once. Small, consistent improvements are better.
+        `;
+
+    }
+
+
+
+    /* BEGINNER GUIDE */
+
+    if (
+        q.includes("beginner") ||
+        q.includes("start gym") ||
+        q.includes("start the gym") ||
+        q.includes("new to gym")
+    ) {
+
+        return `
+If you're a beginner, start with 2–4 training days per week.
+
+Learn the basic movement patterns, use manageable weights, and prioritize good technique.
+
+A simple full-body routine can include a squat or leg movement, a push, a pull, a hip movement, and some core work.
+
+Start gradually and give your body enough recovery time.
+        `;
+
+    }
+
+
+
+    /* MUSCLE BUILDING */
+
+    if (
+        q.includes("muscle") ||
+        q.includes("build")
+    ) {
+
+        return `
+Building muscle generally requires consistent resistance training, enough food, adequate protein, and good recovery.
+
+Train each major muscle group regularly and gradually make your exercises more challenging.
+
+Sleep and recovery are also important parts of progress.
+        `;
+
+    }
+
+
+
+    /* WEIGHT LOSS */
+
+    if (
+        q.includes("weight loss") ||
+        q.includes("lose weight") ||
+        q.includes("fat loss") ||
+        q.includes("lose fat")
+    ) {
+
+        return `
+For fat loss, focus on sustainable eating habits and regular activity rather than extreme dieting.
+
+Strength training can help maintain muscle while you work toward your goal.
+
+Walking, sleep, hydration, and consistent meals can also support a healthy routine.
+        `;
+
+    }
+
+
+
+    /* CARDIO */
+
+    if (
+        q.includes("cardio") ||
+        q.includes("running") ||
+        q.includes("treadmill")
+    ) {
+
+        return `
+Cardio includes activities such as walking, cycling, jogging, swimming, and using a treadmill.
+
+For beginners, start at a comfortable intensity and gradually increase duration.
+
+You don't need to exhaust yourself every session.
+        `;
+
+    }
+
+
+
+    /* PROTEIN */
+
+    if (
+        q.includes("protein") ||
+        q.includes("protein powder")
+    ) {
+
+        return `
+Protein helps support muscle repair and growth.
+
+Good food sources include eggs, milk, yogurt, paneer, dal, beans, soy, fish, chicken, and other protein-rich foods.
+
+Protein powder is optional. It can be convenient, but it is not required if you can meet your nutrition needs through food.
+        `;
+
+    }
+
+
+
+    /* CREATINE */
+
+    if (
+        q.includes("creatine")
+    ) {
+
+        return `
+Creatine is a widely studied sports supplement that can help support high-intensity exercise performance.
+
+It is not required for beginners, and supplements should not replace a balanced diet and proper training.
+
+If you are considering a supplement, especially if you have any health concerns, discuss it with a qualified healthcare professional.
+        `;
+
+    }
+
+
+
+    /* SQUATS */
+
+    if (
+        q.includes("squat")
+    ) {
+
+        return `
+A basic squat trains your legs and hips.
+
+Keep your feet in a comfortable stance, brace your core, bend your knees and hips, and lower yourself under control.
+
+Use a comfortable range of motion and start with bodyweight or a light load while learning the movement.
+        `;
+
+    }
+
+
+
+    /* PUSH UPS */
+
+    if (
+        q.includes("push up") ||
+        q.includes("push-up")
+    ) {
+
+        return `
+Push-ups mainly train the chest, shoulders, and triceps.
+
+Keep your body in a straight line, brace your core, and lower yourself under control.
+
+If regular push-ups are difficult, start with an easier variation such as incline push-ups.
+        `;
+
+    }
+
+
+
+    /* DUMBBELLS */
+
+    if (
+        q.includes("dumbbell") ||
+        q.includes("weights")
+    ) {
+
+        return `
+Start with a weight that allows you to perform the exercise with controlled technique.
+
+The correct weight is not necessarily the heaviest weight you can lift.
+
+If your form breaks down, reduce the weight and focus on the movement.
+        `;
+
+    }
+
+
+
+    /* GYM FREQUENCY */
+
+    if (
+        q.includes("how many days") ||
+        q.includes("days per week") ||
+        q.includes("frequency")
+    ) {
+
+        return `
+Many beginners can make good progress training around 2–4 days per week.
+
+The best schedule is one you can follow consistently while allowing enough recovery between demanding sessions.
+        `;
+
+    }
+
+
+
+    /* WATER */
+
+    if (
+        q.includes("water") ||
+        q.includes("hydration") ||
+        q.includes("drink")
+    ) {
+
+        return `
+Drink fluids regularly throughout the day and around your workouts.
+
+Your needs increase with heat, sweating, and longer exercise sessions.
+
+A simple approach is to drink when thirsty and make sure you replace fluids after substantial sweating.
+        `;
+
+    }
+
+
+
+    /* SLEEP */
+
+    if (
+        q.includes("sleep") ||
+        q.includes("recovery")
+    ) {
+
+        return `
+Recovery is an important part of fitness.
+
+Aim for a consistent sleep schedule and give trained muscles enough time to recover.
+
+Training harder every day is not always better. Rest helps your body adapt to exercise.
+        `;
+
+    }
+
+
+
+    /* PAIN / INJURY */
+
+    if (
+        q.includes("pain") ||
+        q.includes("injury") ||
+        q.includes("hurt")
+    ) {
+
+        return `
+Do not try to push through sharp, severe, or unusual pain.
+
+Stop the exercise and, if the pain persists or is concerning, seek advice from a qualified healthcare professional.
+
+Normal muscle fatigue is different from injury pain.
+        `;
+
+    }
+
+
+
+    /* DEFAULT */
+
+    return `
+I can help with beginner-friendly gym topics such as:
+
+• Sets and reps
+• Workout exercises
+• Warm-ups
+• Rest time
+• Progressive overload
+• Muscle building
+• Weight loss basics
+• Cardio
+• Protein and nutrition basics
+• Gym equipment
+• Recovery and sleep
+
+Try asking one of these topics and I'll explain it simply.
+    `;
+
+}
+
+
+
+/* =========================================
+   ENTER KEY
+========================================= */
+
+document
+    .getElementById("userInput")
+    .addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+</script>
+
 
 </body>
 
