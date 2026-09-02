@@ -1,1283 +1,1229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AI Gym Coach - SMART FIT AI</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 35%),
-                #07110c;
-            color: #fff;
-        }
-
-        .coach-page {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* HEADER */
-
-        .coach-header {
-            height: 76px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-            border-bottom: 1px solid rgba(255,255,255,.08);
-            background: rgba(7,17,12,.95);
-            backdrop-filter: blur(15px);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-icon {
-            width: 45px;
-            height: 45px;
-            display: grid;
-            place-items: center;
-            border-radius: 14px;
-            background: #22c55e;
-            color: #06110a;
-            font-size: 23px;
-            font-weight: bold;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        .brand p {
-            margin: 4px 0 0;
-            color: #9ca3af;
-            font-size: 12px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 9px;
-        }
-
-        .header-btn {
-            border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.05);
-            color: #fff;
-            padding: 10px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .header-btn:hover {
-            background: rgba(255,255,255,.1);
-        }
-
-        /* LAYOUT */
-
-        .coach-layout {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: calc(100vh - 76px);
-        }
-
-        /* SIDEBAR */
-
-        .sidebar {
-            padding: 22px;
-            border-right: 1px solid rgba(255,255,255,.08);
-            background: rgba(255,255,255,.015);
-            overflow-y: auto;
-        }
-
-        .sidebar-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .quick-question {
-            width: 100%;
-            text-align: left;
-            border: 1px solid rgba(255,255,255,.08);
-            background: rgba(255,255,255,.035);
-            color: #e5e7eb;
-            padding: 13px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        .quick-question:hover {
-            border-color: rgba(34,197,94,.55);
-            background: rgba(34,197,94,.08);
-            transform: translateY(-1px);
-        }
-
-        .coach-note {
-            margin-top: 24px;
-            padding: 15px;
-            border-radius: 14px;
-            background: rgba(34,197,94,.08);
-            border: 1px solid rgba(34,197,94,.18);
-            color: #d1fae5;
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        /* CHAT */
-
-        .chat-section {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            min-height: 0;
-        }
-
-        .chat-status {
-            padding: 13px 22px;
-            border-bottom: 1px solid rgba(255,255,255,.07);
-            color: #9ca3af;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .online-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 10px rgba(34,197,94,.7);
-        }
-
-        .chat-box {
-            flex: 1;
-            padding: 28px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .message-row {
-            width: 100%;
-            display: flex;
-        }
-
-        .message-row.user {
-            justify-content: flex-end;
-        }
-
-        .message {
-            max-width: min(760px, 85%);
-            padding: 14px 16px;
-            border-radius: 17px;
-            line-height: 1.6;
-            font-size: 14px;
-            overflow-wrap: anywhere;
-        }
-
-        .message.ai {
-            background: rgba(255,255,255,.055);
-            border: 1px solid rgba(255,255,255,.08);
-            border-bottom-left-radius: 5px;
-        }
-
-        .message.user {
-            background: #16a34a;
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .message strong {
-            color: #86efac;
-        }
-
-        .message.user strong {
-            color: white;
-        }
-
-        .message p {
-            margin: 7px 0;
-        }
-
-        .message ul,
-        .message ol {
-            padding-left: 22px;
-            margin: 8px 0;
-        }
-
-        .message li {
-            margin: 4px 0;
-        }
-
-        /* TYPING */
-
-        .typing {
-            display: none;
-            align-items: center;
-            gap: 5px;
-            width: fit-content;
-            padding: 12px 15px;
-            border-radius: 14px;
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.07);
-        }
-
-        .typing span {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #9ca3af;
-            animation: typing 1.2s infinite;
-        }
-
-        .typing span:nth-child(2) {
-            animation-delay: .15s;
-        }
-
-        .typing span:nth-child(3) {
-            animation-delay: .3s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: .5;
-            }
-
-            30% {
-                transform: translateY(-5px);
-                opacity: 1;
-            }
-        }
-
-        /* INPUT */
-
-        .input-area {
-            padding: 18px 22px 22px;
-            border-top: 1px solid rgba(255,255,255,.08);
-            background: rgba(7,17,12,.96);
-        }
-
-        .input-wrapper {
-            max-width: 1000px;
-            margin: auto;
-            display: flex;
-            gap: 10px;
-        }
-
-        #userInput {
-            flex: 1;
-            min-width: 0;
-            border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.05);
-            color: white;
-            border-radius: 14px;
-            padding: 15px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        #userInput:focus {
-            border-color: rgba(34,197,94,.65);
-            box-shadow: 0 0 0 3px rgba(34,197,94,.08);
-        }
-
-        #sendBtn {
-            border: none;
-            background: #22c55e;
-            color: #06110a;
-            padding: 0 22px;
-            border-radius: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #sendBtn:hover {
-            background: #4ade80;
-        }
-
-        #sendBtn:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-        }
-
-        .input-help {
-            max-width: 1000px;
-            margin: 8px auto 0;
-            color: #6b7280;
-            font-size: 11px;
-        }
-
-        /* MOBILE */
-
-        @media (max-width: 800px) {
-
-            .coach-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .coach-header {
-                padding: 0 15px;
-            }
-
-            .brand h1 {
-                font-size: 17px;
-            }
-
-            .brand p {
-                display: none;
-            }
-
-            .header-btn {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
-
-            .chat-box {
-                padding: 18px 14px;
-            }
-
-            .message {
-                max-width: 92%;
-            }
-
-            .input-area {
-                padding: 12px;
-            }
-
-            #sendBtn {
-                padding: 0 17px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>SMART FIT AI Coach</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #06130d;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .chat-app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 315px;
+      min-width: 315px;
+      background: #071b11;
+      border-right: 1px solid #173c2a;
+      padding: 22px;
+      overflow-y: auto;
+    }
+
+    .brand {
+      margin-bottom: 28px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #25d366;
+    }
+
+    .brand p {
+      margin-top: 8px;
+      color: #a7b9af;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .quick-question {
+      width: 100%;
+      border: 1px solid #244936;
+      background: #10271b;
+      color: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .quick-question:hover {
+      background: #173a27;
+      border-color: #25d366;
+      transform: translateY(-1px);
+    }
+
+    .coach-card {
+      margin-top: 32px;
+      background: #0b2a19;
+      border: 1px solid #1c5835;
+      border-radius: 15px;
+      padding: 18px;
+    }
+
+    .coach-card h3 {
+      margin-top: 0;
+      color: #25d366;
+      font-size: 15px;
+    }
+
+    .coach-card p {
+      color: #c5d5cc;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* MAIN */
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 55px;
+      display: flex;
+      align-items: center;
+      padding: 0 25px;
+      border-bottom: 1px solid #173c2a;
+      background: #07160f;
+    }
+
+    .online {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #a7c7b5;
+      font-size: 15px;
+    }
+
+    .online-dot {
+      width: 11px;
+      height: 11px;
+      background: #25d366;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #25d366;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+      min-height: 0;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #183b2a;
+      border-radius: 18px;
+      background: #06150e;
+      padding: 32px;
+      min-height: 500px;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 22px;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 78%;
+      padding: 16px 18px;
+      border-radius: 14px;
+      line-height: 1.6;
+      font-size: 15px;
+      white-space: normal;
+      word-wrap: break-word;
+    }
+
+    .message.ai .bubble {
+      background: #132019;
+      border: 1px solid #273d32;
+      color: #fff;
+    }
+
+    .message.user .bubble {
+      background: #18aa4e;
+      color: #fff;
+    }
+
+    .bubble strong {
+      color: #55ef8b;
+    }
+
+    .welcome {
+      background: #15221c;
+      border: 1px solid #273d32;
+      border-radius: 15px;
+      padding: 22px;
+      max-width: 850px;
+      line-height: 1.7;
+    }
+
+    .welcome-title {
+      color: #59ee8d;
+      font-size: 17px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .typing {
+      display: none;
+      margin-top: 8px;
+      color: #8ca69a;
+      font-size: 13px;
+    }
+
+    /* INPUT */
+
+    .input-area {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    #messageInput {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #1b7543;
+      background: #101d17;
+      color: #fff;
+      border-radius: 16px;
+      padding: 17px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    #messageInput:focus {
+      border-color: #25d366;
+      box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.1);
+    }
+
+    #sendButton {
+      width: 90px;
+      border: none;
+      border-radius: 15px;
+      background: #20c65d;
+      color: #001c0b;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #sendButton:hover {
+      background: #2de873;
+    }
+
+    #sendButton:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      color: #657d70;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .error-box {
+      background: #301313 !important;
+      border-color: #813838 !important;
+      color: #ffb6b6 !important;
+    }
+
+    .error-title {
+      color: #ff7373;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 850px) {
+      .chat-app {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        border-right: none;
+        border-bottom: 1px solid #173c2a;
+      }
+
+      .quick-question {
+        display: inline-block;
+        width: auto;
+        margin-right: 5px;
+      }
+
+      .coach-card {
+        display: none;
+      }
+
+      .chat-container {
+        padding: 15px;
+      }
+
+      .messages {
+        padding: 18px;
+        min-height: 450px;
+      }
+
+      .bubble {
+        max-width: 90%;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .input-area {
+        flex-direction: column;
+      }
+
+      #sendButton {
+        width: 100%;
+        height: 52px;
+      }
+
+      .topbar {
+        padding: 0 15px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="coach-page">
+<div class="chat-app">
 
-    <!-- HEADER -->
+  <!-- SIDEBAR -->
 
-    <header class="coach-header">
+  <aside class="sidebar">
 
-        <div class="brand">
+    <div class="brand">
+      <h1>SMART FIT AI</h1>
+      <p>
+        Your personal AI fitness coach for workouts,
+        nutrition, recovery and training.
+      </p>
+    </div>
 
-            <div class="brand-icon">
-                🧠
+    <div class="section-title">
+      ⚡ Quick Questions
+    </div>
+
+    <button
+      class="quick-question"
+      data-question="How should I train for muscle growth?"
+    >
+      💪 How should I train for muscle growth?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="How many sets and reps should I do?"
+    >
+      📊 How many sets and reps?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="How much protein should I eat every day?"
+    >
+      🥗 How much protein?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="How long should I rest between sets?"
+    >
+      ⏱️ Rest between sets?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="What is progressive overload and how should I use it?"
+    >
+      📈 Progressive overload?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="Should I train each muscle twice per week?"
+    >
+      🔥 Train muscle twice?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="What should I eat before a workout?"
+    >
+      🍌 Pre-workout food?
+    </button>
+
+    <button
+      class="quick-question"
+      data-question="How can I improve my recovery?"
+    >
+      🥱 Better recovery?
+    </button>
+
+    <div class="coach-card">
+      <h3>🤖 Real AI Coach</h3>
+
+      <p>
+        Ask questions naturally.
+      </p>
+
+      <p>
+        You don't need to select a predefined
+        question.
+      </p>
+
+      <p>
+        Ask about workouts, exercises, nutrition,
+        gym equipment, recovery, cardio, muscle
+        building, fat loss, or general fitness.
+      </p>
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <div class="topbar">
+      <div class="online">
+        <span class="online-dot"></span>
+        <span id="statusText">
+          AI Coach Online
+        </span>
+      </div>
+    </div>
+
+    <div class="chat-container">
+
+      <div
+        id="messages"
+        class="messages"
+      >
+
+        <div class="message ai">
+
+          <div class="welcome">
+
+            <div class="welcome-title">
+              👋 Hey! I'm your SMART FIT AI Coach.
             </div>
 
             <div>
-                <h1>SMART FIT AI Coach</h1>
-                <p>Your personal intelligent fitness assistant</p>
+              Ask me anything about gym training,
+              workouts, exercises, nutrition,
+              recovery, cardio, equipment,
+              or general fitness.
             </div>
+
+            <br>
+
+            <div>
+              You can ask your questions naturally.
+              I'm powered by AI, so I'm not limited
+              to predefined keywords.
+            </div>
+
+          </div>
 
         </div>
 
-        <div class="header-actions">
+      </div>
 
-            <button
-                class="header-btn"
-                onclick="clearChat()">
-                Clear
-            </button>
+      <div
+        id="typing"
+        class="typing"
+      >
+        🤖 SMART FIT AI Coach is thinking...
+      </div>
 
-            <button
-                class="header-btn"
-                onclick="window.location.href='dashboard.html'">
-                Dashboard
-            </button>
+      <div class="input-area">
 
-        </div>
+        <input
+          id="messageInput"
+          type="text"
+          placeholder="Ask anything about the gym..."
+          autocomplete="off"
+        />
 
-    </header>
+        <button
+          id="sendButton"
+          type="button"
+        >
+          Send
+        </button>
 
+      </div>
 
-    <!-- MAIN -->
+      <div class="hint">
+        Press Enter to send
+      </div>
 
-    <main class="coach-layout">
+    </div>
 
-        <!-- SIDEBAR -->
-
-        <aside class="sidebar">
-
-            <div class="sidebar-title">
-                ⚡ Quick Questions
-            </div>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('How should I train for muscle growth?')">
-                💪 How should I train for muscle growth?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('How many sets and reps should I do?')">
-                📊 How many sets and reps?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('How much protein should I eat?')">
-                🥗 How much protein?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('How long should I rest between sets?')">
-                ⏱️ Rest between sets?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('What is progressive overload?')">
-                📈 Progressive overload?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('Can I train the same muscle twice a week?')">
-                🔥 Train muscle twice?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('What should I eat before a workout?')">
-                🍌 Pre-workout food?
-            </button>
-
-            <button
-                class="quick-question"
-                onclick="askQuestion('How can I recover faster after training?')">
-                😴 Better recovery?
-            </button>
-
-            <div class="coach-note">
-
-                <strong>🤖 Real AI Coach</strong>
-
-                <br><br>
-
-                Ask questions naturally.
-
-                <br><br>
-
-                You don't need to select a predefined question.
-
-                <br><br>
-
-                Ask about workouts, exercises, nutrition,
-                gym equipment, recovery, cardio,
-                muscle building, fat loss, or general fitness.
-
-            </div>
-
-        </aside>
-
-
-        <!-- CHAT -->
-
-        <section class="chat-section">
-
-            <div class="chat-status">
-
-                <span class="online-dot"></span>
-
-                AI Coach Online
-
-            </div>
-
-
-            <div
-                id="chatBox"
-                class="chat-box">
-
-                <div class="message-row">
-
-                    <div class="message ai">
-
-                        <p>
-                            👋 <strong>Hey! I'm your SMART FIT AI Coach.</strong>
-                        </p>
-
-                        <p>
-                            Ask me anything about gym training,
-                            workouts, exercises, nutrition,
-                            recovery, cardio, equipment,
-                            or general fitness.
-                        </p>
-
-                        <p>
-                            You can ask your questions naturally.
-                            I'm powered by AI, so I'm not limited
-                            to predefined keywords.
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div
-                    id="typing"
-                    class="typing">
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                </div>
-
-            </div>
-
-
-            <!-- INPUT -->
-
-            <div class="input-area">
-
-                <div class="input-wrapper">
-
-                    <input
-                        id="userInput"
-                        type="text"
-                        placeholder="Ask anything about the gym..."
-                        autocomplete="off"
-                    >
-
-                    <button
-                        id="sendBtn"
-                        onclick="sendMessage()">
-                        Send
-                    </button>
-
-                </div>
-
-                <div class="input-help">
-                    Press Enter to send
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
+  </main>
 
 </div>
 
 
 <script>
-
-    // ==========================================
-    // AUTH
-    // ==========================================
-
-    const currentUser =
-        localStorage.getItem("smartFitCurrentUserEmail") ||
-        localStorage.getItem("smartFitCurrentUser") ||
-        "";
-
-    const loggedIn =
-        localStorage.getItem("smartFitLoggedIn");
-
-
-    if (!currentUser || loggedIn !== "true") {
-
-        window.location.href = "login.html";
-
-    }
-
-
-    // ==========================================
-    // ELEMENTS
-    // ==========================================
-
-    const chatBox =
-        document.getElementById("chatBox");
-
-    const userInput =
-        document.getElementById("userInput");
-
-    const sendBtn =
-        document.getElementById("sendBtn");
-
-    const typing =
-        document.getElementById("typing");
-
-
-    // ==========================================
-    // STORAGE
-    // ==========================================
-
-    const chatStorageKey =
-        "smartFitAIChat_" + currentUser;
-
-
-    let conversation = [];
-
-
-    // ==========================================
-    // GET PROFILE
-    // ==========================================
-
-    function getUserProfile() {
-
-        try {
-
-            const profiles =
-                JSON.parse(
-                    localStorage.getItem("smartFitProfiles") || "{}"
-                );
-
-            if (profiles[currentUser]) {
-                return profiles[currentUser];
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Profile error:",
-                error
-            );
-
-        }
-
-
-        try {
-
-            const profile =
-                JSON.parse(
-                    localStorage.getItem("smartFitProfile") || "null"
-                );
-
-            return profile || {};
-
-        } catch (error) {
-
-            return {};
-
-        }
-
-    }
-
-
-    // ==========================================
-    // GET FOOD PREFERENCES
-    // ==========================================
-
-    function getFoodPreferences() {
-
-        try {
-
-            const foods =
-                JSON.parse(
-                    localStorage.getItem(
-                        "smartFitFoodPreferencesByUser"
-                    ) || "{}"
-                );
-
-            if (foods[currentUser]) {
-                return foods[currentUser];
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Food preference error:",
-                error
-            );
-
-        }
-
-
-        try {
-
-            const foods =
-                JSON.parse(
-                    localStorage.getItem(
-                        "smartFitFoods"
-                    ) || "{}"
-                );
-
-            if (foods[currentUser]) {
-                return foods[currentUser];
-            }
-
-        } catch (error) {}
-
-        return {};
-
-    }
-
-
-    // ==========================================
-    // LOAD CHAT
-    // ==========================================
-
-    function loadChat() {
-
-        try {
-
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        chatStorageKey
-                    ) || "[]"
-                );
-
-
-            if (
-                !Array.isArray(saved) ||
-                saved.length === 0
-            ) {
-
-                return;
-
-            }
-
-
-            conversation =
-                saved;
-
-
-            const oldMessages =
-                chatBox.querySelectorAll(
-                    ".message-row"
-                );
-
-
-            oldMessages.forEach(
-                message => message.remove()
-            );
-
-
-            conversation.forEach(item => {
-
-                addMessageToUI(
-                    item.content,
-                    item.role === "assistant"
-                        ? "ai"
-                        : "user"
-                );
-
-            });
-
-
-            scrollToBottom();
-
-
-        } catch (error) {
-
-            console.error(
-                "Could not load chat:",
-                error
-            );
-
-        }
-
-    }
-
-
-    // ==========================================
-    // SAVE CHAT
-    // ==========================================
-
-    function saveChat() {
-
-        try {
-
-            conversation =
-                conversation.slice(-30);
-
-
-            localStorage.setItem(
-                chatStorageKey,
-                JSON.stringify(conversation)
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Could not save chat:",
-                error
-            );
-
-        }
-
-    }
-
-
-    // ==========================================
-    // ESCAPE HTML
-    // ==========================================
-
-    function escapeHTML(text) {
-
-        const div =
-            document.createElement("div");
-
-        div.textContent =
-            text;
-
-        return div.innerHTML;
-
-    }
-
-
-    // ==========================================
-    // FORMAT AI RESPONSE
-    // ==========================================
-
-    function formatAIResponse(text) {
-
-        let html =
-            escapeHTML(text);
-
-
-        html =
-            html.replace(
-                /\*\*(.*?)\*\*/g,
-                "<strong>$1</strong>"
-            );
-
-
-        html =
-            html.replace(
-                /^[-•]\s+(.*)$/gm,
-                "<li>$1</li>"
-            );
-
-
-        html =
-            html.replace(
-                /^\d+\.\s+(.*)$/gm,
-                "<li>$1</li>"
-            );
-
-
-        html =
-            html.replace(
-                /(<li>.*?<\/li>\s*)+/gs,
-                match => `<ul>${match}</ul>`
-            );
-
-
-        html =
-            html
-                .split(/\n{2,}/)
-                .map(part => {
-
-                    if (
-                        part.trim().startsWith("<ul>")
-                    ) {
-                        return part;
-                    }
-
-                    return `<p>${part.replace(/\n/g, "<br>")}</p>`;
-
-                })
-                .join("");
-
-
-        return html;
-
-    }
-
-
-    // ==========================================
-    // ADD MESSAGE UI
-    // ==========================================
-
-    function addMessageToUI(
-        content,
-        type
-    ) {
-
-        const row =
-            document.createElement("div");
-
-
-        row.className =
-            "message-row " +
-            (
-                type === "user"
-                    ? "user"
-                    : ""
-            );
-
-
-        const message =
-            document.createElement("div");
-
-
-        message.className =
-            "message " +
-            (
-                type === "user"
-                    ? "user"
-                    : "ai"
-            );
-
-
-        if (type === "user") {
-
-            message.textContent =
-                content;
-
-        } else {
-
-            message.innerHTML =
-                formatAIResponse(content);
-
-        }
-
-
-        row.appendChild(
-            message
-        );
-
-
-        chatBox.insertBefore(
-            row,
-            typing
-        );
-
-    }
-
-
-    function addMessage(
-        content,
-        type
-    ) {
-
-        addMessageToUI(
-            content,
-            type
-        );
-
-        scrollToBottom();
-
-    }
-
-
-    // ==========================================
-    // SCROLL
-    // ==========================================
-
-    function scrollToBottom() {
-
-        setTimeout(() => {
-
-            chatBox.scrollTop =
-                chatBox.scrollHeight;
-
-        }, 30);
-
-    }
-
-
-    // ==========================================
-    // TYPING
-    // ==========================================
-
-    function showTyping() {
-
-        typing.style.display =
-            "flex";
-
-        scrollToBottom();
-
-    }
-
-
-    function hideTyping() {
-
-        typing.style.display =
-            "none";
-
-    }
-
-
-    // ==========================================
-    // SEND MESSAGE
-    // ==========================================
-
-    async function sendMessage() {
-
-        const message =
-            userInput.value.trim();
-
-
-        if (!message) {
-            return;
-        }
-
-
-        sendBtn.disabled =
-            true;
-
-        userInput.disabled =
-            true;
-
-
-        // USER MESSAGE
-
-        addMessage(
-            message,
-            "user"
-        );
-
-
-        conversation.push({
-            role: "user",
-            content: message
-        });
-
-
-        saveChat();
-
-
-        userInput.value =
-            "";
-
-
-        showTyping();
-
-
-        try {
-
-            const profile =
-                getUserProfile();
-
-
-            const food =
-                getFoodPreferences();
-
-
-            const response =
-                await fetch(
-                    "/api/ai-coach",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-
-                            message: message,
-
-                            profile: {
-                                ...profile,
-                                foodPreferences: food
-                            },
-
-                            history:
-                                conversation.slice(-12)
-
-                        })
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.error ||
-                    "AI Coach request failed."
-                );
-
-            }
-
-
-            const answer =
-                data.answer ||
-                "Sorry, I couldn't generate an answer right now.";
-
-
-            hideTyping();
-
-
-            addMessage(
-                answer,
-                "ai"
-            );
-
-
-            conversation.push({
-                role: "assistant",
-                content: answer
-            });
-
-
-            saveChat();
-
-
-        } catch (error) {
-
-            console.error(
-                "AI Coach error:",
-                error
-            );
-
-
-            hideTyping();
-
-
-            const errorMessage =
-                "⚠️ I couldn't connect to the AI Coach right now. Please check your AI server configuration and try again.";
-
-
-            addMessage(
-                errorMessage,
-                "ai"
-            );
-
-
-        } finally {
-
-            sendBtn.disabled =
-                false;
-
-            userInput.disabled =
-                false;
-
-            userInput.focus();
-
-        }
-
-    }
-
-
-    // ==========================================
-    // QUICK QUESTION
-    // ==========================================
-
-    function askQuestion(
-        question
-    ) {
-
-        userInput.value =
-            question;
-
-        sendMessage();
-
-    }
-
-
-    // ==========================================
-    // ENTER KEY
-    // ==========================================
-
-    userInput.addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                sendMessage();
-
-            }
-
-        }
+  /* =========================================
+     SMART FIT AI COACH
+  ========================================= */
+
+  const messageInput =
+    document.getElementById(
+      "messageInput"
+    );
+
+  const sendButton =
+    document.getElementById(
+      "sendButton"
+    );
+
+  const messages =
+    document.getElementById(
+      "messages"
+    );
+
+  const typing =
+    document.getElementById(
+      "typing"
+    );
+
+  const statusText =
+    document.getElementById(
+      "statusText"
     );
 
 
-    // ==========================================
-    // CLEAR CHAT
-    // ==========================================
+  /* =========================================
+     CURRENT USER
+  ========================================= */
 
-    function clearChat() {
+  function getCurrentUser() {
 
-        const confirmed =
-            confirm(
-                "Clear your SMART FIT AI Coach conversation?"
-            );
+    return (
+      localStorage.getItem(
+        "smartFitCurrentUserEmail"
+      ) ||
+
+      localStorage.getItem(
+        "smartFitCurrentUser"
+      ) ||
+
+      "guest"
+    );
+  }
 
 
-        if (!confirmed) {
-            return;
+  const currentUser =
+    getCurrentUser();
+
+
+  /* =========================================
+     PROFILE
+  ========================================= */
+
+  function getUserProfile() {
+
+    try {
+
+      const profiles =
+        JSON.parse(
+          localStorage.getItem(
+            "smartFitProfiles"
+          ) || "{}"
+        );
+
+      if (
+        profiles &&
+        profiles[currentUser]
+      ) {
+        return profiles[currentUser];
+      }
+
+    } catch (error) {
+      console.error(
+        "Profile read error:",
+        error
+      );
+    }
+
+
+    try {
+
+      const oldProfile =
+        localStorage.getItem(
+          "smartFitProfile"
+        );
+
+      if (oldProfile) {
+        return JSON.parse(
+          oldProfile
+        );
+      }
+
+    } catch (error) {
+      console.error(
+        "Old profile read error:",
+        error
+      );
+    }
+
+
+    return {};
+  }
+
+
+  /* =========================================
+     FOOD PREFERENCES
+  ========================================= */
+
+  function getFoodPreferences() {
+
+    try {
+
+      const data =
+        JSON.parse(
+          localStorage.getItem(
+            "smartFitFoodPreferencesByUser"
+          ) || "{}"
+        );
+
+      if (
+        data &&
+        data[currentUser]
+      ) {
+        return data[currentUser];
+      }
+
+    } catch (error) {
+      console.error(
+        "Food preference error:",
+        error
+      );
+    }
+
+
+    try {
+
+      const foods =
+        JSON.parse(
+          localStorage.getItem(
+            "smartFitFoods"
+          ) || "{}"
+        );
+
+      if (
+        foods &&
+        foods[currentUser]
+      ) {
+        return foods[currentUser];
+      }
+
+    } catch (error) {
+      console.error(
+        "Food storage error:",
+        error
+      );
+    }
+
+
+    try {
+
+      const oldFood =
+        localStorage.getItem(
+          "smartFitFoodPreferences"
+        );
+
+      if (oldFood) {
+        return JSON.parse(
+          oldFood
+        );
+      }
+
+    } catch (error) {
+      console.error(
+        "Old food preference error:",
+        error
+      );
+    }
+
+
+    return {};
+  }
+
+
+  /* =========================================
+     CHAT HISTORY
+  ========================================= */
+
+  const historyKey =
+    "smartFitAIChat_" +
+    currentUser;
+
+
+  let conversation = [];
+
+
+  function loadHistory() {
+
+    try {
+
+      const saved =
+        localStorage.getItem(
+          historyKey
+        );
+
+      if (saved) {
+
+        const parsed =
+          JSON.parse(saved);
+
+        if (
+          Array.isArray(parsed)
+        ) {
+
+          conversation =
+            parsed.slice(-30);
+
         }
 
+      }
 
-        conversation =
-            [];
+    } catch (error) {
+
+      console.error(
+        "Chat history error:",
+        error
+      );
+
+    }
+  }
 
 
-        localStorage.removeItem(
-            chatStorageKey
+  function saveHistory() {
+
+    try {
+
+      localStorage.setItem(
+        historyKey,
+        JSON.stringify(
+          conversation.slice(-30)
+        )
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Save history error:",
+        error
+      );
+
+    }
+  }
+
+
+  loadHistory();
+
+
+  /* =========================================
+     HTML ESCAPE
+  ========================================= */
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+  }
+
+
+  /* =========================================
+     FORMAT AI MESSAGE
+  ========================================= */
+
+  function formatAIMessage(text) {
+
+    let html =
+      escapeHtml(text);
+
+
+    html =
+      html.replace(
+        /\*\*(.*?)\*\*/g,
+        "<strong>$1</strong>"
+      );
+
+
+    html =
+      html.replace(
+        /\n/g,
+        "<br>"
+      );
+
+
+    html =
+      html.replace(
+        /^[-•]\s?(.*)$/gm,
+        "• $1"
+      );
+
+
+    return html;
+  }
+
+
+  /* =========================================
+     ADD MESSAGE
+  ========================================= */
+
+  function addMessage(
+    role,
+    text,
+    isError = false
+  ) {
+
+    const wrapper =
+      document.createElement(
+        "div"
+      );
+
+    wrapper.className =
+      "message " +
+      (role === "user"
+        ? "user"
+        : "ai");
+
+
+    const bubble =
+      document.createElement(
+        "div"
+      );
+
+    bubble.className =
+      "bubble";
+
+
+    if (isError) {
+      bubble.classList.add(
+        "error-box"
+      );
+
+      bubble.innerHTML =
+        `
+          <div class="error-title">
+            ⚠️ AI Coach Error
+          </div>
+          ${formatAIMessage(text)}
+        `;
+
+    } else if (
+      role === "assistant"
+    ) {
+
+      bubble.innerHTML =
+        formatAIMessage(
+          text
         );
 
+    } else {
 
-        const messages =
-            chatBox.querySelectorAll(
-                ".message-row"
-            );
-
-
-        messages.forEach(
-            message => message.remove()
-        );
-
-
-        addMessageToUI(
-            "👋 **Chat cleared!**\n\nI'm ready for your next fitness question.",
-            "ai"
-        );
-
-
-        scrollToBottom();
+      bubble.textContent =
+        text;
 
     }
 
 
-    // ==========================================
-    // START
-    // ==========================================
+    wrapper.appendChild(
+      bubble
+    );
 
-    loadChat();
+    messages.appendChild(
+      wrapper
+    );
 
-    userInput.focus();
+
+    messages.scrollTop =
+      messages.scrollHeight;
+  }
+
+
+  /* =========================================
+     SEND MESSAGE
+  ========================================= */
+
+  async function sendMessage(
+    customMessage = null
+  ) {
+
+    const text =
+      customMessage !== null
+        ? String(customMessage).trim()
+        : messageInput.value.trim();
+
+
+    if (!text) {
+      return;
+    }
+
+
+    /* USER MESSAGE */
+
+    addMessage(
+      "user",
+      text
+    );
+
+
+    conversation.push({
+      role: "user",
+      content: text
+    });
+
+
+    saveHistory();
+
+
+    messageInput.value =
+      "";
+
+
+    sendButton.disabled =
+      true;
+
+
+    typing.style.display =
+      "block";
+
+
+    statusText.textContent =
+      "AI Coach Thinking...";
+
+
+    try {
+
+      const profile =
+        getUserProfile();
+
+
+      const foodPreferences =
+        getFoodPreferences();
+
+
+      /*
+        IMPORTANT:
+
+        We do NOT require a JWT here.
+
+        Your existing frontend login
+        uses localStorage.
+      */
+
+      const response =
+        await fetch(
+          "/api/ai-coach",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                message:
+                  text,
+
+                profile: {
+                  ...profile,
+
+                  foodPreferences:
+                    foodPreferences
+                },
+
+                history:
+                  conversation
+                    .slice(-12)
+                    .slice(
+                      0,
+                      -1
+                    )
+
+              })
+          }
+        );
+
+
+      /* =====================================
+         READ SERVER RESPONSE
+      ====================================== */
+
+      let data = null;
+
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch (jsonError) {
+
+        throw new Error(
+          "The server returned an invalid response. HTTP status: " +
+          response.status
+        );
+
+      }
+
+
+      /* =====================================
+         SERVER ERROR
+      ====================================== */
+
+      if (!response.ok) {
+
+        const serverError =
+          data &&
+          (
+            data.error ||
+            data.message
+          );
+
+        throw new Error(
+          serverError ||
+          (
+            "AI server returned HTTP " +
+            response.status
+          )
+        );
+
+      }
+
+
+      /* =====================================
+         AI ANSWER
+      ====================================== */
+
+      const answer =
+        data &&
+        (
+          data.answer ||
+          data.response ||
+          data.message
+        );
+
+
+      if (!answer) {
+
+        throw new Error(
+          "The AI server responded successfully, but no answer was returned."
+        );
+
+      }
+
+
+      addMessage(
+        "assistant",
+        answer
+      );
+
+
+      conversation.push({
+        role: "assistant",
+        content: answer
+      });
+
+
+      saveHistory();
+
+
+      statusText.textContent =
+        "AI Coach Online";
+
+
+    } catch (error) {
+
+      console.error(
+        "AI COACH FRONTEND ERROR:",
+        error
+      );
+
+
+      /*
+        THIS IS THE IMPORTANT FIX.
+
+        Instead of showing only:
+        "I couldn't connect..."
+
+        we now show the actual
+        backend error.
+      */
+
+      addMessage(
+        "assistant",
+        error.message ||
+        "Unknown AI Coach error.",
+        true
+      );
+
+
+      statusText.textContent =
+        "AI Coach Error";
+
+    } finally {
+
+      typing.style.display =
+        "none";
+
+
+      sendButton.disabled =
+        false;
+
+
+      messageInput.focus();
+
+    }
+
+  }
+
+
+  /* =========================================
+     SEND BUTTON
+  ========================================= */
+
+  sendButton.addEventListener(
+    "click",
+    () => {
+      sendMessage();
+    }
+  );
+
+
+  /* =========================================
+     ENTER KEY
+  ========================================= */
+
+  messageInput.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey
+      ) {
+
+        event.preventDefault();
+
+        sendMessage();
+
+      }
+
+    }
+  );
+
+
+  /* =========================================
+     QUICK QUESTIONS
+  ========================================= */
+
+  document
+    .querySelectorAll(
+      ".quick-question"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const question =
+            button.dataset.question;
+
+          sendMessage(
+            question
+          );
+
+        }
+      );
+
+    });
+
+
+  /* =========================================
+     START
+  ========================================= */
+
+  messageInput.focus();
 
 </script>
 
