@@ -7,7 +7,8 @@
 
     <title>Workout - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- FIXED: style.css is in the same folder -->
+    <link rel="stylesheet" href="style.css">
 
     <style>
         .workout-container {
@@ -230,7 +231,6 @@
         }
     </style>
 </head>
-
 
 <body>
 
@@ -469,7 +469,8 @@ const loggedIn =
     localStorage.getItem("smartFitLoggedIn");
 
 const currentUserEmail =
-    localStorage.getItem("smartFitCurrentUserEmail");
+    localStorage.getItem("smartFitCurrentUserEmail") ||
+    localStorage.getItem("smartFitCurrentUser");
 
 
 if (
@@ -1969,8 +1970,7 @@ document.addEventListener(
 
 </script>
 
-
-<script src="js/script.js"></script>
+<!-- No js/script.js because it is not present in your root project -->
 
 </body>
 
