@@ -7,7 +7,7 @@
 
     <title>Generate Plan - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -187,6 +187,13 @@
 
 <script>
 
+"use strict";
+
+
+/* ================================
+   SAFE JSON READER
+================================ */
+
 function getData(key) {
 
     const data = localStorage.getItem(key);
@@ -196,109 +203,306 @@ function getData(key) {
     }
 
     try {
+
         return JSON.parse(data);
-    }
 
-    catch (error) {
+    } catch (error) {
 
-        console.error("Invalid data:", error);
+        console.error("Invalid localStorage data:", key, error);
 
         return null;
     }
 }
 
 
-document.addEventListener("DOMContentLoaded", function () {
+/* ================================
+   CURRENT USER
+================================ */
 
-    const profile = getData("smartFitProfile");
-    const food = getData("smartFitFoodPreferences");
+function getCurrentUser() {
+
+    return (
+        localStorage.getItem("smartFitCurrentUserEmail") ||
+        localStorage.getItem("smartFitCurrentUser") ||
+        ""
+    );
+
+}
 
 
-    if (!profile) {
+/* ================================
+   GET USER PROFILE
+================================ */
 
-        alert("Please complete your fitness profile first.");
+function getCurrentProfile() {
 
-        window.location.href = "profile.html";
+    const currentUser = getCurrentUser();
 
-        return;
+    if (!currentUser) {
+        return null;
     }
 
 
-    if (!food) {
+    /* New per-user storage */
 
-        alert("Please complete your food preferences first.");
+    const profilesByUser =
+        getData("smartFitProfiles");
 
-        window.location.href = "food.html";
 
-        return;
+    if (
+        profilesByUser &&
+        typeof profilesByUser === "object" &&
+        profilesByUser[currentUser]
+    ) {
+
+        return profilesByUser[currentUser];
+
     }
 
 
-    document.getElementById("userName").textContent =
-        profile.name || "-";
+    /* Old storage */
 
-    document.getElementById("age").textContent =
-        profile.age ? profile.age + " years" : "-";
+    return getData("smartFitProfile");
 
-    document.getElementById("height").textContent =
-        profile.height ? profile.height + " cm" : "-";
-
-    document.getElementById("weight").textContent =
-        profile.weight ? profile.weight + " kg" : "-";
-
-    document.getElementById("experience").textContent =
-        profile.experience || "-";
-
-    document.getElementById("goal").textContent =
-        profile.goal || "-";
-
-    document.getElementById("days").textContent =
-        profile.days ? profile.days + " days/week" : "-";
-
-    document.getElementById("workoutTime").textContent =
-        profile.workoutTime
-        ? profile.workoutTime + " minutes"
-        : "-";
-
-    document.getElementById("location").textContent =
-        profile.location || "-";
-
-    document.getElementById("equipment").textContent =
-        profile.equipment || "None";
+}
 
 
-    document.getElementById("diet").textContent =
-        food.diet || "-";
+/* ================================
+   GET FOOD PREFERENCES
+================================ */
 
-    document.getElementById("preferredFoods").textContent =
-        food.preferredFoods || "None";
+function getCurrentFood() {
 
-    document.getElementById("avoidFoods").textContent =
-        food.avoidFoods || "None";
+    const currentUser = getCurrentUser();
 
-    document.getElementById("allergies").textContent =
-        food.allergies || "None";
 
-    document.getElementById("meals").textContent =
-        food.meals
-        ? food.meals + " meals/day"
-        : "-";
+    /* New per-user storage */
 
-    document.getElementById("budget").textContent =
-        food.budget || "-";
+    const foodByUser =
+        getData("smartFitFoodPreferencesByUser");
 
-});
 
+    if (
+        foodByUser &&
+        typeof foodByUser === "object" &&
+        foodByUser[currentUser]
+    ) {
+
+        return foodByUser[currentUser];
+
+    }
+
+
+    /* Existing per-user food storage */
+
+    const foods =
+        getData("smartFitFoods");
+
+
+    if (
+        foods &&
+        typeof foods === "object" &&
+        foods[currentUser]
+    ) {
+
+        return foods[currentUser];
+
+    }
+
+
+    /* Old storage */
+
+    return getData("smartFitFoodPreferences");
+
+}
+
+
+/* ================================
+   LOAD PAGE
+================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const loggedIn =
+            localStorage.getItem("smartFitLoggedIn");
+
+
+        if (loggedIn !== "true") {
+
+            alert("Please login first.");
+
+            window.location.href = "login.html";
+
+            return;
+        }
+
+
+        const profile =
+            getCurrentProfile();
+
+
+        const food =
+            getCurrentFood();
+
+
+        /* --------------------------
+           PROFILE CHECK
+        -------------------------- */
+
+        if (!profile) {
+
+            alert(
+                "Please complete your fitness profile first."
+            );
+
+            window.location.href = "profile.html";
+
+            return;
+        }
+
+
+        /* --------------------------
+           FOOD CHECK
+        -------------------------- */
+
+        if (!food) {
+
+            alert(
+                "Please complete your food preferences first."
+            );
+
+            window.location.href = "food.html";
+
+            return;
+        }
+
+
+        /* --------------------------
+           PROFILE DISPLAY
+        -------------------------- */
+
+        document.getElementById("userName").textContent =
+            profile.name || "-";
+
+
+        document.getElementById("age").textContent =
+            profile.age
+                ? profile.age + " years"
+                : "-";
+
+
+        document.getElementById("height").textContent =
+            profile.height
+                ? profile.height + " cm"
+                : "-";
+
+
+        document.getElementById("weight").textContent =
+            profile.weight
+                ? profile.weight + " kg"
+                : "-";
+
+
+        document.getElementById("experience").textContent =
+            profile.experience || "-";
+
+
+        document.getElementById("goal").textContent =
+            profile.goal || "-";
+
+
+        document.getElementById("days").textContent =
+            profile.days
+                ? profile.days + " days/week"
+                : "-";
+
+
+        document.getElementById("workoutTime").textContent =
+            profile.workoutTime
+                ? profile.workoutTime + " minutes"
+                : "-";
+
+
+        document.getElementById("location").textContent =
+            profile.location || "-";
+
+
+        document.getElementById("equipment").textContent =
+            profile.equipment || "None";
+
+
+        /* --------------------------
+           FOOD DISPLAY
+        -------------------------- */
+
+        document.getElementById("diet").textContent =
+            food.diet || "-";
+
+
+        document.getElementById("preferredFoods").textContent =
+            food.preferredFoods || "None";
+
+
+        document.getElementById("avoidFoods").textContent =
+            food.avoidFoods || "None";
+
+
+        document.getElementById("allergies").textContent =
+            food.allergies || "None";
+
+
+        document.getElementById("meals").textContent =
+            food.meals
+                ? food.meals + " meals/day"
+                : "-";
+
+
+        document.getElementById("budget").textContent =
+            food.budget || "-";
+
+    }
+);
+
+
+/* ================================
+   GENERATE PLAN
+================================ */
 
 function generatePlan() {
 
-    const profile = getData("smartFitProfile");
-    const food = getData("smartFitFoodPreferences");
+    const currentUser =
+        getCurrentUser();
 
+
+    if (!currentUser) {
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+
+    const profile =
+        getCurrentProfile();
+
+
+    const food =
+        getCurrentFood();
+
+
+    /* --------------------------
+       PROFILE CHECK
+    -------------------------- */
 
     if (!profile) {
 
-        alert("Profile not found.");
+        alert(
+            "Profile not found. Please complete your profile."
+        );
 
         window.location.href = "profile.html";
 
@@ -306,9 +510,15 @@ function generatePlan() {
     }
 
 
+    /* --------------------------
+       FOOD CHECK
+    -------------------------- */
+
     if (!food) {
 
-        alert("Food preferences not found.");
+        alert(
+            "Food preferences not found. Please complete them first."
+        );
 
         window.location.href = "food.html";
 
@@ -316,48 +526,76 @@ function generatePlan() {
     }
 
 
+    /* ==========================
+       CREATE PLAN
+    ========================== */
+
     const plan = {
 
-        createdAt: new Date().toISOString(),
+        createdAt:
+            new Date().toISOString(),
 
-        profile: profile,
+        user:
+            currentUser,
 
-        food: food,
+        profile:
+            profile,
+
+        food:
+            food,
+
 
         workout: {
 
-            experience: profile.experience || "Beginner",
+            experience:
+                profile.experience || "Beginner",
 
-            goal: profile.goal || "General Fitness",
+            goal:
+                profile.goal || "General Fitness",
 
-            days: Number(profile.days) || 3,
+            days:
+                Number(profile.days) || 3,
 
-            duration: Number(profile.workoutTime) || 30,
+            duration:
+                Number(profile.workoutTime) || 30,
 
-            location: profile.location || "Gym",
+            location:
+                profile.location || "Gym",
 
-            equipment: profile.equipment || ""
+            equipment:
+                profile.equipment || ""
 
         },
 
+
         nutrition: {
 
-            diet: food.diet || "Vegetarian",
+            diet:
+                food.diet || "Vegetarian",
 
-            preferredFoods: food.preferredFoods || "",
+            preferredFoods:
+                food.preferredFoods || "",
 
-            avoidFoods: food.avoidFoods || "",
+            avoidFoods:
+                food.avoidFoods || "",
 
-            allergies: food.allergies || "None",
+            allergies:
+                food.allergies || "None",
 
-            meals: Number(food.meals) || 3,
+            meals:
+                Number(food.meals) || 3,
 
-            budget: food.budget || "Low"
+            budget:
+                food.budget || "Low"
 
         }
 
     };
 
+
+    /* ==========================
+       SAVE GLOBAL PLAN
+    ========================== */
 
     localStorage.setItem(
         "smartFitGeneratedPlan",
@@ -365,19 +603,54 @@ function generatePlan() {
     );
 
 
+    /* ==========================
+       SAVE PER-USER PLAN
+    ========================== */
+
+    const plansByUser =
+        getData("smartFitGeneratedPlans") || {};
+
+
+    plansByUser[currentUser] =
+        plan;
+
+
+    localStorage.setItem(
+        "smartFitGeneratedPlans",
+        JSON.stringify(plansByUser)
+    );
+
+
+    /* ==========================
+       SAVE ACTIVE USER
+    ========================== */
+
+    localStorage.setItem(
+        "smartFitCurrentUserEmail",
+        currentUser
+    );
+
+
+    /* ==========================
+       SUCCESS
+    ========================== */
+
     alert(
         "🎉 Your SMART FIT AI plan has been generated!"
     );
 
 
-    window.location.href = "workout.html";
+    /* ==========================
+       GO TO WORKOUT
+    ========================== */
+
+    window.location.href =
+        "workout.html";
 
 }
 
 </script>
 
-
-<script src="js/script.js"></script>
-
 </body>
+
 </html>
