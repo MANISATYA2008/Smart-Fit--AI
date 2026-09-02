@@ -7,7 +7,8 @@
 
     <title>Login - SMART FIT AI</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- IMPORTANT: style.css is in the same folder -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -66,7 +67,6 @@
                 "
             >
 
-
             <label for="loginPassword">
                 Password
             </label>
@@ -83,7 +83,6 @@
                     box-sizing:border-box;
                 "
             >
-
 
             <button
                 type="submit"
@@ -115,10 +114,6 @@
 
 
 <script>
-
-/* =========================================
-   LOGIN
-========================================= */
 
 document
 .getElementById("loginForm")
@@ -154,9 +149,7 @@ document
                 localStorage.getItem("smartFitUsers")
             ) || [];
 
-    }
-
-    catch(error) {
+    } catch (error) {
 
         console.error(error);
 
@@ -195,9 +188,7 @@ document
     }
 
 
-    /* =========================================
-       LOGIN SUCCESS
-    ========================================= */
+    /* LOGIN SUCCESS */
 
     localStorage.setItem(
         "smartFitLoggedIn",
@@ -205,21 +196,11 @@ document
     );
 
 
-    /*
-       SAVE COMPLETE CURRENT USER
-    */
-
     localStorage.setItem(
         "smartFitCurrentUser",
         JSON.stringify(user)
     );
 
-
-    /*
-       SAVE EMAIL TOO
-       This is the unique key for
-       profile and food data.
-    */
 
     localStorage.setItem(
         "smartFitCurrentUserEmail",
@@ -233,9 +214,7 @@ document
     );
 
 
-    /* =========================================
-       CHECK WHETHER PROFILE EXISTS
-    ========================================= */
+    /* CHECK PROFILE */
 
     let profiles = {};
 
@@ -248,9 +227,7 @@ document
                 )
             ) || {};
 
-    }
-
-    catch(error) {
+    } catch (error) {
 
         profiles = {};
 
@@ -261,9 +238,7 @@ document
         profiles[user.email];
 
 
-    /* =========================================
-       CHECK WHETHER FOOD EXISTS
-    ========================================= */
+    /* CHECK FOOD */
 
     let foods = {};
 
@@ -276,9 +251,7 @@ document
                 )
             ) || {};
 
-    }
-
-    catch(error) {
+    } catch (error) {
 
         foods = {};
 
@@ -289,15 +262,7 @@ document
         foods[user.email];
 
 
-    /* =========================================
-       SAVE OLD DATA INTO USER-SPECIFIC STORAGE
-       IF IT EXISTS
-    ========================================= */
-
-    /*
-       This allows old profile data to continue
-       working with the new system.
-    */
+    /* MIGRATE OLD PROFILE */
 
     if (
         !userProfile &&
@@ -321,9 +286,7 @@ document
                 JSON.stringify(profiles)
             );
 
-        }
-
-        catch(error) {
+        } catch (error) {
 
             console.log(
                 "Old profile not migrated."
@@ -333,6 +296,8 @@ document
 
     }
 
+
+    /* MIGRATE OLD FOOD DATA */
 
     if (
         !userFood &&
@@ -358,9 +323,7 @@ document
                 JSON.stringify(foods)
             );
 
-        }
-
-        catch(error) {
+        } catch (error) {
 
             console.log(
                 "Old food data not migrated."
@@ -371,9 +334,7 @@ document
     }
 
 
-    /* =========================================
-       SUCCESS
-    ========================================= */
+    /* LOGIN SUCCESS MESSAGE */
 
     alert(
         "Login successful! ✅\n\n" +
@@ -383,9 +344,7 @@ document
     );
 
 
-    /* =========================================
-       GO TO DASHBOARD
-    ========================================= */
+    /* GO TO DASHBOARD */
 
     window.location.href =
         "dashboard.html";
