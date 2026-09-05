@@ -8,17 +8,11 @@
 
     <title>Food Preferences - SMART FIT AI</title>
 
-    <!-- FIXED PATH -->
     <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
-
-
-<!-- ================================
-     NAVBAR
-================================ -->
 
 <header class="navbar">
 
@@ -36,11 +30,6 @@
 
 
 <section class="features-section">
-
-
-<!-- ================================
-     HEADING
-================================ -->
 
 <div class="section-heading">
 
@@ -62,15 +51,11 @@
 <div class="food-form">
 
 
-<!-- ================================
-     DIET PREFERENCE
-================================ -->
+<!-- DIET -->
 
 <div class="form-group">
 
-    <label>
-        🥗 Diet Preference
-    </label>
+    <label>🥗 Diet Preference</label>
 
     <select id="diet">
 
@@ -91,15 +76,11 @@
 </div>
 
 
-<!-- ================================
-     PREFERRED FOODS
-================================ -->
+<!-- PREFERRED FOODS -->
 
 <div class="form-group">
 
-    <label>
-        ❤️ Foods You Prefer
-    </label>
+    <label>❤️ Foods You Prefer</label>
 
     <input
         type="text"
@@ -114,15 +95,11 @@
 </div>
 
 
-<!-- ================================
-     FOODS TO AVOID
-================================ -->
+<!-- AVOID FOODS -->
 
 <div class="form-group">
 
-    <label>
-        🚫 Foods You Avoid
-    </label>
+    <label>🚫 Foods You Avoid</label>
 
     <input
         type="text"
@@ -137,15 +114,11 @@
 </div>
 
 
-<!-- ================================
-     ALLERGIES
-================================ -->
+<!-- ALLERGIES -->
 
 <div class="form-group">
 
-    <label>
-        ⚠️ Allergies / Intolerances
-    </label>
+    <label>⚠️ Allergies / Intolerances</label>
 
     <input
         type="text"
@@ -160,15 +133,11 @@
 </div>
 
 
-<!-- ================================
-     MEALS PER DAY
-================================ -->
+<!-- MEALS -->
 
 <div class="form-group">
 
-    <label>
-        🍽️ Meals Per Day
-    </label>
+    <label>🍽️ Meals Per Day</label>
 
     <select id="meals">
 
@@ -193,15 +162,11 @@
 </div>
 
 
-<!-- ================================
-     FOOD BUDGET
-================================ -->
+<!-- BUDGET -->
 
 <div class="form-group">
 
-    <label>
-        💰 Approximate Daily Food Budget
-    </label>
+    <label>💰 Approximate Daily Food Budget</label>
 
     <select id="budget">
 
@@ -222,9 +187,7 @@
 </div>
 
 
-<!-- ==================================================
-     PREFERRED SUPPLEMENTS
-================================================== -->
+<!-- SUPPLEMENTS -->
 
 <div class="form-group">
 
@@ -253,8 +216,6 @@
     ">
 
 
-        <!-- PROTEIN POWDER -->
-
         <label
             class="supplement-option"
             style="
@@ -281,14 +242,10 @@
                 "
             >
 
-            <span>
-                🥛 Protein Powder
-            </span>
+            <span>🥛 Protein Powder</span>
 
         </label>
 
-
-        <!-- CREATINE -->
 
         <label
             class="supplement-option"
@@ -316,14 +273,10 @@
                 "
             >
 
-            <span>
-                ⚡ Creatine
-            </span>
+            <span>⚡ Creatine</span>
 
         </label>
 
-
-        <!-- MULTIVITAMIN -->
 
         <label
             class="supplement-option"
@@ -351,14 +304,10 @@
                 "
             >
 
-            <span>
-                🌈 Multivitamin
-            </span>
+            <span>🌈 Multivitamin</span>
 
         </label>
 
-
-        <!-- OMEGA 3 -->
 
         <label
             class="supplement-option"
@@ -386,16 +335,12 @@
                 "
             >
 
-            <span>
-                🐟 Omega-3
-            </span>
+            <span>🐟 Omega-3</span>
 
         </label>
 
     </div>
 
-
-    <!-- NO SUPPLEMENT -->
 
     <label
         style="
@@ -436,7 +381,7 @@
     ">
 
         Supplements are optional and should not replace
-        balanced meals. If you are considering a supplement,
+        balanced meals. If considering a supplement,
         discuss it with a parent/guardian and a qualified
         healthcare professional.
 
@@ -445,9 +390,7 @@
 </div>
 
 
-<!-- ================================
-     SAVE BUTTON
-================================ -->
+<!-- SAVE -->
 
 <button
     class="primary-btn continue-btn"
@@ -467,42 +410,76 @@
 <script>
 
 /* ==================================================
-   LOGIN CHECK
+   AUTHENTICATION
 ================================================== */
 
-const loggedIn =
-    localStorage.getItem("smartFitLoggedIn");
-
-const currentUser =
-    localStorage.getItem("smartFitCurrentUser");
-
-const currentUserEmail =
-    localStorage.getItem("smartFitCurrentUserEmail");
+const token =
+    localStorage.getItem("smartFitToken");
 
 
-if (
-    loggedIn !== "true" ||
-    (!currentUser && !currentUserEmail)
-) {
+if (!token) {
 
     window.location.replace("login.html");
 
 }
 
 
-/*
-   Use email when available.
-   Otherwise keep compatibility with
-   the existing smartFitCurrentUser system.
-*/
+/* ==================================================
+   API HELPER
+================================================== */
 
-const activeUser =
-    currentUserEmail ||
-    currentUser;
+async function apiRequest(url, options = {}) {
+
+    const response =
+        await fetch(url, {
+
+            ...options,
+
+            headers: {
+
+                "Content-Type":
+                    "application/json",
+
+                "Authorization":
+                    `Bearer ${token}`,
+
+                ...(options.headers || {})
+
+            }
+
+        });
+
+
+    let data = {};
+
+    try {
+
+        data = await response.json();
+
+    } catch (error) {
+
+        data = {};
+
+    }
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            data.error ||
+            "Something went wrong."
+        );
+
+    }
+
+
+    return data;
+
+}
 
 
 /* ==================================================
-   LOAD SAVED FOOD DATA
+   LOAD FOOD PREFERENCES FROM DATABASE
 ================================================== */
 
 window.addEventListener(
@@ -511,186 +488,277 @@ window.addEventListener(
 );
 
 
-function loadFoodPreferences() {
-
-    let allFoods = {};
+async function loadFoodPreferences() {
 
     try {
 
-        allFoods =
-            JSON.parse(
-                localStorage.getItem(
-                    "smartFitFoods"
-                ) || "{}"
+        const data =
+            await apiRequest("/api/me");
+
+
+        /*
+           If token is invalid/expired,
+           send user back to login.
+        */
+
+        if (!data.user) {
+
+            throw new Error(
+                "Session expired."
             );
 
-    } catch (error) {
-
-        console.error(
-            "Food data error:",
-            error
-        );
-
-        allFoods = {};
-
-    }
+        }
 
 
-    let food =
-        allFoods[activeUser];
+        const profile =
+            data.profile || {};
 
 
-    /*
-       Compatibility with older saved
-       smartFitFoodPreferences data.
-    */
+        /* ==========================================
+           DIET
+        ========================================== */
 
-    if (!food) {
+        document.getElementById("diet").value =
+            profile.vegetarian_type ||
+            "Vegetarian";
+
+
+        /* ==========================================
+           PREFERRED FOODS
+        ========================================== */
+
+        document.getElementById(
+            "preferredFoods"
+        ).value =
+            profile.preferred_foods ||
+            "";
+
+
+        /* ==========================================
+           AVOID FOODS
+        ========================================== */
+
+        document.getElementById(
+            "avoidFoods"
+        ).value =
+            profile.avoided_foods ||
+            "";
+
+
+        /* ==========================================
+           ALLERGIES
+        ========================================== */
+
+        document.getElementById(
+            "allergies"
+        ).value =
+            profile.allergies ||
+            "";
+
+
+        /* ==========================================
+           MEALS
+        ========================================== */
+
+        document.getElementById(
+            "meals"
+        ).value =
+            profile.meals_per_day ||
+            "3";
+
+
+        /* ==========================================
+           BUDGET
+        ========================================== */
+
+        /*
+           Backend currently stores food_budget
+           as a number.
+
+           Convert it back to the UI labels.
+        */
+
+        let budget =
+            profile.food_budget;
+
+
+        if (
+            budget === null ||
+            budget === undefined
+        ) {
+
+            budget = "Low";
+
+        }
+
+
+        if (
+            budget === "Low" ||
+            budget === "Medium" ||
+            budget === "High"
+        ) {
+
+            document.getElementById(
+                "budget"
+            ).value = budget;
+
+        }
+        else {
+
+            /*
+               Compatibility if database
+               contains numeric budget.
+            */
+
+            const numericBudget =
+                Number(budget);
+
+
+            if (!Number.isNaN(numericBudget)) {
+
+                if (numericBudget <= 150) {
+
+                    document.getElementById(
+                        "budget"
+                    ).value = "Low";
+
+                }
+                else if (
+                    numericBudget <= 400
+                ) {
+
+                    document.getElementById(
+                        "budget"
+                    ).value = "Medium";
+
+                }
+                else {
+
+                    document.getElementById(
+                        "budget"
+                    ).value = "High";
+
+                }
+
+            }
+
+        }
+
+
+        /* ==========================================
+           LOAD SUPPLEMENTS FROM LOCAL CACHE
+           
+           NOTE:
+           Supplements are NOT yet in the
+           backend profiles table.
+        ========================================== */
+
+        let savedSupplements = [];
+
 
         try {
 
-            food =
+            const cachedFood =
                 JSON.parse(
                     localStorage.getItem(
                         "smartFitFoodPreferences"
                     ) || "null"
                 );
 
-        } catch (error) {
 
-            food = null;
+            if (
+                cachedFood &&
+                Array.isArray(
+                    cachedFood.supplements
+                )
+            ) {
+
+                savedSupplements =
+                    cachedFood.supplements;
+
+            }
+
+        }
+        catch (error) {
+
+            savedSupplements = [];
+
+        }
+
+
+        document
+            .querySelectorAll(
+                'input[name="supplements"]'
+            )
+            .forEach(
+                checkbox => {
+
+                    checkbox.checked =
+                        savedSupplements.includes(
+                            checkbox.value
+                        );
+
+                }
+            );
+
+
+        document.getElementById(
+            "noSupplement"
+        ).checked =
+            savedSupplements.length === 0;
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+
+        /*
+           If authentication failed,
+           remove invalid token.
+        */
+
+        if (
+            error.message
+                .toLowerCase()
+                .includes("token") ||
+            error.message
+                .toLowerCase()
+                .includes("session") ||
+            error.message
+                .toLowerCase()
+                .includes("unauthorized")
+        ) {
+
+            localStorage.removeItem(
+                "smartFitToken"
+            );
+
+            localStorage.removeItem(
+                "smartFitLoggedIn"
+            );
+
+            window.location.replace(
+                "login.html"
+            );
 
         }
 
     }
 
-
-    if (!food) {
-
-        return;
-
-    }
-
-
-    /* DIET */
-
-    document.getElementById(
-        "diet"
-    ).value =
-        food.diet ||
-        "Vegetarian";
-
-
-    /* PREFERRED FOODS */
-
-    document.getElementById(
-        "preferredFoods"
-    ).value =
-        food.preferredFoods ||
-        "";
-
-
-    /* AVOID FOODS */
-
-    document.getElementById(
-        "avoidFoods"
-    ).value =
-        food.avoidFoods ||
-        "";
-
-
-    /* ALLERGIES */
-
-    document.getElementById(
-        "allergies"
-    ).value =
-        food.allergies ||
-        "";
-
-
-    /* MEALS */
-
-    document.getElementById(
-        "meals"
-    ).value =
-        food.meals ||
-        "3";
-
-
-    /* BUDGET */
-
-    document.getElementById(
-        "budget"
-    ).value =
-        food.budget ||
-        "Low";
-
-
-    /* ==================================================
-       LOAD SUPPLEMENTS
-    ================================================== */
-
-    let savedSupplements =
-        food.supplements || [];
-
-
-    if (
-        typeof savedSupplements === "string"
-    ) {
-
-        savedSupplements =
-            savedSupplements
-                .split(",")
-                .map(
-                    item =>
-                        item.trim().toLowerCase()
-                )
-                .filter(Boolean);
-
-    }
-
-
-    if (
-        !Array.isArray(savedSupplements)
-    ) {
-
-        savedSupplements = [];
-
-    }
-
-
-    document
-        .querySelectorAll(
-            'input[name="supplements"]'
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    savedSupplements.includes(
-                        checkbox.value
-                    );
-
-            }
-        );
-
-
-    document.getElementById(
-        "noSupplement"
-    ).checked =
-        savedSupplements.length === 0;
-
 }
 
 
 /* ==================================================
-   NO SUPPLEMENT CHECKBOX
+   NO SUPPLEMENT
 ================================================== */
 
 document
-    .getElementById(
-        "noSupplement"
-    )
+    .getElementById("noSupplement")
     .addEventListener(
         "change",
         function() {
@@ -750,12 +818,73 @@ document
    SAVE FOOD PREFERENCES
 ================================================== */
 
-function saveFoodPreferences() {
+async function saveFoodPreferences() {
 
 
-    /* ==================================================
-       GET SELECTED SUPPLEMENTS
-    ================================================== */
+    /* ==========================================
+       GET VALUES
+    ========================================== */
+
+    const diet =
+        document.getElementById(
+            "diet"
+        ).value;
+
+
+    const preferredFoods =
+        document.getElementById(
+            "preferredFoods"
+        ).value.trim();
+
+
+    const avoidFoods =
+        document.getElementById(
+            "avoidFoods"
+        ).value.trim();
+
+
+    const allergies =
+        document.getElementById(
+            "allergies"
+        ).value.trim();
+
+
+    const meals =
+        document.getElementById(
+            "meals"
+        ).value;
+
+
+    const budget =
+        document.getElementById(
+            "budget"
+        ).value;
+
+
+    /* ==========================================
+       VALIDATION
+    ========================================== */
+
+    if (!preferredFoods) {
+
+        alert(
+            "Please enter at least one preferred food."
+        );
+
+        document
+            .getElementById(
+                "preferredFoods"
+            )
+            .focus();
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       GET SUPPLEMENTS
+    ========================================== */
 
     let supplements =
         Array.from(
@@ -780,140 +909,153 @@ function saveFoodPreferences() {
     }
 
 
-    /* ==================================================
-       CREATE FOOD OBJECT
-    ================================================== */
+    /* ==========================================
+       CONVERT BUDGET
+       
+       Backend currently expects REAL.
+    ========================================== */
 
-    const food = {
-
-        userId:
-            activeUser,
-
-        diet:
-            document.getElementById(
-                "diet"
-            ).value,
-
-        preferredFoods:
-            document.getElementById(
-                "preferredFoods"
-            ).value.trim(),
-
-        avoidFoods:
-            document.getElementById(
-                "avoidFoods"
-            ).value.trim(),
-
-        allergies:
-            document.getElementById(
-                "allergies"
-            ).value.trim(),
-
-        meals:
-            document.getElementById(
-                "meals"
-            ).value,
-
-        budget:
-            document.getElementById(
-                "budget"
-            ).value,
-
-        supplements:
-            supplements
-
-    };
+    let foodBudget = 100;
 
 
-    /* ==================================================
-       VALIDATION
-    ================================================== */
+    if (budget === "Low") {
 
-    if (
-        !food.preferredFoods
-    ) {
+        foodBudget = 100;
 
-        alert(
-            "Please enter at least one preferred food."
-        );
+    }
+    else if (budget === "Medium") {
 
-        document
-            .getElementById(
-                "preferredFoods"
-            )
-            .focus();
+        foodBudget = 250;
 
-        return;
+    }
+    else if (budget === "High") {
+
+        foodBudget = 500;
 
     }
 
 
-    /* ==================================================
-       GET ALL USERS' FOOD DATA
-    ================================================== */
-
-    let allFoods = {};
+    /* ==========================================
+       SAVE TO BACKEND DATABASE
+    ========================================== */
 
     try {
 
-        allFoods =
-            JSON.parse(
-                localStorage.getItem(
-                    "smartFitFoods"
-                ) || "{}"
+        /*
+           IMPORTANT:
+           We send the food fields only.
+
+           This prevents food.html from
+           accidentally replacing the workout
+           profile fields with null.
+        */
+
+        const result =
+            await apiRequest(
+                "/api/profile",
+                {
+
+                    method: "POST",
+
+                    body:
+                        JSON.stringify({
+
+                            vegetarian_type:
+                                diet,
+
+                            preferred_foods:
+                                preferredFoods,
+
+                            avoided_foods:
+                                avoidFoods,
+
+                            allergies:
+                                allergies,
+
+                            meals_per_day:
+                                Number(meals),
+
+                            food_budget:
+                                foodBudget
+
+                        })
+
+                }
             );
 
-    } catch (error) {
 
-        allFoods = {};
+        /* ======================================
+           LOCAL CACHE
+           
+           Database is the source of truth.
+           localStorage is only a cache.
+        ====================================== */
+
+        const food = {
+
+            diet:
+                diet,
+
+            preferredFoods:
+                preferredFoods,
+
+            avoidFoods:
+                avoidFoods,
+
+            allergies:
+                allergies,
+
+            meals:
+                meals,
+
+            budget:
+                budget,
+
+            supplements:
+                supplements
+
+        };
+
+
+        localStorage.setItem(
+            "smartFitFoodPreferences",
+            JSON.stringify(food)
+        );
+
+
+        /* ======================================
+           SUCCESS
+        ====================================== */
+
+        alert(
+            "Food preferences saved to your account! ✅"
+        );
+
+
+        /* ======================================
+           NEXT PAGE
+        ====================================== */
+
+        window.location.replace(
+            "nutrition.html"
+        );
+
 
     }
+    catch (error) {
+
+        console.error(
+            "Food save error:",
+            error
+        );
 
 
-    /* ==================================================
-       SAVE CURRENT USER
-    ================================================== */
+        alert(
+            "Could not save food preferences.\n\n" +
+            error.message
+        );
 
-    allFoods[activeUser] =
-        food;
-
-
-    localStorage.setItem(
-        "smartFitFoods",
-        JSON.stringify(
-            allFoods
-        )
-    );
-
-
-    /* ==================================================
-       SAVE ACTIVE USER FOOD DATA
-    ================================================== */
-
-    localStorage.setItem(
-        "smartFitFoodPreferences",
-        JSON.stringify(
-            food
-        )
-    );
-
-
-    /* ==================================================
-       SUCCESS
-    ================================================== */
-
-    alert(
-        "Food preferences saved successfully! ✅"
-    );
-
-
-    /* ==================================================
-       GO TO NUTRITION
-    ================================================== */
-
-    window.location.replace(
-        "nutrition.html"
-    );
+    }
 
 }
 
