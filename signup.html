@@ -7,7 +7,7 @@
 
     <title>Sign Up - SMART FIT AI</title>
 
-    <!-- CSS is in the same folder as signup.html -->
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -50,6 +50,8 @@
 
         <form id="signupForm">
 
+            <!-- FULL NAME -->
+
             <label>Full Name</label>
 
             <input
@@ -57,6 +59,7 @@
                 id="signupName"
                 placeholder="Enter your name"
                 required
+                autocomplete="name"
                 style="
                     width:100%;
                     padding:14px;
@@ -65,6 +68,8 @@
                 "
             >
 
+
+            <!-- EMAIL -->
 
             <label>Email</label>
 
@@ -73,6 +78,7 @@
                 id="signupEmail"
                 placeholder="Enter your email"
                 required
+                autocomplete="email"
                 style="
                     width:100%;
                     padding:14px;
@@ -81,6 +87,8 @@
                 "
             >
 
+
+            <!-- PASSWORD -->
 
             <label>Password</label>
 
@@ -89,7 +97,8 @@
                 id="signupPassword"
                 placeholder="Create a password"
                 required
-                minlength="4"
+                minlength="6"
+                autocomplete="new-password"
                 style="
                     width:100%;
                     padding:14px;
@@ -99,6 +108,8 @@
             >
 
 
+            <!-- CONFIRM PASSWORD -->
+
             <label>Confirm Password</label>
 
             <input
@@ -106,7 +117,8 @@
                 id="signupConfirmPassword"
                 placeholder="Confirm your password"
                 required
-                minlength="4"
+                minlength="6"
+                autocomplete="new-password"
                 style="
                     width:100%;
                     padding:14px;
@@ -115,6 +127,8 @@
                 "
             >
 
+
+            <!-- CREATE ACCOUNT BUTTON -->
 
             <button
                 type="submit"
@@ -126,6 +140,8 @@
 
         </form>
 
+
+        <!-- LOGIN LINK -->
 
         <p style="
             text-align:center;
@@ -147,210 +163,319 @@
 
 <script>
 
+/* =====================================================
+   SMART FIT AI - ACCOUNT REGISTRATION
+   ===================================================== */
+
 document
-.getElementById("signupForm")
-.addEventListener("submit", function(event) {
+    .getElementById("signupForm")
+    .addEventListener("submit", async function(event) {
 
-    event.preventDefault();
+        event.preventDefault();
 
 
-    /* =========================================
-       GET FORM VALUES
-    ========================================= */
+        /* =================================================
+           GET FORM VALUES
+        ================================================= */
 
-    const name =
-        document
-        .getElementById("signupName")
-        .value
-        .trim();
+        const name =
+            document
+                .getElementById("signupName")
+                .value
+                .trim();
 
 
-    const email =
-        document
-        .getElementById("signupEmail")
-        .value
-        .trim()
-        .toLowerCase();
+        const email =
+            document
+                .getElementById("signupEmail")
+                .value
+                .trim()
+                .toLowerCase();
 
 
-    const password =
-        document
-        .getElementById("signupPassword")
-        .value;
+        const password =
+            document
+                .getElementById("signupPassword")
+                .value;
 
 
-    const confirmPassword =
-        document
-        .getElementById("signupConfirmPassword")
-        .value;
+        const confirmPassword =
+            document
+                .getElementById("signupConfirmPassword")
+                .value;
 
 
-    /* =========================================
-       VALIDATION
-    ========================================= */
+        /* =================================================
+           VALIDATION
+        ================================================= */
 
-    if (!name || !email || !password) {
+        if (
+            !name ||
+            !email ||
+            !password ||
+            !confirmPassword
+        ) {
 
-        alert("Please fill all fields.");
+            alert("Please fill all fields.");
 
-        return;
+            return;
+        }
 
-    }
 
+        /* =================================================
+           PASSWORD MATCH
+        ================================================= */
 
-    if (password !== confirmPassword) {
+        if (password !== confirmPassword) {
 
-        alert("Passwords do not match.");
+            alert("Passwords do not match.");
 
-        return;
+            return;
+        }
 
-    }
 
+        /* =================================================
+           PASSWORD LENGTH
+        ================================================= */
 
-    /* =========================================
-       GET EXISTING USERS
-    ========================================= */
+        if (password.length < 6) {
 
-    let users = [];
+            alert(
+                "Password must be at least 6 characters long."
+            );
 
-    try {
+            return;
+        }
 
-        users =
-            JSON.parse(
-                localStorage.getItem("smartFitUsers")
-            ) || [];
 
-    }
+        /* =================================================
+           GET CREATE ACCOUNT BUTTON
+        ================================================= */
 
-    catch(error) {
+        const button =
+            document.querySelector(
+                "#signupForm button[type='submit']"
+            );
 
-        users = [];
 
-    }
+        const originalButtonText =
+            button.textContent;
 
 
-    /* =========================================
-       CHECK EXISTING ACCOUNT
-    ========================================= */
+        /* =================================================
+           DISABLE BUTTON
+        ================================================= */
 
-    const existingUser =
-        users.find(
-            user =>
-                user.email === email
-        );
+        button.disabled = true;
 
+        button.textContent =
+            "Creating Account...";
 
-    if (existingUser) {
 
-        alert(
-            "An account with this email already exists.\n\n" +
-            "Please login instead."
-        );
+        try {
 
-        window.location.href =
-            "login.html";
+            /* =================================================
+               SEND REGISTRATION REQUEST TO BACKEND
+               ================================================= */
 
-        return;
+            const response =
+                await fetch(
+                    "/api/auth/register",
+                    {
+                        method: "POST",
 
-    }
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
 
+                        body: JSON.stringify({
 
-    /* =========================================
-       CREATE NEW USER
-    ========================================= */
+                            name: name,
 
-    const user = {
+                            email: email,
 
-        name: name,
+                            password: password
 
-        email: email,
+                        })
+                    }
+                );
 
-        password: password
 
-    };
+            /* =================================================
+               READ SERVER RESPONSE
+               ================================================= */
 
+            const data =
+                await response.json();
 
-    users.push(user);
 
+            /* =================================================
+               HANDLE SERVER ERROR
+               ================================================= */
 
-    /* =========================================
-       SAVE ALL USERS
-    ========================================= */
+            if (!response.ok) {
 
-    localStorage.setItem(
-        "smartFitUsers",
-        JSON.stringify(users)
-    );
+                alert(
+                    data.error ||
+                    "Unable to create account. Please try again."
+                );
 
+                return;
+            }
 
-    /* =========================================
-       SAVE CURRENT USER
-    ========================================= */
 
-    localStorage.setItem(
-        "smartFitUser",
-        JSON.stringify(user)
-    );
+            /* =================================================
+               MAKE SURE TOKEN EXISTS
+               ================================================= */
 
+            if (!data.token || !data.user) {
 
-    /*
-       New account starts with no profile
-       and no food preferences.
-    */
+                alert(
+                    "Account was created, but authentication data was not received."
+                );
 
-    localStorage.removeItem(
-        "smartFitProfile"
-    );
+                return;
+            }
 
 
-    localStorage.removeItem(
-        "smartFitFoodPreferences"
-    );
+            /* =================================================
+               SAVE JWT TOKEN
+               =================================================
 
+               The token is used by other pages to communicate
+               with the backend as this logged-in user.
+            */
 
-    /*
-       User is NOT logged in yet.
-    */
+            localStorage.setItem(
+                "smartFitToken",
+                data.token
+            );
 
-    localStorage.setItem(
-        "smartFitLoggedIn",
-        "false"
-    );
 
+            /* =================================================
+               SAVE LOGIN STATUS
+               ================================================= */
 
-    /*
-       Save the email that was just registered.
-    */
+            localStorage.setItem(
+                "smartFitLoggedIn",
+                "true"
+            );
 
-    localStorage.setItem(
-        "smartFitLastRegisteredEmail",
-        email
-    );
 
+            /* =================================================
+               SAVE CURRENT USER EMAIL
+               ================================================= */
 
-    /* =========================================
-       SUCCESS
-    ========================================= */
+            localStorage.setItem(
+                "smartFitCurrentUserEmail",
+                data.user.email
+            );
 
-    alert(
-        "Account created successfully! ✅\n\n" +
-        "Welcome " + name + "!\n\n" +
-        "Please login to continue."
-    );
 
+            /* =================================================
+               SAVE LAST REGISTERED EMAIL
+               ================================================= */
 
-    /* =========================================
-       GO TO LOGIN
-    ========================================= */
+            localStorage.setItem(
+                "smartFitLastRegisteredEmail",
+                data.user.email
+            );
 
-    window.location.replace(
-        "login.html"
-    );
 
-});
+            /* =================================================
+               SAVE BASIC USER INFORMATION
+               =================================================
+
+               This is only a local convenience copy.
+
+               The real account is stored in the backend
+               database.
+            */
+
+            localStorage.setItem(
+                "smartFitUser",
+                JSON.stringify(data.user)
+            );
+
+
+            /* =================================================
+               REMOVE OLD DEVICE-ONLY PROFILE DATA
+               =================================================
+
+               We don't want an old user's local profile
+               accidentally appearing for the new account.
+            */
+
+            localStorage.removeItem(
+                "smartFitProfile"
+            );
+
+            localStorage.removeItem(
+                "smartFitFoodPreferences"
+            );
+
+
+            /* =================================================
+               SUCCESS MESSAGE
+               ================================================= */
+
+            alert(
+                "Account created successfully! ✅\n\n" +
+                "Welcome " +
+                data.user.name +
+                "!"
+            );
+
+
+            /* =================================================
+               GO TO PROFILE SETUP
+               ================================================= */
+
+            window.location.replace(
+                "profile.html"
+            );
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "Signup error:",
+                error
+            );
+
+
+            /* =================================================
+               NETWORK / SERVER ERROR
+               ================================================= */
+
+            alert(
+                "Unable to connect to the SMART FIT AI server.\n\n" +
+                "Please check your internet connection or make sure the server is running."
+            );
+
+        }
+
+
+        finally {
+
+            /* =================================================
+               ENABLE BUTTON AGAIN
+               ================================================= */
+
+            button.disabled = false;
+
+            button.textContent =
+                originalButtonText;
+
+        }
+
+    });
 
 </script>
 
 
 </body>
+
 </html>
