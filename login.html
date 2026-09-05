@@ -7,7 +7,6 @@
 
     <title>Login - SMART FIT AI</title>
 
-    <!-- IMPORTANT: style.css is in the same folder -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -50,6 +49,8 @@
 
         <form id="loginForm">
 
+            <!-- EMAIL -->
+
             <label for="loginEmail">
                 Email
             </label>
@@ -59,6 +60,7 @@
                 id="loginEmail"
                 placeholder="Enter your email"
                 required
+                autocomplete="email"
                 style="
                     width:100%;
                     padding:14px;
@@ -66,6 +68,9 @@
                     box-sizing:border-box;
                 "
             >
+
+
+            <!-- PASSWORD -->
 
             <label for="loginPassword">
                 Password
@@ -76,6 +81,7 @@
                 id="loginPassword"
                 placeholder="Enter your password"
                 required
+                autocomplete="current-password"
                 style="
                     width:100%;
                     padding:14px;
@@ -83,6 +89,9 @@
                     box-sizing:border-box;
                 "
             >
+
+
+            <!-- LOGIN BUTTON -->
 
             <button
                 type="submit"
@@ -94,6 +103,8 @@
 
         </form>
 
+
+        <!-- SIGNUP LINK -->
 
         <p style="
             text-align:center;
@@ -115,244 +126,349 @@
 
 <script>
 
+/* =====================================================
+   SMART FIT AI - LOGIN
+   ===================================================== */
+
 document
-.getElementById("loginForm")
-.addEventListener("submit", function(event) {
+    .getElementById("loginForm")
+    .addEventListener("submit", async function(event) {
 
-    event.preventDefault();
-
-
-    /* GET INPUT */
-
-    const email =
-        document
-        .getElementById("loginEmail")
-        .value
-        .trim()
-        .toLowerCase();
+        event.preventDefault();
 
 
-    const password =
-        document
-        .getElementById("loginPassword")
-        .value;
+        /* =================================================
+           GET INPUT VALUES
+        ================================================= */
+
+        const email =
+            document
+                .getElementById("loginEmail")
+                .value
+                .trim()
+                .toLowerCase();
 
 
-    /* GET USERS */
-
-    let users = [];
-
-    try {
-
-        users =
-            JSON.parse(
-                localStorage.getItem("smartFitUsers")
-            ) || [];
-
-    } catch (error) {
-
-        console.error(error);
-
-        users = [];
-
-    }
+        const password =
+            document
+                .getElementById("loginPassword")
+                .value;
 
 
-    /* FIND USER */
+        /* =================================================
+           BASIC VALIDATION
+        ================================================= */
 
-    const user =
-        users.find(function(account) {
+        if (!email || !password) {
 
-            return (
-                String(account.email)
-                .toLowerCase()
-                === email
-                &&
-                account.password
-                === password
+            alert(
+                "Please enter your email and password."
             );
 
-        });
+            return;
+        }
 
 
-    /* INVALID LOGIN */
+        /* =================================================
+           GET LOGIN BUTTON
+        ================================================= */
 
-    if (!user) {
-
-        alert(
-            "Invalid email or password."
-        );
-
-        return;
-
-    }
+        const button =
+            document.querySelector(
+                "#loginForm button[type='submit']"
+            );
 
 
-    /* LOGIN SUCCESS */
-
-    localStorage.setItem(
-        "smartFitLoggedIn",
-        "true"
-    );
+        const originalButtonText =
+            button.textContent;
 
 
-    localStorage.setItem(
-        "smartFitCurrentUser",
-        JSON.stringify(user)
-    );
+        /* =================================================
+           DISABLE BUTTON
+        ================================================= */
 
+        button.disabled = true;
 
-    localStorage.setItem(
-        "smartFitCurrentUserEmail",
-        user.email
-    );
+        button.textContent =
+            "Logging in...";
 
-
-    console.log(
-        "CURRENT USER:",
-        user
-    );
-
-
-    /* CHECK PROFILE */
-
-    let profiles = {};
-
-    try {
-
-        profiles =
-            JSON.parse(
-                localStorage.getItem(
-                    "smartFitProfiles"
-                )
-            ) || {};
-
-    } catch (error) {
-
-        profiles = {};
-
-    }
-
-
-    const userProfile =
-        profiles[user.email];
-
-
-    /* CHECK FOOD */
-
-    let foods = {};
-
-    try {
-
-        foods =
-            JSON.parse(
-                localStorage.getItem(
-                    "smartFitFoods"
-                )
-            ) || {};
-
-    } catch (error) {
-
-        foods = {};
-
-    }
-
-
-    const userFood =
-        foods[user.email];
-
-
-    /* MIGRATE OLD PROFILE */
-
-    if (
-        !userProfile &&
-        localStorage.getItem("smartFitProfile")
-    ) {
 
         try {
 
-            const oldProfile =
-                JSON.parse(
-                    localStorage.getItem(
-                        "smartFitProfile"
-                    )
+            /* =================================================
+               SEND LOGIN REQUEST TO BACKEND
+               ================================================= */
+
+            const response =
+                await fetch(
+                    "/api/auth/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            email: email,
+
+                            password: password
+
+                        })
+                    }
                 );
 
-            profiles[user.email] =
-                oldProfile;
+
+            /* =================================================
+               READ SERVER RESPONSE
+               ================================================= */
+
+            const data =
+                await response.json();
+
+
+            /* =================================================
+               LOGIN FAILED
+               ================================================= */
+
+            if (!response.ok) {
+
+                alert(
+                    data.error ||
+                    "Invalid email or password."
+                );
+
+                return;
+            }
+
+
+            /* =================================================
+               CHECK AUTHENTICATION DATA
+               ================================================= */
+
+            if (!data.token || !data.user) {
+
+                alert(
+                    "Login failed because authentication data was not received."
+                );
+
+                return;
+            }
+
+
+            /* =================================================
+               SAVE JWT TOKEN
+               =================================================
+
+               This token identifies the logged-in account
+               when communicating with the backend.
+            */
 
             localStorage.setItem(
-                "smartFitProfiles",
-                JSON.stringify(profiles)
+                "smartFitToken",
+                data.token
             );
 
-        } catch (error) {
 
-            console.log(
-                "Old profile not migrated."
+            /* =================================================
+               SAVE LOGIN STATUS
+               ================================================= */
+
+            localStorage.setItem(
+                "smartFitLoggedIn",
+                "true"
+            );
+
+
+            /* =================================================
+               SAVE CURRENT USER
+               ================================================= */
+
+            localStorage.setItem(
+                "smartFitCurrentUser",
+                JSON.stringify(data.user)
+            );
+
+
+            /* =================================================
+               SAVE CURRENT USER EMAIL
+               ================================================= */
+
+            localStorage.setItem(
+                "smartFitCurrentUserEmail",
+                data.user.email
+            );
+
+
+            /* =================================================
+               SAVE BASIC USER INFORMATION
+               =================================================
+
+               This is only a convenience copy.
+
+               The real account is stored in the backend
+               database.
+            */
+
+            localStorage.setItem(
+                "smartFitUser",
+                JSON.stringify(data.user)
+            );
+
+
+            /* =================================================
+               GET USER DATA FROM DATABASE
+               =================================================
+
+               This is important.
+
+               /api/me returns the profile belonging to the
+               logged-in user's user_id.
+
+               Therefore another device can retrieve the
+               same profile from the server.
+            */
+
+            let profileResponse;
+
+            try {
+
+                profileResponse =
+                    await fetch(
+                        "/api/me",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " +
+                                    data.token
+                            }
+                        }
+                    );
+
+            }
+
+            catch (profileError) {
+
+                console.warn(
+                    "Could not load profile immediately:",
+                    profileError
+                );
+
+                profileResponse = null;
+            }
+
+
+            /* =================================================
+               SAVE DATABASE PROFILE LOCALLY AS CACHE
+               =================================================
+
+               IMPORTANT:
+               This is NOT the source of truth.
+
+               The database is the source of truth.
+
+               The local copy only helps the page load
+               quickly on this device.
+            */
+
+            if (
+                profileResponse &&
+                profileResponse.ok
+            ) {
+
+                try {
+
+                    const me =
+                        await profileResponse.json();
+
+
+                    if (me.profile) {
+
+                        localStorage.setItem(
+                            "smartFitProfile",
+                            JSON.stringify(me.profile)
+                        );
+
+                    }
+
+                }
+
+                catch (profileReadError) {
+
+                    console.warn(
+                        "Profile data could not be read:",
+                        profileReadError
+                    );
+
+                }
+
+            }
+
+
+            /* =================================================
+               SUCCESS MESSAGE
+               ================================================= */
+
+            alert(
+                "Login successful! ✅\n\n" +
+                "Welcome " +
+                data.user.name +
+                "!"
+            );
+
+
+            /* =================================================
+               GO TO DASHBOARD
+               ================================================= */
+
+            window.location.replace(
+                "dashboard.html"
             );
 
         }
 
-    }
 
+        catch (error) {
 
-    /* MIGRATE OLD FOOD DATA */
-
-    if (
-        !userFood &&
-        localStorage.getItem(
-            "smartFitFoodPreferences"
-        )
-    ) {
-
-        try {
-
-            const oldFood =
-                JSON.parse(
-                    localStorage.getItem(
-                        "smartFitFoodPreferences"
-                    )
-                );
-
-            foods[user.email] =
-                oldFood;
-
-            localStorage.setItem(
-                "smartFitFoods",
-                JSON.stringify(foods)
+            console.error(
+                "Login error:",
+                error
             );
 
-        } catch (error) {
 
-            console.log(
-                "Old food data not migrated."
+            /* =================================================
+               SERVER / NETWORK ERROR
+               ================================================= */
+
+            alert(
+                "Unable to connect to the SMART FIT AI server.\n\n" +
+                "Please check your internet connection or make sure the server is running."
             );
 
         }
 
-    }
 
+        finally {
 
-    /* LOGIN SUCCESS MESSAGE */
+            /* =================================================
+               ENABLE BUTTON AGAIN
+               ================================================= */
 
-    alert(
-        "Login successful! ✅\n\n" +
-        "Welcome " +
-        user.name +
-        "!"
-    );
+            button.disabled = false;
 
+            button.textContent =
+                originalButtonText;
 
-    /* GO TO DASHBOARD */
+        }
 
-    window.location.href =
-        "dashboard.html";
-
-});
+    });
 
 </script>
 
 
 </body>
+
 </html>
