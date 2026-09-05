@@ -57,11 +57,22 @@
     font-size: 14px;
 }
 
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 </style>
 
 </head>
 
+
 <body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
 
 <header class="navbar">
 
@@ -71,7 +82,14 @@
 
 </header>
 
+
+
+<!-- =====================================================
+     PROFILE SECTION
+===================================================== -->
+
 <section class="features-section">
+
 
 <div class="section-heading">
 
@@ -89,9 +107,14 @@
 
 </div>
 
+
+
 <div class="profile-container">
 
-    <!-- NAME -->
+
+    <!-- =================================================
+         NAME
+    ================================================== -->
 
     <label for="name">
         Name
@@ -104,7 +127,10 @@
     >
 
 
-    <!-- AGE -->
+
+    <!-- =================================================
+         AGE
+    ================================================== -->
 
     <label for="age">
         Age
@@ -119,7 +145,10 @@
     >
 
 
-    <!-- HEIGHT -->
+
+    <!-- =================================================
+         HEIGHT
+    ================================================== -->
 
     <label for="height">
         Height (cm)
@@ -130,11 +159,15 @@
         type="number"
         min="50"
         max="250"
+        step="0.1"
         placeholder="Enter your height"
     >
 
 
-    <!-- WEIGHT -->
+
+    <!-- =================================================
+         WEIGHT
+    ================================================== -->
 
     <label for="weight">
         Weight (kg)
@@ -150,7 +183,10 @@
     >
 
 
-    <!-- EXPERIENCE -->
+
+    <!-- =================================================
+         EXPERIENCE
+    ================================================== -->
 
     <label for="experience">
         Fitness Experience
@@ -173,7 +209,10 @@
     </select>
 
 
-    <!-- GOAL -->
+
+    <!-- =================================================
+         GOAL
+    ================================================== -->
 
     <label for="goal">
         Fitness Goal
@@ -204,7 +243,10 @@
     </select>
 
 
-    <!-- DAYS -->
+
+    <!-- =================================================
+         WORKOUT DAYS
+    ================================================== -->
 
     <label for="days">
         Workout Days Per Week
@@ -231,7 +273,10 @@
     </select>
 
 
-    <!-- WORKOUT TIME -->
+
+    <!-- =================================================
+         WORKOUT TIME
+    ================================================== -->
 
     <label for="workoutTime">
         Available Workout Time
@@ -270,7 +315,10 @@
     </select>
 
 
-    <!-- LOCATION -->
+
+    <!-- =================================================
+         LOCATION
+    ================================================== -->
 
     <label for="location">
         Workout Location
@@ -289,7 +337,10 @@
     </select>
 
 
-    <!-- EQUIPMENT -->
+
+    <!-- =================================================
+         EQUIPMENT
+    ================================================== -->
 
     <label for="equipment">
         Available Equipment
@@ -302,7 +353,10 @@
     >
 
 
-    <!-- WORKOUT SPLIT -->
+
+    <!-- =================================================
+         WORKOUT SPLIT
+    ================================================== -->
 
     <label for="split">
         Workout Split
@@ -332,6 +386,11 @@
 
     </select>
 
+
+
+    <!-- =================================================
+         SPLIT INFORMATION
+    ================================================== -->
 
     <div class="split-info">
 
@@ -365,9 +424,13 @@
     </div>
 
 
-    <!-- SAVE BUTTON -->
+
+    <!-- =================================================
+         SAVE BUTTON
+    ================================================== -->
 
     <button
+        id="saveButton"
         class="primary-btn"
         style="width:100%;"
         onclick="saveProfile()">
@@ -376,300 +439,655 @@
 
     </button>
 
+
 </div>
 
 </section>
 
 
+
 <script>
+
+/* =====================================================
+   SMART FIT AI
+   PROFILE DATABASE SYSTEM
+===================================================== */
+
+
+/* =====================================================
+   GET LOGIN TOKEN
+===================================================== */
+
+const token =
+    localStorage.getItem("smartFitToken");
+
 
 /* =====================================================
    LOGIN CHECK
 ===================================================== */
 
-const loggedIn =
-    localStorage.getItem("smartFitLoggedIn");
+if (!token) {
 
-const currentUserEmail =
-    localStorage.getItem("smartFitCurrentUserEmail");
-
-if (
-    loggedIn !== "true" ||
-    !currentUserEmail
-) {
-
-    window.location.replace("login.html");
+    window.location.replace(
+        "login.html"
+    );
 
 }
 
 
+
 /* =====================================================
-   GET USERS
+   WORKOUT SPLIT NAMES
 ===================================================== */
 
-function getUsers() {
+const splitNames = {
 
-    try {
+    "ppl":
+        "Push Pull Legs",
 
-        return JSON.parse(
-            localStorage.getItem("smartFitUsers") || "[]"
-        );
+    "bro":
+        "Bro Split",
 
-    } catch (error) {
+    "upper-lower":
+        "Upper / Lower Split",
 
-        console.error(
-            "User data error:",
-            error
-        );
+    "double-muscle":
+        "Double Muscle Split",
 
-        return [];
+    "enhanced-ppl":
+        "Advanced PPL"
+
+};
+
+
+
+/* =====================================================
+   PAGE LOADING MESSAGE
+===================================================== */
+
+function setLoadingState(isLoading) {
+
+    const button =
+        document.getElementById("saveButton");
+
+    if (!button) {
+        return;
+    }
+
+
+    if (isLoading) {
+
+        button.disabled = true;
+
+        button.textContent =
+            "Loading Profile...";
+
+    } else {
+
+        button.disabled = false;
+
+        button.textContent =
+            "Save Profile & Continue →";
 
     }
 
 }
 
 
+
 /* =====================================================
-   GET CURRENT USER
+   LOAD USER PROFILE FROM DATABASE
 ===================================================== */
 
-function getCurrentUser() {
+async function loadProfile() {
 
-    const users = getUsers();
+    if (!token) {
+        return;
+    }
 
-    return users.find(function(user) {
 
-        return user.email === currentUserEmail;
+    try {
 
-    });
+        setLoadingState(true);
+
+
+        /* ---------------------------------------------
+           REQUEST USER + PROFILE
+        --------------------------------------------- */
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    }
+
+                }
+            );
+
+
+        /* ---------------------------------------------
+           TOKEN INVALID
+        --------------------------------------------- */
+
+        if (!response.ok) {
+
+            localStorage.removeItem(
+                "smartFitToken"
+            );
+
+            localStorage.removeItem(
+                "smartFitLoggedIn"
+            );
+
+            localStorage.removeItem(
+                "smartFitUser"
+            );
+
+            localStorage.removeItem(
+                "smartFitCurrentUserEmail"
+            );
+
+
+            alert(
+                "Your login session has expired. Please login again."
+            );
+
+
+            window.location.replace(
+                "login.html"
+            );
+
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           READ RESPONSE
+        --------------------------------------------- */
+
+        const data =
+            await response.json();
+
+
+        /* ---------------------------------------------
+           SAVE USER INFORMATION
+        --------------------------------------------- */
+
+        if (data.user) {
+
+            localStorage.setItem(
+                "smartFitUser",
+                JSON.stringify(data.user)
+            );
+
+
+            localStorage.setItem(
+                "smartFitCurrentUserEmail",
+                data.user.email
+            );
+
+
+            localStorage.setItem(
+                "smartFitLoggedIn",
+                "true"
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           USER NAME
+        --------------------------------------------- */
+
+        if (data.user) {
+
+            document.getElementById(
+                "name"
+            ).value =
+                data.user.name || "";
+
+        }
+
+
+        /* ---------------------------------------------
+           GET DATABASE PROFILE
+        --------------------------------------------- */
+
+        const profile =
+            data.profile;
+
+
+        /* ---------------------------------------------
+           NEW USER
+        --------------------------------------------- */
+
+        if (!profile) {
+
+            setLoadingState(false);
+
+            return;
+
+        }
+
+
+
+        /* =================================================
+           LOAD PROFILE VALUES
+        ================================================== */
+
+
+        /* AGE */
+
+        document.getElementById(
+            "age"
+        ).value =
+            profile.age ?? "";
+
+
+
+        /* HEIGHT */
+
+        document.getElementById(
+            "height"
+        ).value =
+            profile.height_cm ?? "";
+
+
+
+        /* WEIGHT */
+
+        document.getElementById(
+            "weight"
+        ).value =
+            profile.weight_kg ?? "";
+
+
+
+        /* EXPERIENCE */
+
+        document.getElementById(
+            "experience"
+        ).value =
+            profile.experience ||
+            "Beginner";
+
+
+
+        /* GOAL */
+
+        document.getElementById(
+            "goal"
+        ).value =
+            profile.goal ||
+            "General Fitness";
+
+
+
+        /* WORKOUT DAYS */
+
+        document.getElementById(
+            "days"
+        ).value =
+            profile.workout_days ??
+            "3";
+
+
+
+        /* WORKOUT TIME */
+
+        document.getElementById(
+            "workoutTime"
+        ).value =
+            profile.workout_minutes ??
+            "30";
+
+
+
+        /* LOCATION */
+
+        document.getElementById(
+            "location"
+        ).value =
+            profile.location ||
+            "Gym";
+
+
+
+        /* EQUIPMENT */
+
+        document.getElementById(
+            "equipment"
+        ).value =
+            profile.equipment ||
+            "";
+
+
+
+        /* =================================================
+           WORKOUT SPLIT
+
+           Backend currently doesn't have split
+           column, so temporarily restore it from
+           localStorage.
+        ================================================== */
+
+        const savedSplit =
+            localStorage.getItem(
+                "smartFitSelectedSplit"
+            );
+
+
+        if (savedSplit) {
+
+            const splitElement =
+                document.getElementById(
+                    "split"
+                );
+
+
+            if (
+                splitNames[savedSplit]
+            ) {
+
+                splitElement.value =
+                    savedSplit;
+
+            }
+
+        }
+
+
+        /* ---------------------------------------------
+           CACHE PROFILE
+
+           This is only a local cache.
+           Database remains the main source.
+        --------------------------------------------- */
+
+        localStorage.setItem(
+            "smartFitProfile",
+            JSON.stringify(profile)
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+
+        alert(
+            "Unable to load your profile.\n\nPlease check your internet connection and try again."
+        );
+
+    } finally {
+
+        setLoadingState(false);
+
+    }
 
 }
 
 
-const currentUser =
-    getCurrentUser();
-
 
 /* =====================================================
-   LOAD EXISTING PROFILE
+   LOAD PROFILE WHEN PAGE OPENS
 ===================================================== */
 
 window.addEventListener(
     "DOMContentLoaded",
     function() {
 
-        if (!currentUser) {
-
-            alert(
-                "User account not found. Please login again."
-            );
-
-            window.location.replace("login.html");
-
-            return;
-
-        }
-
-
-        let profiles = {};
-
-        try {
-
-            profiles = JSON.parse(
-                localStorage.getItem("smartFitProfiles") || "{}"
-            );
-
-        } catch (error) {
-
-            profiles = {};
-
-        }
-
-
-        const profile =
-            profiles[currentUserEmail];
-
-
-        /* NEW USER */
-
-        if (!profile) {
-
-            document.getElementById("name").value =
-                currentUser.name || "";
-
-            return;
-
-        }
-
-
-        /* LOAD PROFILE DATA */
-
-        document.getElementById("name").value =
-            profile.name ||
-            currentUser.name ||
-            "";
-
-        document.getElementById("age").value =
-            profile.age || "";
-
-        document.getElementById("height").value =
-            profile.height || "";
-
-        document.getElementById("weight").value =
-            profile.weight || "";
-
-        document.getElementById("experience").value =
-            profile.experience ||
-            "Beginner";
-
-        document.getElementById("goal").value =
-            profile.goal ||
-            "General Fitness";
-
-        document.getElementById("days").value =
-            profile.days ||
-            "3";
-
-        document.getElementById("workoutTime").value =
-            profile.workoutTime ||
-            "30";
-
-        document.getElementById("location").value =
-            profile.location ||
-            "Gym";
-
-        document.getElementById("equipment").value =
-            profile.equipment ||
-            "";
-
-        document.getElementById("split").value =
-            profile.split ||
-            "ppl";
+        loadProfile();
 
     }
 );
+
 
 
 /* =====================================================
    SAVE PROFILE
 ===================================================== */
 
-function saveProfile() {
+async function saveProfile() {
+
+
+    /* =================================================
+       GET VALUES FROM FORM
+    ================================================== */
 
     const name =
-        document.getElementById("name").value.trim();
+        document
+            .getElementById("name")
+            .value
+            .trim();
+
 
     const age =
-        document.getElementById("age").value;
+        document
+            .getElementById("age")
+            .value;
+
 
     const height =
-        document.getElementById("height").value;
+        document
+            .getElementById("height")
+            .value;
+
 
     const weight =
-        document.getElementById("weight").value;
+        document
+            .getElementById("weight")
+            .value;
+
 
     const experience =
-        document.getElementById("experience").value;
+        document
+            .getElementById("experience")
+            .value;
+
 
     const goal =
-        document.getElementById("goal").value;
+        document
+            .getElementById("goal")
+            .value;
+
 
     const days =
-        document.getElementById("days").value;
+        document
+            .getElementById("days")
+            .value;
+
 
     const workoutTime =
-        document.getElementById("workoutTime").value;
+        document
+            .getElementById("workoutTime")
+            .value;
+
 
     const location =
-        document.getElementById("location").value;
+        document
+            .getElementById("location")
+            .value;
+
 
     const equipment =
-        document.getElementById("equipment").value.trim();
+        document
+            .getElementById("equipment")
+            .value
+            .trim();
+
 
     const split =
-        document.getElementById("split").value;
+        document
+            .getElementById("split")
+            .value;
 
 
-    /* VALIDATION */
+
+    /* =================================================
+       VALIDATION
+    ================================================== */
 
     if (!name) {
 
-        alert("Please enter your name.");
+        alert(
+            "Please enter your name."
+        );
 
         return;
 
     }
+
 
     if (!age) {
 
-        alert("Please enter your age.");
+        alert(
+            "Please enter your age."
+        );
 
         return;
 
     }
+
 
     if (!height) {
 
-        alert("Please enter your height.");
+        alert(
+            "Please enter your height."
+        );
 
         return;
 
     }
+
 
     if (!weight) {
 
-        alert("Please enter your weight.");
+        alert(
+            "Please enter your weight."
+        );
 
         return;
 
     }
 
 
-    /* SPLIT NAMES */
 
-    const splitNames = {
+    /* =================================================
+       CONVERT VALUES
+    ================================================== */
 
-        "ppl":
-            "Push Pull Legs",
+    const ageNumber =
+        Number(age);
 
-        "bro":
-            "Bro Split",
 
-        "upper-lower":
-            "Upper / Lower Split",
+    const heightNumber =
+        Number(height);
 
-        "double-muscle":
-            "Double Muscle Split",
 
-        "enhanced-ppl":
-            "Advanced PPL"
+    const weightNumber =
+        Number(weight);
 
-    };
 
+    const daysNumber =
+        Number(days);
+
+
+    const workoutTimeNumber =
+        Number(workoutTime);
+
+
+
+    /* =================================================
+       BASIC NUMBER VALIDATION
+    ================================================== */
+
+    if (
+        !Number.isFinite(ageNumber) ||
+        ageNumber <= 0
+    ) {
+
+        alert(
+            "Please enter a valid age."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !Number.isFinite(heightNumber) ||
+        heightNumber <= 0
+    ) {
+
+        alert(
+            "Please enter a valid height."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !Number.isFinite(weightNumber) ||
+        weightNumber <= 0
+    ) {
+
+        alert(
+            "Please enter a valid weight."
+        );
+
+        return;
+
+    }
+
+
+
+    /* =================================================
+       GET SPLIT NAME
+    ================================================== */
 
     const selectedSplitName =
         splitNames[split] ||
         "Push Pull Legs";
 
 
-    /* CREATE PROFILE */
 
-    const profile = {
+    /* =================================================
+       CREATE BACKEND PROFILE OBJECT
+    =================================================
 
-        userId:
-            currentUserEmail,
+       IMPORTANT:
 
-        name:
-            name,
+       The property names below MUST match
+       backend/server.js
+    ================================================== */
+
+    const profileData = {
 
         age:
-            age,
+            ageNumber,
 
-        height:
-            height,
+        height_cm:
+            heightNumber,
 
-        weight:
-            weight,
+        weight_kg:
+            weightNumber,
 
         experience:
             experience,
@@ -677,11 +1095,11 @@ function saveProfile() {
         goal:
             goal,
 
-        days:
-            days,
+        workout_days:
+            daysNumber,
 
-        workoutTime:
-            workoutTime,
+        workout_minutes:
+            workoutTimeNumber,
 
         location:
             location,
@@ -689,79 +1107,259 @@ function saveProfile() {
         equipment:
             equipment,
 
-        split:
-            split,
+        /*
+           Food fields are saved later from
+           food.html.
 
-        splitName:
-            selectedSplitName
+           They are kept as null here so the
+           existing backend upsert doesn't
+           accidentally lose existing values.
+        */
+
+        vegetarian_type:
+            null,
+
+        preferred_foods:
+            null,
+
+        avoided_foods:
+            null,
+
+        allergies:
+            null,
+
+        meals_per_day:
+            null,
+
+        food_budget:
+            null
 
     };
 
 
-    /* SAVE PROFILE PER USER */
 
-    let profiles = {};
+    /* =================================================
+       DISABLE BUTTON
+    ================================================== */
+
+    const button =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Saving Profile...";
+
+
+
+    /* =================================================
+       SEND DATA TO BACKEND
+    ================================================== */
 
     try {
 
-        profiles = JSON.parse(
-            localStorage.getItem("smartFitProfiles") || "{}"
+        const response =
+            await fetch(
+                "/api/profile",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            profileData
+                        )
+
+                }
+            );
+
+
+
+        /* =================================================
+           READ BACKEND RESPONSE
+        ================================================== */
+
+        const result =
+            await response.json();
+
+
+
+        /* =================================================
+           BACKEND ERROR
+        ================================================== */
+
+        if (!response.ok) {
+
+            console.error(
+                "Profile save error:",
+                result
+            );
+
+
+            alert(
+                result.error ||
+                "Unable to save your profile."
+            );
+
+
+            button.disabled = false;
+
+            button.textContent =
+                "Save Profile & Continue →";
+
+
+            return;
+
+        }
+
+
+
+        /* =================================================
+           PROFILE SUCCESSFULLY SAVED
+        ================================================== */
+
+        const savedProfile =
+            result.profile ||
+            profileData;
+
+
+
+        /* =================================================
+           LOCAL CACHE
+
+           DATABASE = SOURCE OF TRUTH
+           LOCALSTORAGE = CACHE ONLY
+        ================================================== */
+
+        localStorage.setItem(
+            "smartFitProfile",
+            JSON.stringify(
+                savedProfile
+            )
         );
+
+
+
+        /* =================================================
+           SAVE SPLIT TEMPORARILY
+        ================================================== */
+
+        localStorage.setItem(
+            "smartFitSelectedSplit",
+            split
+        );
+
+
+        localStorage.setItem(
+            "smartFitSelectedSplitName",
+            selectedSplitName
+        );
+
+
+
+        /* =================================================
+           UPDATE USER NAME LOCALLY
+        ================================================== */
+
+        const storedUser =
+            localStorage.getItem(
+                "smartFitUser"
+            );
+
+
+        if (storedUser) {
+
+            try {
+
+                const user =
+                    JSON.parse(
+                        storedUser
+                    );
+
+
+                user.name =
+                    name;
+
+
+                localStorage.setItem(
+                    "smartFitUser",
+                    JSON.stringify(user)
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "User cache update error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+
+        /* =================================================
+           SUCCESS MESSAGE
+        ================================================== */
+
+        alert(
+            "Profile saved successfully! ✅\n\n" +
+            "Your profile is now saved to your account.\n\n" +
+            "Workout Split: " +
+            selectedSplitName
+        );
+
+
+
+        /* =================================================
+           GO TO FOOD PAGE
+        ================================================== */
+
+        window.location.replace(
+            "food.html"
+        );
+
 
     } catch (error) {
 
-        profiles = {};
+        console.error(
+            "Server connection error:",
+            error
+        );
+
+
+        alert(
+            "Cannot connect to the server.\n\n" +
+            "Please check your internet connection and try again."
+        );
+
+
+        button.disabled = false;
+
+        button.textContent =
+            "Save Profile & Continue →";
 
     }
-
-
-    profiles[currentUserEmail] =
-        profile;
-
-
-    localStorage.setItem(
-        "smartFitProfiles",
-        JSON.stringify(profiles)
-    );
-
-
-    /* CURRENT USER PROFILE */
-
-    localStorage.setItem(
-        "smartFitProfile",
-        JSON.stringify(profile)
-    );
-
-
-    /* WORKOUT SPLIT */
-
-    localStorage.setItem(
-        "smartFitSelectedSplit",
-        split
-    );
-
-    localStorage.setItem(
-        "smartFitSelectedSplitName",
-        selectedSplitName
-    );
-
-
-    /* SUCCESS */
-
-    alert(
-        "Profile saved successfully! ✅\n\n" +
-        "Workout Split: " +
-        selectedSplitName
-    );
-
-
-    /* NEXT PAGE */
-
-    window.location.replace("food.html");
 
 }
 
 </script>
+
 
 </body>
 
